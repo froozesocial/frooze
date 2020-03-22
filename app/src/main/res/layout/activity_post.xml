@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:context=".PostActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/background_color"
+        android:id="@+id/bar">
+
+        <Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background_color"
+            android:id="@+id/toolbar">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/close"
+                    android:layout_marginEnd="13dp"
+                    android:src="@drawable/ic_close"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/post"
+                    android:id="@+id/post"
+                    android:layout_alignParentEnd="true"
+
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="10dp"
+                    android:textColor="@color/colorBlack"/>
+
+            </RelativeLayout>
+        </Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:orientation="vertical">
+        <VideoView
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:id="@+id/video_added"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
+            android:maxLines="10"
+            android:textColor="@color/colorBlack"
+            android:hint="Description"
+            android:id="@+id/description"/>
+
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,30 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    tool:android="com.thilojaeggi.frooze.SettingsActivity">
+    <PreferenceCategory>
+
+        <Preference
+            android:key="licenses"
+            android:title="Open-Source Licenses"
+            android:icon="@drawable/ic_description_black_24dp"
+            />
+        <Preference
+            android:key="support"
+            android:title="Support"
+            android:icon="@drawable/ic_help_outline_black_24dp"/>
+
+
+        <Preference
+            android:icon="@drawable/ic_exit_to_app_black_24dp"
+            android:key="logout"
+            android:title="Log out" />
+    </PreferenceCategory>
+    <PreferenceCategory>
+     <Preference
+            android:icon="@drawable/ic_delete_black_24dp"
+            android:key="deleteaccount"
+            android:title="Delete Account" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

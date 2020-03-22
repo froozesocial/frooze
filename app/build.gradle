@@ -1,0 +1,102 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.firebase-perf'
+apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+    defaultConfig {
+        applicationId "com.thilojaeggi.frooze"
+        minSdkVersion 21
+        targetSdkVersion 26
+        versionCode 10
+        versionName "1.9.5"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.debug
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+        debug {
+            signingConfig signingConfigs.debug
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'com.google.android.gms:play-services-ads:19.0.0'
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
+    implementation 'com.google.firebase:firebase-messaging:20.1.2'
+    implementation 'com.google.firebase:firebase-core:17.2.3'
+    implementation 'com.google.firebase:firebase-auth:19.3.0'
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    // Add the Firebase SDK for Crashlytics.
+    implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
+    implementation 'com.google.firebase:firebase-analytics:17.2.3'
+    implementation 'com.google.firebase:firebase-perf:19.0.5'
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    implementation 'com.github.MasayukiSuda:Mp4Composer-android:v0.3.9'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
+    implementation 'com.shobhitpuri.custombuttons:google-signin:1.1.0'
+    implementation 'gr.pantrif:easy-android-splash-screen:0.0.1'
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.10.4'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.10.4'
+    implementation 'com.google.android.exoplayer:exoplayer:2.10.4'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation "com.github.parse-community.Parse-SDK-Android:parse:1.23.1"
+    implementation 'com.squareup.okhttp3:okhttp:3.12.8'
+    implementation 'com.squareup.okio:okio:2.2.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.squareup.retrofit2:converter-gson:2.0.1'
+    implementation 'pub.devrel:easypermissions:3.0.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    annotationProcessor 'com.android.support:support-annotations:28.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'com.google.firebase:firebase-database:19.2.1'
+    implementation 'com.github.MasayukiSuda:Mp4Composer-android:v0.3.9'
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.7.0'
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation "im.ene.toro3:toro:3.0.0-beta1"
+    implementation 'com.allattentionhere:autoplayvideos:0.2.0'
+    implementation 'cn.jzvd:jiaozivideoplayer:7.2.2'
+    implementation 'com.github.markushi:circlebutton:1.1'
+    annotationProcessor 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
+    implementation 'org.jsoup:jsoup:1.13.1'
+    implementation 'com.github.medyo:fancybuttons:1.9.1'
+    implementation 'cn.jzvd:jiaozivideoplayer:7.2.2'
+
+
+
+
+}
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url  "http://tbrandlib.bintray.com/maven" }
+    maven { url 'https://jitpack.io' }
+}

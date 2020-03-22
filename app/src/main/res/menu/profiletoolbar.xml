@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/darkmode"
+        android:icon="@drawable/ic_wb_sunny_black_24dp"
+        android:title="Dark Mode"
+        android:color="@color/transparent"/>
+</menu>

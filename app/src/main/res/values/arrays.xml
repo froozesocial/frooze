@@ -1,0 +1,29 @@
+<resources>
+    <string-array name="pref_upload_quality_entries">
+        <item>360p</item>
+        <item>480p</item>
+        <item>720p</item>
+        <item>1080p</item>
+        <item>Original</item>
+    </string-array>
+    <string-array name="pref_upload_quality_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <!-- Reply Preference -->
+    <string-array name="settings_list_preference_titles">
+        <item>Dark Mode</item>
+        <item>Light Mode</item>
+        <item>Follow system</item>
+    </string-array>
+    <string-array name="settings_list_preference_values">
+        <item>1</item>
+        <item>0</item>
+        <item>2</item>
+    </string-array>
+    <!-- Label ordering must match values -->
+
+</resources>

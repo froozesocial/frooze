@@ -38,7 +38,9 @@
     <color name="msff242728">#ff363738</color>
     <color name="ms979797">#979797</color>
     <color name="color_edit_buttomlayout">#ff242728</color>
-
+    <color name="colorGradientStart">#D9FF43</color>
+    <color name="colorGradientCenter">#F67831</color>
+    <color name="colorGradientEnd">#FF1493</color>
     <color name="unsel_white">#999cb0</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>

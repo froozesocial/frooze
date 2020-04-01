@@ -123,10 +123,10 @@
             android:layout_height="64dp"
             android:backgroundTint="@color/transparent"
             android:scaleType="fitXY"
+            android:src="@drawable/signup"
             android:layout_marginTop="-15dp"
             android:layout_gravity="center"
             />
-
         <TextView
             android:id="@+id/back_button"
             android:layout_width="wrap_content"
@@ -139,6 +139,7 @@
             android:textColor="@android:color/darker_gray"
             android:textSize="20sp"
             app:srcCompat="@drawable/signup" />
+
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
@@ -146,5 +147,4 @@
             android:visibility="gone" />
 
     </LinearLayout>
-
 </ScrollView>

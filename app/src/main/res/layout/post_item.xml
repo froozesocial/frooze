@@ -10,57 +10,61 @@
         android:orientation="vertical"
         android:background="@color/transparent">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="8dp"
-            android:background="@color/transparent"
-            android:src="@mipmap/ic_launcher"
-            android:id="@+id/image_profile"/>
-
-
-
-
-
-        </LinearLayout>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/username"
-                android:layout_gravity="center_vertical"
-                android:textSize="16sp"
-                android:background="@color/transparent"
-                android:layout_marginStart="7dp"
-                android:textAlignment="center"
-                android:layout_marginTop="-3dp"
-                android:text="frooze"
-                android:textStyle="bold"
-                android:textColor="@color/colorBlack"/>
+
             <cn.jzvd.JzvdStd
                 android:id="@+id/videoplayer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="500dp"/>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/transparent"
+                    android:src="@mipmap/ic_launcher"
+                    android:id="@+id/image_profile"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/username"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="4dp"
+                    android:textSize="16sp"
+                    android:background="@color/transparent"
+                    android:layout_marginStart="7dp"
+                    android:text="frooze"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorWhite"/>
+
+
+
+            </LinearLayout>
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center|bottom"
+                android:layout_marginBottom="40dp"
+                android:adjustViewBounds="true"
+
+                android:id="@+id/like"
+                android:background="@drawable/heart"/>
         </FrameLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp">
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:id="@+id/like"
-                android:color="@color/colorBlack"
-                android:layout_alignParentEnd="true"
-                android:src="@drawable/ic_like"/>
 
 
         </RelativeLayout>
@@ -107,15 +111,7 @@
             android:id="@+id/description"
             android:textColor="@color/colorBlack"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
-            android:id="@+id/comments"
-            android:text="View all 20 Comments"
-            android:textColor="@color/colorAccent"/>
+
 
     </LinearLayout>
 

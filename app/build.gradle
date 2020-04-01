@@ -11,8 +11,8 @@ android {
         applicationId "com.thilojaeggi.frooze"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 10
-        versionName "1.9.5"
+        versionCode 11
+        versionName "2.0.0-beta"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.debug
     }
@@ -82,13 +82,16 @@ dependencies {
     implementation "im.ene.toro3:toro:3.0.0-beta1"
     implementation 'com.allattentionhere:autoplayvideos:0.2.0'
     implementation 'cn.jzvd:jiaozivideoplayer:7.2.2'
-    implementation 'com.github.markushi:circlebutton:1.1'
     annotationProcessor 'com.jakewharton:butterknife:10.2.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
-    implementation 'org.jsoup:jsoup:1.13.1'
-    implementation 'com.github.medyo:fancybuttons:1.9.1'
     implementation 'cn.jzvd:jiaozivideoplayer:7.2.2'
+    implementation 'com.race604.waveloading:library:1.1.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    implementation 'com.github.lsjwzh.RecyclerViewPager:lib:v1.1.1'
+    implementation 'com.brouding:android-doubletaplikeview:0.2.0'
+    implementation 'com.github.freddyfang:android-video-trimmer:v1.0.0'
+
 
 
 
@@ -97,6 +100,7 @@ dependencies {
 repositories {
     mavenCentral()
     jcenter()
+
     maven { url  "http://tbrandlib.bintray.com/maven" }
     maven { url 'https://jitpack.io' }
 }

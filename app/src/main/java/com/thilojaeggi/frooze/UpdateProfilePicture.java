@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.Continuation;
@@ -117,6 +119,10 @@ public class UpdateProfilePicture extends AppCompatActivity {
                         finish();
 
                     } else {
+                        Fragment fragment = new ProfileFragment();
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, fragment);
+                        transaction.commit();
                         Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
 
                     }
@@ -143,9 +149,8 @@ public class UpdateProfilePicture extends AppCompatActivity {
 
             profile_image_added.setImageURI(profileUri);
         } else {
-            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(UpdateProfilePicture.this, MainActivity.class));
-            finish();
+            Intent i = new Intent(UpdateProfilePicture.this, MainActivity.class);
+            startActivity(i);
         }
     }
 }

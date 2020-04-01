@@ -5,8 +5,7 @@
     android:id="@+id/lt_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:fitsSystemWindows="false">
+    android:background="@color/white">
 
 
     <FrameLayout
@@ -50,11 +49,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/transparent"
-        android:backgroundTint="#00C4FF"
+        android:backgroundTint="#00B7FF"
         android:src="@drawable/ic_file_upload_black_24dp"
         android:scaleType="center"
+
         app:fabCustomSize="60dp"
         app:layout_anchor="@id/bottom_bar"
+
         app:maxImageSize="30dp"/>
 
 

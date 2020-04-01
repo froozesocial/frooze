@@ -1,15 +1,11 @@
 package com.thilojaeggi.frooze.Adaptor;
 
 import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,15 +21,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.thilojaeggi.frooze.Model.Post;
 import com.thilojaeggi.frooze.Model.User;
 import com.thilojaeggi.frooze.R;
-import com.thilojaeggi.frooze.VideoConstant;
 
 import java.util.List;
 
 import cn.jzvd.JZDataSource;
 import cn.jzvd.Jzvd;
 import cn.jzvd.JzvdStd;
-
-import static com.parse.Parse.getApplicationContext;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>  {
     public static final String TAG = "AdapterTikTokRecyclerView";
@@ -54,7 +47,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>  {
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.post_item, viewGroup, false);
+
         return new PostAdapter.ViewHolder(view);
+
+
     }
 
 
@@ -65,15 +61,18 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>  {
         JZDataSource jzDataSource = new JZDataSource(post.getPostvideo());
         jzDataSource.looping = true;
         viewHolder.jzvdStd.setUp(jzDataSource,Jzvd.SCREEN_NORMAL);
-
-
+        viewHolder.jzvdStd.startButton.performClick();
+        viewHolder.jzvdStd.progressBar.setVisibility(View.GONE);
+        viewHolder.jzvdStd.totalTimeTextView.setVisibility(View.GONE);
+        viewHolder.jzvdStd.currentTimeTextView.setVisibility(View.GONE);
         if (post.getDescription().equals("")){
             viewHolder.description.setVisibility(View.GONE);
         } else {
             viewHolder.description.setVisibility(View.VISIBLE);
             viewHolder.description.setText(post.getDescription());
         }
-
+        viewHolder.jzvdStd.fullscreenButton.setVisibility(View.GONE);
+        viewHolder.jzvdStd.bottomProgressBar.setVisibility(View.GONE);
         publisherInfo(viewHolder.image_profile, viewHolder.username, viewHolder.publisher, post.getPublisher());
 
     }
@@ -99,7 +98,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>  {
             likes = itemView.findViewById(R.id.likes);
            // publisher = itemView.findViewById(R.id.publisher);
             description = itemView.findViewById(R.id.description);
-            comments = itemView.findViewById(R.id.comments);
+           // comments = itemView.findViewById(R.id.comments);
             username = itemView.findViewById(R.id.username);
             jzvdStd = itemView.findViewById(R.id.videoplayer);
 
@@ -126,5 +125,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>  {
 
             }
         });
+
+    }
+
+    public void clear() {
+        mPost.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items -- change to type used
+    public void addAll(List<Post> list) {
+        mPost.addAll(list);
+        notifyDataSetChanged();
     }
 }

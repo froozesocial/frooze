@@ -35,13 +35,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Setting up a progress dialog
-                final ProgressDialog dlg = new ProgressDialog(ForgotPasswordActivity.this);
-                dlg.setTitle("Please, wait a moment.");
-                dlg.setMessage("Redirecting you to login...");
-                dlg.show();
                 Intent intent = new Intent(ForgotPasswordActivity.this, LoginActivity.class);
-                dlg.dismiss();
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+
             }
         });
 
@@ -60,6 +57,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                                         Toast.makeText(getApplicationContext(), getString(R.string.emailsent), Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(ForgotPasswordActivity.this, LoginActivity.class);
                                         startActivity(intent);
+                                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                                     } else {
                                         Toast.makeText(getApplicationContext(), getString(R.string.emailnotsent), Toast.LENGTH_SHORT).show();
 
@@ -72,5 +70,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
             }
         });
+    }
+    @Override
+    public void finish(){
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

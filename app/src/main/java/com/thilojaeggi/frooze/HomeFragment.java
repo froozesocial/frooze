@@ -7,9 +7,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
+import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -21,7 +27,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -50,6 +59,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.race604.drawable.wave.WaveDrawable;
 import com.thilojaeggi.frooze.Adaptor.PostAdapter;
 import com.thilojaeggi.frooze.Model.Post;
 
@@ -88,21 +98,23 @@ public class HomeFragment extends Fragment {
         jzVideoPlayerStandard = rootView.findViewById(R.id.videoplayer);
         recyclerView = rootView.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
         postLists = new ArrayList<>();
         postAdapter = new PostAdapter(getContext(), postLists);
         recyclerView.setAdapter(postAdapter);
-
         checkFollowing();
 
+//set adapter
+//You just need to impelement ViewPageAdapter by yourself like a normal RecyclerView.Adpater.
 //        getPlayer();
 
         return rootView;
 
     }
+
 
 
     private void checkFollowing() {
@@ -134,8 +146,7 @@ public class HomeFragment extends Fragment {
 
     private void readPosts() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 postLists.clear();
@@ -147,6 +158,7 @@ public class HomeFragment extends Fragment {
                         }
                     }
                 }
+
 
                 postAdapter.notifyDataSetChanged();
             }
@@ -207,12 +219,29 @@ public class HomeFragment extends Fragment {
         // Autoplay the video when the player is ready
       //  mPlayer.setPlayWhenReady(true);
     }
-    public void onViewCreated(View rootView, Bundle savedInstanceState){
+
+    public void onViewCreated(View rootView, Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
         // initialise your views
+        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.swiperefresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your recyclerview reload logic function will be here!!!
+                readPosts();
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 2000);
+            }
 
-
+        });
     }
+
+
+
     @Override
     public void onDestroyView() {
       super.onDestroyView();
@@ -220,5 +249,11 @@ public class HomeFragment extends Fragment {
         jzVideoPlayerStandard.releaseAllVideos();
         // Release the player when it is not needed
      //   mPlayer.release();
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        jzVideoPlayerStandard.releaseAllVideos();
+
     }
 }

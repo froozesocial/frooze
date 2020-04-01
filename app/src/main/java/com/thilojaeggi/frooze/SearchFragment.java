@@ -51,7 +51,7 @@ public class SearchFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_view);
-      //  recyclerView.setHasFixedSize(true);
+        //  recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         search_bar = view.findViewById(R.id.search_bar);
         mUsers = new ArrayList<>();
@@ -68,7 +68,7 @@ public class SearchFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchUsers(s.toString().toLowerCase());
-              //  recyclerView.setVisibility(View.VISIBLE);
+                //  recyclerView.setVisibility(View.VISIBLE);
                 trending.setVisibility(View.GONE);
 
             }
@@ -79,7 +79,7 @@ public class SearchFragment extends Fragment {
             }
         });
 
-       // recyclerView.setVisibility(View.GONE);
+        // recyclerView.setVisibility(View.GONE);
         mAdView = view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
@@ -88,10 +88,10 @@ public class SearchFragment extends Fragment {
 
     private void searchUsers(String s){
         Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
-                 .startAt("s")
+                .startAt("s")
                 .endAt(s+"\uf8ff");
 
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mUsers.clear();
@@ -127,7 +127,7 @@ public class SearchFragment extends Fragment {
     }
     private void readUsers(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (search_bar.getText().toString().equals("")){

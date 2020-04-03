@@ -6,10 +6,14 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -17,17 +21,21 @@ import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
+
+import com.thilojaeggi.frooze.Model.Post;
 
 import java.util.HashMap;
 
@@ -37,6 +45,7 @@ Uri videoUri;
 String myUrl = "";
 StorageTask uploadTask;
 StorageReference storageReference;
+String dangerousstring;
 
 ImageView close;
 VideoView video_added;
@@ -66,6 +75,7 @@ EditText description;
     post.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+
             uploadVideo();
         }
     });
@@ -83,9 +93,12 @@ private String getFileExtension(Uri uri) {
 }
 
     private void uploadVideo() {
+
     ProgressDialog progressDialog = new ProgressDialog(this);
     progressDialog.setMessage("Uploading...");
     progressDialog.show();
+
+
             if (videoUri != null){
                 StorageReference filereference = storageReference.child(System.currentTimeMillis()
                         + "."+ getFileExtension(videoUri));
@@ -105,13 +118,15 @@ private String getFileExtension(Uri uri) {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
                         if (task.isSuccessful()){
+
                             Uri downloadUri = task.getResult();
                             myUrl = downloadUri.toString();
-
                             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+
 
                             String postid = reference.push().getKey();
                             HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("dangerous", "");
                             hashMap.put("postid", postid);
                             hashMap.put("postvideo", myUrl);
                             hashMap.put("description", description.getText().toString());

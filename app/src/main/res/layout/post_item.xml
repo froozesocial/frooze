@@ -50,24 +50,49 @@
 
 
             </LinearLayout>
-            <ImageView
+                <com.google.android.material.appbar.AppBarLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dangerous"
+                    android:visibility="gone"
+                    android:background="@drawable/roundedcornerstoprounded"
+                    android:layout_gravity="bottom">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="The actions depicted in this video \ncan cause significant harm."
+                        android:layout_marginTop="9dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginBottom="9dp"
+                        android:textSize="17dp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"/>
+                </com.google.android.material.appbar.AppBarLayout>
+
+            <ImageButton
                 android:layout_width="50dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center|bottom"
-                android:layout_marginBottom="40dp"
+                android:layout_marginBottom="65dp"
                 android:adjustViewBounds="true"
-
                 android:id="@+id/like"
                 android:background="@drawable/heart"/>
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="bottom|right"
+                android:layout_marginBottom="70dp"
+                android:layout_marginEnd="20dp"
+                android:adjustViewBounds="true"
+                android:id="@+id/share"
+                android:background="@drawable/ic_share_white_24dp"/>
         </FrameLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp">
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
 
-
-        </RelativeLayout>
+</FrameLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,6 +135,9 @@
             android:layout_marginStart="8dp"
             android:id="@+id/description"
             android:textColor="@color/colorBlack"/>
+
+
+
 
 
 

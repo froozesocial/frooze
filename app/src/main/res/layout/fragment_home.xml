@@ -54,12 +54,6 @@
 
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="I"
-        android:textSize="20sp"
-        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>
 

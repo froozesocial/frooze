@@ -112,6 +112,7 @@ public class SettingsActivity extends AppCompatActivity {
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(uid);;
                     ref.removeValue();
                     user.delete();
+                    FirebaseAuth.getInstance().signOut();
                     Toast.makeText(getContext(), "Account deleted", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(getContext(), LoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

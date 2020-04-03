@@ -70,6 +70,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import cn.jzvd.JzvdStd;
+import jp.wasabeef.blurry.Blurry;
 
 import static com.parse.Parse.getApplicationContext;
 
@@ -223,6 +224,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View rootView, Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
         // initialise your views
+
         SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

@@ -29,11 +29,13 @@
     <string name="emailnotsent">E-Mail not sent</string>
     <string name="missingfullname">Please enter a Name</string>
     <string name="usernameexists">Username already taken</string>
-
+    <string name="fullname">Name</string>
 
     <!-- Posts -->
     <string name="post">Post</string>
     <string name="yourproblem">Your Problem:</string>
+    <string name="description">Description</string>
+    <string name ="newpost">New Post</string>
 
     <!-- Profil -->
     <string name="ifollow">I follow</string>

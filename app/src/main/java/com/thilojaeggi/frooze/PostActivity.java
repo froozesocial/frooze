@@ -1,17 +1,27 @@
 package com.thilojaeggi.frooze;
 
+import android.Manifest;
+import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -22,13 +32,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.app.ActivityCompat;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.android.MediaManager;
+import com.cloudinary.android.callback.ErrorInfo;
+import com.cloudinary.android.callback.UploadCallback;
+import com.cloudinary.utils.ObjectUtils;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -37,144 +54,202 @@ import com.google.firebase.storage.StorageTask;
 
 import com.thilojaeggi.frooze.Model.Post;
 
+import org.w3c.dom.Text;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
+
 
 public class PostActivity extends AppCompatActivity {
 
-Uri videoUri;
-String myUrl = "";
-StorageTask uploadTask;
-StorageReference storageReference;
-String dangerousstring;
-
-ImageView close;
-VideoView video_added;
-TextView post;
-EditText description;
-    private static final int PICK_VIDEO_REQUEST = 1001;
-
-@Override
-    protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_post);
-    close = findViewById(R.id.close);
-    video_added = findViewById(R.id.video_added);
-    post = findViewById(R.id.post);
-    description = findViewById(R.id.description);
-
-    storageReference = FirebaseStorage.getInstance().getReference("posts");
-
-    close.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            startActivity(new Intent(PostActivity.this, MainActivity.class));
-            finish();
-        }
-    });
-
-    post.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-
-            uploadVideo();
-        }
-    });
-
-    Intent intent = new Intent(Intent.ACTION_PICK);
-    intent.setType("video/*");
-    intent.setAction(Intent.ACTION_GET_CONTENT);
-    startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_VIDEO_REQUEST );
-}
-
-private String getFileExtension(Uri uri) {
-    ContentResolver contentResolver = getContentResolver();
-    MimeTypeMap mime = MimeTypeMap.getSingleton();
-    return mime.getExtensionFromMimeType(contentResolver.getType(uri));
-}
-
-    private void uploadVideo() {
-
-    ProgressDialog progressDialog = new ProgressDialog(this);
-    progressDialog.setMessage("Uploading...");
-    progressDialog.show();
-
-
-            if (videoUri != null){
-                StorageReference filereference = storageReference.child(System.currentTimeMillis()
-                        + "."+ getFileExtension(videoUri));
-
-
-                uploadTask = filereference.putFile(videoUri);
-                uploadTask.continueWithTask(new Continuation() {
-                    @Override
-                    public Object then(@NonNull Task task) throws Exception {
-                        if (!task.isSuccessful()){
-                            throw task.getException();
-                        }
-
-                        return filereference.getDownloadUrl();
-                    }
-                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        if (task.isSuccessful()){
-
-                            Uri downloadUri = task.getResult();
-                            myUrl = downloadUri.toString();
-                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-
-
-                            String postid = reference.push().getKey();
-                            HashMap<String, Object> hashMap = new HashMap<>();
-                            hashMap.put("dangerous", "");
-                            hashMap.put("postid", postid);
-                            hashMap.put("postvideo", myUrl);
-                            hashMap.put("description", description.getText().toString());
-                            hashMap.put("publisher", FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-                            reference.child(postid).setValue(hashMap);
-
-                            progressDialog.dismiss();
-
-                            startActivity(new Intent(PostActivity.this, MainActivity.class));
-                            finish();
-
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
-
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(), ""+e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            } else {
-                Toast.makeText(getApplicationContext(),"No Video selected", Toast.LENGTH_LONG).show();
-            }
-    }
-// ctrl + O
+    private static final int SELECT_VIDEO = 2;
+    private static final int TRIM_VIDEO = 3;
+    private static final int REQUEST_VIDEO_TRIMMER = 0x01;
+    private static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION = 101;
+    static final String EXTRA_VIDEO_PATH = "EXTRA_VIDEO_PATH";
+    private static ProgressDialog mProgressDialog;
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_post);
+        Map config = new HashMap();
+        config.put("cloud_name", "frooze");
+        MediaManager.init(this, config);
+        //ringProgressBar = findViewById(R.id.progress_bar_2);
+        //ringProgressBar.setProgress(0);
 
-        if (requestCode == PICK_VIDEO_REQUEST && resultCode == RESULT_OK
-            && data != null && data.getData() != null) {
-            videoUri = data.getData();
-            video_added.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setMessage("Uploading");
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMax(100);
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+
+        pickFromGallery();
+
+        ImageButton close = findViewById(R.id.close);
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_VIDEO_TRIMMER) {
+                final Uri selectedUri = data.getData();
+                if (selectedUri != null) {
+                    VideoView preview = findViewById(R.id.video_added);
+                    preview.setVideoURI(selectedUri);
+                    preview.start();
+                    TextView post = findViewById(R.id.post);
+                    post.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            uploadVideoCloudinary(selectedUri);
+                        }
+                    });
+                    } else {
+                    Toast.makeText(PostActivity.this, "No video selected", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        }
+    }
+
+
+
+    private void pickFromGallery() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE, "Read Storage", REQUEST_STORAGE_READ_ACCESS_PERMISSION);
+        } else {
+            Intent intent = new Intent();
+            intent.setTypeAndNormalize("video/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(Intent.createChooser(intent, "Trash"), REQUEST_VIDEO_TRIMMER);
+        }
+    }
+
+    private void uploadVideoCloudinary(Uri videoUri) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+        mProgressDialog.show();
+
+        String postid = reference.push().getKey();
+
+        String requestId = MediaManager.get().upload(videoUri)
+
+                .option("public_id", "frooze/posts/" + uid + "/" + postid)
+                .option("resource_type", "video")
+                .unsigned("f4b4utaj")
+                .callback(new UploadCallback() {
+                    @Override
+                    public void onStart(String requestId) {
+
+                        //ringProgressBar.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onProgress(String requestId, long bytes, long totalBytes) {
+                        double progress = (double) bytes/totalBytes;
+                        progress = progress * 100;
+                        Log.i("progress", String.valueOf(progress));
+                        //ringProgressBar.setProgress((int)progress);
+                        mProgressDialog.setProgress((int)progress);
+                    }
+
+                    @Override
+                    public void onSuccess(String requestId, Map resultData) {
+
+
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        String uid = user.getUid();
+                        Switch dangerousswitch = findViewById(R.id.dangerousswitch);
+                        Boolean switchState = dangerousswitch.isChecked();
+                        EditText description = findViewById(R.id.description);
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("dangerous", switchState.toString());
+                        hashMap.put("postid", postid);
+                        hashMap.put("postvideo", "https://res.cloudinary.com/frooze/video/upload/q_auto:eco/frooze/posts/" + uid +"/" + postid + ".m3u8");
+                        hashMap.put("description", description.getText().toString());
+                        hashMap.put("publisher", FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                        reference.child(postid).setValue(hashMap);
+
+                        Toast.makeText(getApplicationContext(), "Video Uploaded Successfully !",Toast.LENGTH_LONG).show();
+                        //ringProgressBar.setVisibility(View.INVISIBLE);
+                        mProgressDialog.dismiss();
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(String requestId, ErrorInfo error) {
+                        Toast.makeText(getApplicationContext(), "Failed to Upload Video !",Toast.LENGTH_LONG).show();
+                        //ringProgressBar.setVisibility(View.INVISIBLE);
+                        mProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onReschedule(String requestId, ErrorInfo error) {
+
+                    }
+                })
+                .dispatch();
+    }
+
+    /**
+     * Requests given permission.
+     * If the permission has been denied previously, a Dialog will prompt the user to grant the
+     * permission, otherwise it is requested directly.
+     */
+    private void requestPermission(final String permission, String rationale, final int requestCode) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Permissions required");
+            builder.setMessage("To upload videos we need access to your Gallery");
+            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mp.setLooping(true);
+                public void onClick(DialogInterface dialog, int which) {
+                    ActivityCompat.requestPermissions(PostActivity.this, new String[]{permission}, requestCode);
                 }
             });
-            video_added.setVideoURI(videoUri);
-            video_added.start();
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            builder.show();
         } else {
-            Toast.makeText(this, "Something gone wrong", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(PostActivity.this, MainActivity.class));
-            finish();
+            ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+        }
+    }
+
+    /**
+     * Callback received when a permissions request has been completed.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_STORAGE_READ_ACCESS_PERMISSION:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    pickFromGallery();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 }

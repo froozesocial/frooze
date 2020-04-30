@@ -21,7 +21,7 @@
     <item
         android:id="@+id/nav_notifications"
         android:icon="@drawable/ic_notifications"
-        android:title="Notifications" />
+        android:title="@string/notifications" />
 
 
     <item

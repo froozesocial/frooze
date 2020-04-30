@@ -58,7 +58,7 @@ public class SearchFragment extends Fragment {
         userAdapter = new UserAdapter(getContext(), mUsers);
         recyclerView.setAdapter(userAdapter);
         readUsers();
-        TextView trending = (TextView) view.findViewById(R.id.trending);
+        TextView trending = view.findViewById(R.id.trending);
         search_bar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

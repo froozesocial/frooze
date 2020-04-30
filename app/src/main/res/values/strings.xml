@@ -1,100 +1,52 @@
 <resources xmlns:tools="http://schemas.android.com/tools" >
+
+    <!-- App Name und Menu -->
     <string name="app_name">frooze</string>
     <string name="home">Home</string>
     <string name="search">Search</string>
-    <string name="camera">Camera</string>
+    <string name="notifications">Notifications</string>
     <string name="profile">Profile</string>
-    <string name="upload_video">UPLOAD VIDEO</string>
+
     <string name="read_file">This app needs access to your file storage so that it can read video.</string>
 
-    <!-- Anmeldung -->
+    <!-- Anmeldung/Registrierung/Password Reset -->
     <string name="username">Username</string>
-    <string name="signupinstead"><u>Sign up instead</u></string>
-    <string name="forgotpass">Forgot your password?</string>
+    <string name="signupinstead">New here? <font fgcolor='#0084ff'>Sign up</font></string>
+    <string name="forgotpass">Forgot your password? <font fgcolor='#0084ff'>Reset it</font></string>
+    <string name="forgotpassnormal">Forgot your password?</string>
     <string name="password">Password</string>
     <string name="greeting">Hello there, welcome back</string>
-    <string name="alreadysignedup">Already signed up? Sign in instead</string>
+    <string name="alreadysignedup">Already signed up? <font fgcolor='#0084ff'>Log in</font></string>
     <string name="onboarding">Get on Board</string>
-    <string name="google_sign_up">Sign up with Google</string>
-    <string name="didnotforgetpass">Didn\'t forget your password? Go back</string>
-    <string name="missingmail">Please enter an E-Mail</string>
+    <string name="didnotforgetpass">Didn\'t forget your password? <font fgcolor='#0084ff'>Go back</font></string>
+    <string name="missingfullname">Please enter a Name</string>
     <string name="missingusername">Please enter an Username</string>
+    <string name="usernameexists">Username already taken</string>
+    <string name="missingmail">Please enter an E-Mail</string>
     <string name="missingpassword">Please enter a Password</string>
     <string name="verifyemail">Please verify your E-Mail before logging in</string>
     <string name="loginfail">Login failed! Please try again later</string>
     <string name="loginsuccessful">Logged in successfully!</string>
     <string name="registrationfail">Registration failed! Please try again later</string>
     <string name="registrationsuccessful">Signup successful. Verification email sent</string>
-    <string name="emailsent">E-Mail sent</string>
-    <string name="emailnotsent">E-Mail not sent</string>
-    <string name="missingfullname">Please enter a Name</string>
-    <string name="usernameexists">Username already taken</string>
     <string name="fullname">Name</string>
 
-    <!-- Posts -->
+    <!-- Post Activity-->
     <string name="post">Post</string>
-    <string name="yourproblem">Your Problem:</string>
     <string name="description">Description</string>
-    <string name ="newpost">New Post</string>
+    <string name="newpost">New Post</string>
 
-    <!-- Profil -->
-    <string name="ifollow">I follow</string>
-    <string name="followers">Followers</string>
+    <!-- Support Mail -->
+    <string name="yourproblem">Your Problem:</string>
+    <string name="emailsent">E-Mail sent</string>
+    <string name="emailnotsent">E-Mail not sent</string>
+
+    <!-- Profile -->
+    <string name="ifollow">I Follow</string>
+    <string name="followers">Fans</string>
     <string name="likes">Likes</string>
+    <string name="follow">Follow</string>
+    <string name="bioplaceholder">This is your Bio, tap to edit</string>
 
 
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_settings">Settings</string>
-
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-
-    <string name="default_gallery_storage">My Videos</string>
-    <string name="title_auto_upload">Auto upload</string>
-    <string name="summary_upload_over_wifi">Upload the videos when wifi is available</string>
-    <string name="title_upload_quality">Upload Quality</string>
-    <string name="summary_upload_video_quality">Specify video quality for uploads</string>
-    <string name="pref_title_notifications">Notifications</string>
-    <string name="summary_choose_ringtone">Choose notification sound</string>
-    <string name="pref_header_about">About</string>
-    <string name="summary_about">We are a team of like-minded people, specialized in development of Android App Development creating new trends across the app space. Glad to Help in anyway!</string>
-    <string name="app_version">3.5</string>
-    <string name="summary_support">Got any queries? We are happy to help!</string>
-    <string name="title_send_feedback">Send Feedback</string>
-    <string name="title_faq">FAQ</string>
-    <string name="summary_faq">View frequently asked questions</string>
-    <string name="url_faq">https://www.androidhive.info/privacy-policy/</string>
-    <string name="privacy_policy">Privacy Policy</string>
-    <string name="url_privacy">https://www.androidhive.info/privacy-policy/</string>
-    <string name="title_terms">Terms &amp; Conditions</string>
-    <string name="url_terms">https://www.androidhive.info/terms-of-service/</string>
-    <string name="title_version">Version</string>
-    <string name="choose_email_client">Choose email client</string>
-    <string name="title_gallery_storage">Default Storage</string>
-    <string name="title_new_notification_sound">New message notification</string>
-    <string name="title_vibrate">Vibrate</string>
-    <string name="summary_vibrate">Vibrate on new notification</string>
-    <string name="key_upload_over_wifi">key_upload_over_wifi</string>
-    <string name="key_gallery_name">key_gallery_name</string>
-    <string name="key_upload_quality">key_upload_quality</string>
-    <string name="notifications_new_message">notifications_new_message</string>
-    <string name="key_notifications_new_message_ringtone">key_notifications_new_message_ringtone</string>
-    <string name="key_vibrate">key_vibrate</string>
-    <string name="key_send_feedback">key_send_feedback</string>
-    <string name="logout"></string>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">dff</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>

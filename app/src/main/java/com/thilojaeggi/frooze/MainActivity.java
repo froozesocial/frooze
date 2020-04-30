@@ -10,9 +10,14 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+
+import com.cloudinary.android.MediaManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     Context mContext = this;
@@ -29,13 +34,15 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(MainActivity.this, NoInternetActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
+
+
         }
 
 
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
-        FloatingActionButton uploadvideobutton = (FloatingActionButton) findViewById(R.id.upload);
+        FloatingActionButton uploadvideobutton = findViewById(R.id.upload);
         final FloatingActionButton uploadvideo = uploadvideobutton;
         uploadvideo.setOnClickListener(new View.OnClickListener() {
             @Override

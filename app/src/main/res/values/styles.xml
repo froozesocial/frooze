@@ -6,8 +6,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/ff000000</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:forceDarkAllowed">false</item>
-
     </style>
     <style name="WindowAnimationStyle">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>

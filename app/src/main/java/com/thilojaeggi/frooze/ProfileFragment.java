@@ -1,16 +1,23 @@
 package com.thilojaeggi.frooze;
 
 
+import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -30,58 +37,132 @@ public class ProfileFragment extends Fragment {
     String DISPLAY_NAME = null;
     CircleImageView profileImageView;
     private Context mContext;
+    private String m_Text = "";
     private static String LOG_TAG = "EXAMPLE";
     NativeExpressAdView mAdView;
     VideoController mVideoController;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        profileImageView = getActivity().findViewById(R.id.profile_image);
         if (user != null) {
             String uid = user.getUid();
-            DatabaseReference mref = FirebaseDatabase.getInstance().getReference("Users").child(uid).child("username");
-            mref.addListenerForSingleValueEvent(new ValueEventListener() {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+
+            reference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    String username = dataSnapshot.getValue(String.class);
-                    TextView usernametv = (TextView) view.findViewById(R.id.username);
+                    String username = dataSnapshot.child("username").getValue(String.class);
+                    String fullname = dataSnapshot.child("fullname").getValue(String.class);
+                    String imageurl = dataSnapshot.child("imageurl").getValue(String.class);
+                    String biography = dataSnapshot.child("bio").getValue(String.class);
+                    profileImageView = view.findViewById(R.id.profile_image);
+                    Glide
+                            .with(getContext())
+                            .load(imageurl)
+                            .into(profileImageView);
+                    if (biography.isEmpty()){
+                        TextView bioplaceholdertv = view.findViewById(R.id.bioplaceholder);
+                        TextView biotv = view.findViewById(R.id.bio);
+                        biotv.setVisibility(View.GONE);
+                        bioplaceholdertv.setVisibility(View.VISIBLE);
+                    }
+                    TextView biotv = view.findViewById(R.id.bio);
+                    biotv.setText(biography);
+                    TextView usernametv = view.findViewById(R.id.username);
                     usernametv.setText("@" + username);
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-            DatabaseReference mreffullname = FirebaseDatabase.getInstance().getReference("Users").child(uid).child("fullname");
-            mreffullname.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    String fullname = dataSnapshot.getValue(String.class);
-                    TextView fullnametv = (TextView) view.findViewById(R.id.fullname);
+                    TextView fullnametv = view.findViewById(R.id.fullname);
                     fullnametv.setText(fullname);
-
                 }
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
+                    throw databaseError.toException();
                 }
             });
         }
-        ImageButton settingslistener = (ImageButton) view.findViewById(R.id.settings);
+        ImageButton settingslistener = view.findViewById(R.id.settings);
         settingslistener.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intentsettings = new Intent(getActivity(), SettingsActivity.class);
                 startActivity(intentsettings);
+
+
             }
         });
 
+        TextView biotv = view.findViewById(R.id.bio);
+        biotv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Bio");
 
+// Set up the input
+                final EditText input = new EditText(getContext());
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                builder.setView(input);
+
+// Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        m_Text = input.getText().toString();
+                        biotv.setText(m_Text);
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        reference.child("bio").setValue(m_Text);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+
+
+            }
+        });
+        TextView bioplaceholdertv = view.findViewById(R.id.bioplaceholder);
+        bioplaceholdertv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Bio");
+
+// Set up the input
+                final EditText input = new EditText(getContext());
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                builder.setView(input);
+
+// Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        m_Text = input.getText().toString();
+                        bioplaceholdertv.setText(m_Text);
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        reference.child("bio").setValue(m_Text);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+
+
+            }
+        });
         return view;
     }
 
@@ -95,31 +176,15 @@ public class ProfileFragment extends Fragment {
     }
 
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
+    }
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final CircleImageView profilebutton = getView().findViewById(R.id.profile_image);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = user.getUid();
-
-        DatabaseReference mref = FirebaseDatabase.getInstance().getReference("Users").child(uid).child("imageurl");
-        mref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String imageurl = dataSnapshot.getValue(String.class);
-                profileImageView = getActivity().findViewById(R.id.profile_image);
-                Glide.with(getContext())
-                        .load(imageurl)
-                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                        .into(profileImageView);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        CircleImageView profilebutton = getView().findViewById(R.id.profile_image);
 
         profilebutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +194,6 @@ public class ProfileFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
     }
     @Override
     public void onDestroyView() {

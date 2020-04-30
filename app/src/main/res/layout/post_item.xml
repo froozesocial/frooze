@@ -1,21 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/transparent">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".HomeFragment"
+    android:background="@color/transparent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/bar"
+                app:elevation="0dp"
+                android:background="@drawable/toolbar_bg">
+                <androidx.appcompat.widget.Toolbar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/toolbar_bg"
+                    android:id="@+id/toolbar"
+                    android:elevation="0dp"
+                    android:inputType="text"
+                    android:singleLine="true">
 
-            <cn.jzvd.JzvdStd
+                </androidx.appcompat.widget.Toolbar>
+            </com.google.android.material.appbar.AppBarLayout>
+            <com.google.android.exoplayer2.ui.SimpleExoPlayerView
                 android:id="@+id/videoplayer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
@@ -43,12 +57,21 @@
                     android:textSize="16sp"
                     android:background="@color/transparent"
                     android:layout_marginStart="7dp"
+                    android:paddingEnd="8dp"
                     android:text="frooze"
                     android:textStyle="bold"
-                    android:textColor="@color/colorWhite"/>
+                    android:textColor="@color/white"/>
 
 
-
+                <com.google.android.gms.ads.AdView
+                    xmlns:ads="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/adView"
+                    android:layout_width="match_parent"
+                    android:layout_height="65dp"
+                    android:layout_gravity="right"
+                    ads:adSize="BANNER"
+                    ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+                </com.google.android.gms.ads.AdView>
             </LinearLayout>
                 <com.google.android.material.appbar.AppBarLayout
                     android:layout_width="match_parent"
@@ -60,8 +83,9 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="The actions depicted in this video \ncan cause significant harm."
+                        android:text="Dangerous activities, do not attempt.\n"
                         android:layout_marginTop="9dp"
+                        android:textAlignment="center"
                         android:layout_marginStart="15dp"
                         android:layout_marginBottom="9dp"
                         android:textSize="17dp"
@@ -69,78 +93,71 @@
                         android:textStyle="bold"/>
                 </com.google.android.material.appbar.AppBarLayout>
 
+<androidx.cardview.widget.CardView
+    android:id="@+id/buttonscv"
+    android:layout_marginEnd="-145dp"
+    android:layout_width="240dp"
+    android:layout_height="75dp"
+    app:cardCornerRadius="37.5dp"
+    android:layout_gravity="right|bottom"
+    android:layout_marginBottom="65dp"
+    android:backgroundTint="#4D393939">
+    <ImageButton
+        android:id="@+id/closecv"
+        android:rotation="180"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:adjustViewBounds="true"
+        android:background="@drawable/jz_click_back_selector" />
+    <ImageButton
+        android:id="@+id/opencv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:adjustViewBounds="true"
+        android:background="@drawable/jz_click_back_selector" />
             <ImageButton
                 android:layout_width="50dp"
                 android:layout_height="60dp"
-                android:layout_gravity="center|bottom"
-                android:layout_marginBottom="65dp"
+                android:layout_gravity="center_vertical"
                 android:adjustViewBounds="true"
+                android:layout_marginStart="35dp"
                 android:id="@+id/like"
                 android:background="@drawable/heart"/>
             <ImageButton
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="-10dp"
+                android:adjustViewBounds="true"
+                android:id="@+id/comment"
+                android:background="@drawable/ic_comment_icon"/>
+            <ImageButton
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_gravity="bottom|right"
-                android:layout_marginBottom="70dp"
+                android:layout_gravity="right|center_vertical"
                 android:layout_marginEnd="20dp"
                 android:adjustViewBounds="true"
+                android:rotation="180"
                 android:id="@+id/share"
                 android:background="@drawable/ic_share_white_24dp"/>
+</androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="150dp"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="10dp"
+                android:layout_marginStart="8dp"
+                android:text=""
+                android:textSize="16dp"
+                android:maxLines="4"
+                android:layout_gravity="bottom|left"
+                android:layout_marginBottom="200dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textColor="@color/white" />
         </FrameLayout>
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-
-</FrameLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:id="@+id/comment"
-                android:color="@color/colorBlack"
-
-                android:layout_alignParentEnd="true"
-                android:src="@drawable/ic_comment" />
-
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp">
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:color="@color/colorBlack"
-                android:layout_alignParentEnd="true"
-                android:src="@drawable/ic_save_black"
-                android:id="@+id/save" />
-        </RelativeLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textStyle="bold"
-            android:id="@+id/likes"
-            android:textColor="@color/colorBlack"/>
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:id="@+id/description"
-            android:textColor="@color/colorBlack"/>
-
-
-
-
-
-
     </LinearLayout>
-
-</RelativeLayout>

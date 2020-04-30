@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.text.Html;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,12 +54,15 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.RepeatModeUtil;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.lsjwzh.widget.recyclerviewpager.RecyclerViewPager;
 import com.race604.drawable.wave.WaveDrawable;
 import com.thilojaeggi.frooze.Adaptor.PostAdapter;
 import com.thilojaeggi.frooze.Model.Post;
@@ -66,27 +70,17 @@ import com.thilojaeggi.frooze.Model.Post;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-import cn.jzvd.JzvdStd;
-import jp.wasabeef.blurry.Blurry;
 
-import static com.parse.Parse.getApplicationContext;
 
 public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private PostAdapter postAdapter;
     private List<Post> postLists;
-    private JzvdStd jzVideoPlayerStandard;
     private List<String> followingList;
 
 
 
-    //@BindView(R.id.video_view)
-    //SimpleExoPlayerView mPlayerView;
     private SimpleExoPlayer mPlayer;
-    //private Unbinder unbinder;
 
 
 
@@ -94,9 +88,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-//        unbinder = ButterKnife.bind(this, rootView);
 
-        jzVideoPlayerStandard = rootView.findViewById(R.id.videoplayer);
         recyclerView = rootView.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false);
@@ -225,7 +217,13 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(rootView, savedInstanceState);
         // initialise your views
 
-        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.swiperefresh);
+        RecyclerViewPager recyclerViewPager = rootView.findViewById(R.id.recycler_view);
+        recyclerViewPager.addOnPageChangedListener(new RecyclerViewPager.OnPageChangedListener() {
+            @Override
+            public void OnPageChanged(int oldPosition, int newPosition) {
+            }
+        });
+        SwipeRefreshLayout swipeRefreshLayout = getView().findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -248,14 +246,12 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
       super.onDestroyView();
       //  unbinder.unbind();
-        jzVideoPlayerStandard.releaseAllVideos();
+
         // Release the player when it is not needed
-     //   mPlayer.release();
     }
     @Override
     public void onPause() {
         super.onPause();
-        jzVideoPlayerStandard.releaseAllVideos();
 
     }
 }

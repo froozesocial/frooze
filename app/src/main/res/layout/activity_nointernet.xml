@@ -71,7 +71,7 @@
 
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/black"
         android:textSize="16sp"/>
 </androidx.cardview.widget.CardView>
     </FrameLayout>

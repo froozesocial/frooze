@@ -49,7 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/transparent"
-        android:backgroundTint="#00B7FF"
+        android:backgroundTint="#007BFF"
         android:src="@drawable/ic_file_upload_black_24dp"
         android:scaleType="center"
 

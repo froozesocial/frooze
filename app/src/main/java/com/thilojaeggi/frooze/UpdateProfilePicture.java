@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.cloudinary.android.MediaManager;
 import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,6 +36,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -62,7 +64,6 @@ public class UpdateProfilePicture extends AppCompatActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(UpdateProfilePicture.this, MainActivity.class));
                 finish();
             }
         });
@@ -76,7 +77,6 @@ public class UpdateProfilePicture extends AppCompatActivity {
 
         CropImage.activity()
                 .setAspectRatio(1,1)
-                .setCropShape(CropImageView.CropShape.OVAL)
                 .start(UpdateProfilePicture.this);
     }
 
@@ -114,8 +114,6 @@ public class UpdateProfilePicture extends AppCompatActivity {
 
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
                         reference.child("imageurl").setValue(myUrl);
-
-                        startActivity(new Intent(UpdateProfilePicture.this, MainActivity.class));
                         finish();
 
                     } else {
@@ -149,8 +147,7 @@ public class UpdateProfilePicture extends AppCompatActivity {
 
             profile_image_added.setImageURI(profileUri);
         } else {
-            Intent i = new Intent(UpdateProfilePicture.this, MainActivity.class);
-            startActivity(i);
+            finish();
         }
     }
 }

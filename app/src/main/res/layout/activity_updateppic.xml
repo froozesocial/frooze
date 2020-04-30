@@ -33,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:text="Vorschau"
                     android:layout_centerHorizontal="true"
-                    android:textColor="@color/colorBlack"
+                    android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold" />
                 <TextView
@@ -43,7 +43,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="10dp"
                     android:text="Ändern"
-                    android:textColor="@color/colorBlack"
+                    android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 

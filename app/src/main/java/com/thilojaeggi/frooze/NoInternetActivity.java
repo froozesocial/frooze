@@ -16,7 +16,7 @@ public class NoInternetActivity extends AppCompatActivity {
         setContentView(R.layout.activity_nointernet);
         final ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
-        CardView reload = (CardView) findViewById(R.id.reload);
+        CardView reload = findViewById(R.id.reload);
         reload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

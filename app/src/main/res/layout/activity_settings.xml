@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingsActivity">
+<com.google.android.material.appbar.AppBarLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:elevation="8dp">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:minHeight="?attr/actionBarSize"
+        android:elevation="8dp"
+        android:theme="?attr/actionBarTheme">
+        <ImageButton
+            android:id="@+id/backbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:tint="@color/black"
+            android:background="@color/transparent"
+            android:rotation="-90"
+            android:src="@drawable/jz_click_back_selector"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="30dp"
+            android:fontFamily="@font/roboto"
+            android:gravity="center"
+            android:text="Settings"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:textStyle="normal" />
+    </androidx.appcompat.widget.Toolbar>
+
+</com.google.android.material.appbar.AppBarLayout>
+
+    <Button
+        android:id="@+id/support"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/white"
+        android:backgroundTint="@color/white"
+        app:cornerRadius="10dp"
+        app:rippleColor="#00FFFFFF"
+        android:text="Support"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:icon="@drawable/ic_help_outline_black_24dp"
+        app:iconTint="@color/alpha60_black" />
+
+    <Button
+        android:id="@+id/oss"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+
+        android:text="Open Source Licenses"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:background="@color/white"
+        android:backgroundTint="@color/white"
+        app:cornerRadius="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:rippleColor="#00FFFFFF"
+        app:icon="@drawable/ic_description_black_24dp"
+        app:iconTint="@color/alpha60_black" />
+
+
+    <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_above="@+id/delete"
+        android:background="@color/white"
+        android:backgroundTint="@color/white"
+        app:cornerRadius="10dp"
+        app:rippleColor="#00FFFFFF"
+        android:fontFamily="sans-serif-medium"
+        android:text="Log out"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:icon="@drawable/ic_exit_to_app_black_24dp"
+        app:iconTint="@color/alpha60_black"
+ />
+
+    <Button
+        android:id="@+id/delete"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/white"
+        android:backgroundTint="@color/white"
+        app:cornerRadius="10dp"
+        app:rippleColor="#00FFFFFF"
+        android:fontFamily="sans-serif-medium"
+        android:text="Delete Account"
+        android:elevation="2dp"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textColor="@color/ms_red"
+        android:textSize="18sp"
+        android:layout_above="@+id/credits"
+
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:icon="@drawable/ic_delete_black_24dp"
+        app:iconTint="#FF0000" />
+
+        <TextView
+            android:id="@+id/credits"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

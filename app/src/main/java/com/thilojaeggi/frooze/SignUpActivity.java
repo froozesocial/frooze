@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,7 +40,7 @@ public class SignUpActivity extends AppCompatActivity {
 
 
     private EditText emailTV, passwordTV, usernameTV, fullnameTV;
-    private ImageButton regBtn;
+    private MaterialButton regBtn;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
     private static FirebaseAnalytics firebaseAnalytics;
@@ -82,7 +83,6 @@ public class SignUpActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot){
                 if(!dataSnapshot.exists()) {
                     registerNewUser();
-
                 }
                 else{
                     Toast.makeText(getApplicationContext(), getString(R.string.usernameexists), Toast.LENGTH_LONG).show();
@@ -90,6 +90,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }

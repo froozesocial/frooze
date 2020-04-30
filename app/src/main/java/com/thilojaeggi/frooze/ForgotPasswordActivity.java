@@ -16,10 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.parse.ParseException;
-import com.parse.ParseUser;
-import com.parse.RequestPasswordResetCallback;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
     private EditText mailView;
@@ -42,14 +40,15 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             }
         });
 
-        final ImageButton forgotpass_button = findViewById(R.id.forgotpass_button);
+        final MaterialButton forgotpass_button = findViewById(R.id.forgotpass_button);
         forgotpass_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText edt = (EditText) findViewById(R.id.email);
+                EditText edt = findViewById(R.id.email);
                 String mail = edt.getText().toString();
                 if (!TextUtils.isEmpty(mail)) {
-                    FirebaseAuth.getInstance().sendPasswordResetEmail(mail)
+                    FirebaseAuth auth = FirebaseAuth.getInstance();
+                    auth.sendPasswordResetEmail(mail)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -60,7 +59,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                                         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                                     } else {
                                         Toast.makeText(getApplicationContext(), getString(R.string.emailnotsent), Toast.LENGTH_SHORT).show();
-
                                     }
                                 }
                             });

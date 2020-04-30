@@ -22,10 +22,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/close"
+                    android:background="@color/transparent"
                     android:layout_marginEnd="13dp"
                     android:src="@drawable/ic_close"/>
                 <TextView
@@ -35,7 +36,7 @@
                     android:gravity="center_horizontal"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="@color/colorBlack"/>
+                    android:textColor="@color/black"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -46,7 +47,7 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_marginEnd="10dp"
-                    android:textColor="@color/colorBlack"/>
+                    android:textColor="@color/black"/>
 
             </RelativeLayout>
         </Toolbar>
@@ -61,12 +62,13 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+
             <VideoView
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:layout_gravity="left"
-            android:id="@+id/video_added"/>
+                android:id="@+id/video_added"
+                android:layout_width="150dp"
+                android:layout_height="230dp"
+                android:layout_gravity="left"
+                android:adjustViewBounds="true" />
 
             <ImageView
                 android:id="@+id/volume_mute"
@@ -83,14 +85,26 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:layout_gravity="right"
-            android:maxLines="10"
-            android:textColor="@color/colorBlack"
+            android:maxLines="4"
+            android:maxLength="140"
+            android:textColor="@color/black"
             android:hint="@string/description"
             android:id="@+id/description"/>
 
+
     </LinearLayout>
 
-
+    <Switch
+        android:id="@+id/dangerousswitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dangerous activities shown?"
+        android:layout_marginEnd="15dp"
+        android:textAlignment="viewStart"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textColor="#000000"
+        android:layout_marginStart="5dp"
+        android:textSize="18sp" />
 
 
 </LinearLayout>

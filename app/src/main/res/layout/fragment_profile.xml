@@ -45,21 +45,21 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/profile_image"
         android:layout_width="120dp"
+        app:roundAsCircle="true"
+        android:src="@mipmap/ic_launcher"
         android:layout_height="120dp"
         android:layout_marginTop="10dp"
         tools:context="com.thilojaeggi.frooze.ProfileFragment"
         android:layout_gravity="left"
-
-        android:layout_marginStart="5dp"
-        app:civ_border_color="#00FF88"
-        app:civ_border_width="5dp"/>
+        android:layout_marginStart="10dp"
+        />
 
     <TextView
         android:id="@+id/fullname"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginStart="30dp"
@@ -69,7 +69,7 @@
         android:textStyle="bold" />
     <TextView
         android:id="@+id/username"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginStart="30dp"
@@ -84,7 +84,7 @@
         <TextView
             android:id="@+id/bio"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="95dp"
             android:layout_gravity="end"
             android:layout_marginTop="50dp"
             android:layout_marginStart="15dp"
@@ -112,15 +112,14 @@
             android:textStyle="normal" />
         <androidx.appcompat.widget.AppCompatButton
             android:layout_marginEnd="20dp"
-            android:layout_marginStart="60dp"
+            android:layout_marginStart="20dp"
             android:text="@string/follow"
             android:textColor="@color/white"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/roundedbutton"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:layout_toEndOf="@+id/framelinear"
-            android:layout_marginTop="30dp"
-            android:layout_above="@id/cardviewprofile"
+            android:layout_below="@id/cardviewprofile"
 
             />
         <androidx.cardview.widget.CardView
@@ -129,7 +128,8 @@
             android:layout_height="50dp"
             android:layout_alignBottom="@id/framelinear"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="25dp"
             android:layout_alignParentEnd="true"
             app:cardBackgroundColor="@color/transparent"
             app:cardCornerRadius="15dp"
@@ -216,7 +216,10 @@
         </androidx.cardview.widget.CardView>
     </RelativeLayout>
 </FrameLayout>
-
+<androidx.recyclerview.widget.RecyclerView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/recyclerview"/>
 
 
 

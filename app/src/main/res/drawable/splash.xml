@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:gravity="fill">
     <item>
-        <shape>
-            <gradient
-                android:startColor="#8e01ff"
-                android:endColor="#24abfa"
-                android:angle="90"/>
-        </shape>
-    </item>
+        <bitmap android:gravity="fill" android:src="@drawable/background"
 
+            />
+    </item>
 
 </layer-list>

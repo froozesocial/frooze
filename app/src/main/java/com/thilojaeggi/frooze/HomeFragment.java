@@ -29,6 +29,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
+import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -62,19 +63,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.lsjwzh.widget.recyclerviewpager.RecyclerViewPager;
-import com.race604.drawable.wave.WaveDrawable;
+
 import com.thilojaeggi.frooze.Adaptor.PostAdapter;
 import com.thilojaeggi.frooze.Model.Post;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 
 
 public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private PostAdapter postAdapter;
+    private PostAdapter.ViewHolder viewHolder;
     private List<Post> postLists;
     private List<String> followingList;
 
@@ -88,7 +90,6 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-
         recyclerView = rootView.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false);
@@ -99,13 +100,13 @@ public class HomeFragment extends Fragment {
         postAdapter = new PostAdapter(getContext(), postLists);
         recyclerView.setAdapter(postAdapter);
         checkFollowing();
-
+        PagerSnapHelper helper = new PagerSnapHelper();
+        helper.attachToRecyclerView(recyclerView);
 //set adapter
 //You just need to impelement ViewPageAdapter by yourself like a normal RecyclerView.Adpater.
 //        getPlayer();
 
         return rootView;
-
     }
 
 
@@ -124,9 +125,7 @@ public class HomeFragment extends Fragment {
             for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                 followingList.add(snapshot.getKey());
             }
-
             readPosts();
-
 
         }
 
@@ -163,7 +162,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void getPlayer() {
+    private void getPlayer(SimpleExoPlayer mPlayer) {
         // URL of the video to stream
         //String videoURL = "https://frooze-hls.cdnvideo.ru/hls/5e554223daed02000157ce82/playlist.m3u8";
        // Uri uri = Uri.parse(videoURL);
@@ -217,12 +216,6 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(rootView, savedInstanceState);
         // initialise your views
 
-        RecyclerViewPager recyclerViewPager = rootView.findViewById(R.id.recycler_view);
-        recyclerViewPager.addOnPageChangedListener(new RecyclerViewPager.OnPageChangedListener() {
-            @Override
-            public void OnPageChanged(int oldPosition, int newPosition) {
-            }
-        });
         SwipeRefreshLayout swipeRefreshLayout = getView().findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -246,8 +239,8 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
       super.onDestroyView();
       //  unbinder.unbind();
-
         // Release the player when it is not needed
+
     }
     @Override
     public void onPause() {

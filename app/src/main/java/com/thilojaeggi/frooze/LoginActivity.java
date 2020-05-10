@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 234;
     private static final String TAG = "frooze Google login";
     DatabaseReference reference;
-
+    FirebaseAuth.AuthStateListener mAuthStateListener;
     private EditText emailTV, passwordTV;
     private MaterialButton loginBtn;
     private FirebaseAuth mAuth;
@@ -37,8 +37,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
-        getWindow().setExitTransition(new Explode());
-        getWindow().setEnterTransition(null);
         setContentView(R.layout.activity_login);
         initializeUI();
 
@@ -75,47 +73,26 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+                @Override
+                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    if (user != null) {
+                        Intent mainactivity = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(mainactivity);
+                        finish();
+                    }
+                    else {
+                        // No user is signed in
+                    }
 
-        if (user != null) {
-            // User is signed in
-            if (!isNetworkAvailable()) {
-                Intent i = new Intent(LoginActivity.this, NoInternetActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(i);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-
-            } else {
-                Intent mainactivity = new Intent(LoginActivity.this, MainActivity.class);
-                mainactivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(mainactivity);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-
-            }
-
-        } if (user == null) {
-            if (!isNetworkAvailable()) {
-                Intent i = new Intent(LoginActivity.this, NoInternetActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(i);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-
-            }
+                }
+            };
         }
-    }
 
-
-
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) LoginActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
 
     private void loginUserAccount() {
 // inside your activity (if you did not enable transitions in your theme)
-
-
         String email, password;
         email = emailTV.getText().toString();
         password = passwordTV.getText().toString();
@@ -141,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this).toBundle());
-                                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                             }
                             else {
                                 FirebaseAuth.getInstance().signOut();
@@ -155,7 +132,21 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (null != mAuthStateListener) {
+            mAuth.addAuthStateListener(mAuthStateListener);
+        }
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (null != mAuthStateListener) {
+            mAuth.removeAuthStateListener(mAuthStateListener);
+        }
+    }
     private void initializeUI() {
         emailTV = findViewById(R.id.email);
         passwordTV = findViewById(R.id.password);

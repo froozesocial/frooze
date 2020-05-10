@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools" >
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- App Name und Menu -->
     <string name="app_name">frooze</string>
@@ -48,5 +48,13 @@
     <string name="follow">Follow</string>
     <string name="bioplaceholder">This is your Bio, tap to edit</string>
 
+    <!-- Settings -->
+    <string name="getpremium">Get frooze <b><font fgcolor='#0084ff'>Blue</font></b> without Ads</string>
+
+    <!-- Premium -->
+    <string name="noads"><font fgcolor='#0084ff'>•</font> No Ads</string>
+    <string name="newfeatures"><font fgcolor='#0084ff'>•</font> New features</string>
+    <string name="longervideos"><font fgcolor='#0084ff'>•</font> Longer videos</string>
+    <string name="premiumbuttontext">Buy for </string>
 
 </resources>

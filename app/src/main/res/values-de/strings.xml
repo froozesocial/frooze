@@ -48,4 +48,13 @@
     <string name="likes">Likes</string>
     <string name="follow">Folgen</string>
 
+    <!-- Settings -->
+    <string name="getpremium">Get frooze Blue without Ads</string>
+
+    <!--Premium -->
+    <string name="noads"><font fgcolor='#0084ff'>•</font> Keine Werbung</string>
+    <string name="newfeatures"><font fgcolor='#0084ff'>•</font> Keine Werbung</string>
+    <string name="longervideos"><font fgcolor='#0084ff'>•</font> Keine Werbung</string>
+    <string name="premiumbuttontext">Kaufen für </string>
+
 </resources>

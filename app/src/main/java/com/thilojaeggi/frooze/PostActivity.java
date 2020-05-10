@@ -38,6 +38,8 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
+import com.cloudinary.android.preprocess.ImagePreprocessChain;
+import com.cloudinary.android.preprocess.Limit;
 import com.cloudinary.utils.ObjectUtils;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -150,10 +152,10 @@ public class PostActivity extends AppCompatActivity {
         String postid = reference.push().getKey();
 
         String requestId = MediaManager.get().upload(videoUri)
-
                 .option("public_id", "frooze/posts/" + uid + "/" + postid)
                 .option("resource_type", "video")
-                .unsigned("f4b4utaj")
+                .unsigned("frooze")
+
                 .callback(new UploadCallback() {
                     @Override
                     public void onStart(String requestId) {
@@ -206,7 +208,7 @@ public class PostActivity extends AppCompatActivity {
 
                     }
                 })
-                .dispatch();
+                .dispatch(getApplicationContext());
     }
 
     /**

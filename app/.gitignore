@@ -5,6 +5,10 @@
 # files for the dex VM
 *.dex
 
+#Firebase
+google-services.json
+
+
 # Java class files
 *.class
 

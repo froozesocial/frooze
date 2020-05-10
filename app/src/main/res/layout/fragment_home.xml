@@ -7,17 +7,16 @@
     android:background="@color/black"
     tools:context=".HomeFragment">
 
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <com.lsjwzh.widget.recyclerviewpager.RecyclerViewPager
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/bar"
-        app:rvp_triggerOffset="0.1"
-        app:rvp_singlePageFling="true"
-        android:id="@+id/recycler_view" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

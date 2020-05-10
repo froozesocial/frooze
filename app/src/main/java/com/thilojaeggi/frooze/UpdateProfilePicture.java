@@ -3,6 +3,7 @@ package com.thilojaeggi.frooze;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -111,9 +112,10 @@ public class UpdateProfilePicture extends AppCompatActivity {
                     if (task.isSuccessful()){
                         Uri downloadUri = task.getResult();
                         myUrl = downloadUri.toString();
+                        String myUrlsmall = myUrl.replace(".jpg", "_200x200.jpg");
 
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                        reference.child("imageurl").setValue(myUrl);
+                        reference.child("imageurl").setValue(myUrlsmall);
                         finish();
 
                     } else {

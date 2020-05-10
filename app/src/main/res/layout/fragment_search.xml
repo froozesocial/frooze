@@ -13,26 +13,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/bar"
-        android:background="@color/background_color">
+        android:outlineAmbientShadowColor="@color/transparent"
+        android:outlineSpotShadowColor="@color/transparent"
+        android:background="@drawable/searchappbar"
+>
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background_color"
         android:id="@+id/toolbar"
         android:inputType="text"
+        android:outlineAmbientShadowColor="@color/transparent"
+        android:outlineSpotShadowColor="@color/transparent"
+        android:background="@color/transparent"
         android:singleLine="true">
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:tint="#E6FFFFFF"
         android:src="@drawable/ic_search_black_24dp"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/search_bar"
-        android:background="@color/background_color"
-        android:textColor="@color/black"
-        android:hint="Search..."
 
+        android:background="@color/transparent"
+        android:textColor="@color/white"
+        android:hint="Search..."
+        android:textColorHint="#D0FFFFFF"
+        android:maxLines="1"
         android:layout_marginLeft="10dp"/>
     </androidx.appcompat.widget.Toolbar>
 
@@ -43,10 +51,11 @@
             android:layout_alignTop="@id/toolbar"
             android:layout_marginStart="10dp"
             android:fontFamily="@font/roboto"
-
+            android:paddingBottom="5dp"
             android:text="Trending"
+            android:layout_marginTop="-15dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textColor="@color/black"
+            android:textColor="#FFFFFF"
             android:textStyle="bold" />
     </com.google.android.material.appbar.AppBarLayout>
 

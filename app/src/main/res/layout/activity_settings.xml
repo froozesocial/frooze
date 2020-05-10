@@ -6,24 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
-<com.google.android.material.appbar.AppBarLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:elevation="8dp">
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/transparent"
+        android:background="@drawable/searchappbar"
         android:minHeight="?attr/actionBarSize"
-        android:elevation="8dp"
+
         android:theme="?attr/actionBarTheme">
         <ImageButton
             android:id="@+id/backbutton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:tint="@color/black"
             android:background="@color/transparent"
             android:rotation="-90"
             android:src="@drawable/jz_click_back_selector"/>
@@ -36,12 +31,11 @@
             android:gravity="center"
             android:text="Settings"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="25sp"
             android:textStyle="normal" />
     </androidx.appcompat.widget.Toolbar>
 
-</com.google.android.material.appbar.AppBarLayout>
 
     <Button
         android:id="@+id/support"
@@ -61,7 +55,6 @@
         android:textSize="18sp"
         app:icon="@drawable/ic_help_outline_black_24dp"
         app:iconTint="@color/alpha60_black" />
-
     <Button
         android:id="@+id/oss"
         android:layout_width="match_parent"
@@ -80,6 +73,25 @@
         app:rippleColor="#00FFFFFF"
         app:icon="@drawable/ic_description_black_24dp"
         app:iconTint="@color/alpha60_black" />
+    <Button
+        android:id="@+id/getpremium"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="@string/getpremium"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        app:iconSize="40dp"
+        android:textColor="@color/black"
+        android:textStyle="normal"
+        android:textSize="18sp"
+        android:background="@color/white"
+        android:backgroundTint="@color/white"
+        app:cornerRadius="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:rippleColor="#00FFFFFF"
+        app:icon="@drawable/ic_star_black_24dp"
+        app:iconTint="#2962FF" />
 
 
     <RelativeLayout

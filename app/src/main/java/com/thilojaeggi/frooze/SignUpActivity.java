@@ -138,11 +138,12 @@ public class SignUpActivity extends AppCompatActivity {
                             reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userid);
 
                             HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("premium", "false");
                             hashMap.put("id", userid);
                             hashMap.put("username", username.toLowerCase());
                             hashMap.put("fullname", fullname);
                             hashMap.put("bio", "");
-                            hashMap.put("imageurl", "https://firebasestorage.googleapis.com/v0/b/frooze-b2248.appspot.com/o/default.png?alt=media&token=aaf52a37-7043-4685-b91f-c6cccda88f4e");
+                            hashMap.put("imageurl", "https://firebasestorage.googleapis.com/v0/b/frooze-b2248.appspot.com/o/default.jpg?alt=media&token=303e7fbb-6bd4-440f-b3b3-303b761d40da");
                             reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {

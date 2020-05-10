@@ -21,10 +21,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,7 +44,7 @@ import java.util.List;
 public class SearchFragment extends Fragment {
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
-    private List<User> mUsers;
+    private List<User> userList;
     EditText search_bar;
     private AdView mAdView;
 
@@ -51,11 +53,11 @@ public class SearchFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_view);
-        //  recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         search_bar = view.findViewById(R.id.search_bar);
-        mUsers = new ArrayList<>();
-        userAdapter = new UserAdapter(getContext(), mUsers);
+        userList = new ArrayList<>();
+        userAdapter = new UserAdapter(getContext(), userList);
         recyclerView.setAdapter(userAdapter);
         readUsers();
         TextView trending = view.findViewById(R.id.trending);
@@ -68,36 +70,53 @@ public class SearchFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchUsers(s.toString().toLowerCase());
-                //  recyclerView.setVisibility(View.VISIBLE);
-                trending.setVisibility(View.GONE);
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+                trending.setVisibility(View.VISIBLE);
 
             }
         });
+        FirebaseAuth user = FirebaseAuth.getInstance();
+        String uid = user.getUid();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
 
+        reference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String premium = dataSnapshot.child("premium").getValue(String.class);
+                if (premium.equals("true")){
+                    mAdView = view.findViewById(R.id.adView);
+                    mAdView.setVisibility(View.GONE);
+                }if (premium.equals("false")) {
+                    mAdView = view.findViewById(R.id.adView);
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    mAdView.loadAd(adRequest);
+                }
+                }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                throw databaseError.toException();
+            }
+        });
         // recyclerView.setVisibility(View.GONE);
-        mAdView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+
         return view;
     }
 
     private void searchUsers(String s){
         Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
-                .startAt("s")
+                .startAt(s)
                 .endAt(s+"\uf8ff");
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mUsers.clear();
+                userList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     User user = snapshot.getValue(User.class);
-                    mUsers.add(user);
+                    userList.add(user);
                 }
 
                 userAdapter.notifyDataSetChanged();
@@ -120,21 +139,17 @@ public class SearchFragment extends Fragment {
         // initialise your views
 
     }
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
+
     private void readUsers(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (search_bar.getText().toString().equals("")){
-                    mUsers.clear();
+                    userList.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                         User user = snapshot.getValue(User.class);
-                        mUsers.add(user);
+                        userList.add(user);
                     }
 
                     userAdapter.notifyDataSetChanged();

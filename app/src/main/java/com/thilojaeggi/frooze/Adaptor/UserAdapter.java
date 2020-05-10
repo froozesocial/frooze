@@ -2,6 +2,7 @@ package com.thilojaeggi.frooze.Adaptor;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -123,8 +124,23 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.child(userid).exists()){
                     button.setText("following");
+                    button.setTextSize(17);
+                    button.setTextAppearance(mContext, Typeface.BOLD);
+                    button.setTextColor(button.getResources().getColor(R.color.dark_blue));
+                    button.setPadding(0,0,0,5);
+                    button.setBackgroundColor(button.getResources().getColor(R.color.white));
+                    button.setShadowLayer(0,0,0,0);
+                    button.setOutlineAmbientShadowColor(0);
+                    button.setOutlineSpotShadowColor(0);
+
                 } else {
                     button.setText("follow");
+                    button.setTextSize(17);
+                    button.setTextAppearance(mContext, Typeface.BOLD);
+                    button.setPadding(0,0,0,5);
+                    button.setTextColor(button.getResources().getColor(R.color.white));
+                    button.setBackgroundColor(button.getResources().getColor(R.color.dark_blue));
+
                 }
             }
 

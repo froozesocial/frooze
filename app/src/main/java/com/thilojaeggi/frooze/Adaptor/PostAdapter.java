@@ -24,11 +24,17 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ShareCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.brouding.doubletaplikeview.DoubleTapLikeView;
 import com.bumptech.glide.Glide;
+import com.cloudinary.Search;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -58,6 +64,8 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -66,25 +74,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.dynamiclinks.DynamicLink;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.ShortDynamicLink;
+import com.thilojaeggi.frooze.CommentsActivity;
 import com.thilojaeggi.frooze.Model.Post;
 import com.thilojaeggi.frooze.Model.User;
 import com.thilojaeggi.frooze.PostActivity;
 import com.thilojaeggi.frooze.R;
+import com.thilojaeggi.frooze.SearchFragment;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import cn.jzvd.JZDataSource;
-import cn.jzvd.Jzvd;
-import cn.jzvd.JzvdStd;
-import jp.wasabeef.blurry.Blurry;
-
-import static android.widget.ListPopupWindow.MATCH_PARENT;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> implements ExoPlayer.EventListener {
     public static final String TAG = "AdapterTikTokRecyclerView";
@@ -113,7 +114,38 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         Post post = mPost.get(i);
         //URL of the video to stream
+        isLiked(post.getPostid(), viewHolder.like);
+        nrLikes(viewHolder.likes, post.getPostid());
+        getComments(post.getPostid(), viewHolder.comments);
+        viewHolder.doubletap.setOnTapListener(new DoubleTapLikeView.OnTapListener() {
+            @Override
+            public void onDoubleTap(View view) {
+                if (viewHolder.like.getTag().equals("like")){
+                    FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
+                            .child(firebaseUser.getUid()).setValue(true);
+                } else{
+                    FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
+                            .child(firebaseUser.getUid()).removeValue();
+                }
+            }
 
+            @Override
+            public void onTap() {
+                mPlayer.release();
+            }
+        });
+        viewHolder.like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (viewHolder.like.getTag().equals("like")){
+                    FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
+                            .child(firebaseUser.getUid()).setValue(true);
+                } else{
+                    FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
+                            .child(firebaseUser.getUid()).removeValue();
+                }
+            }
+        });
         viewHolder.open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -210,22 +242,67 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
 
 
 
-
+        FirebaseAuth user = FirebaseAuth.getInstance();
+        String uid = user.getUid();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+        reference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String premium = dataSnapshot.child("premium").getValue(String.class);
+                if (premium.equals("true")){
+                    viewHolder.mAdView.setVisibility(View.GONE);
+                }if (premium.equals("false")) {
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    viewHolder.mAdView.loadAd(adRequest);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                throw databaseError.toException();
+            }
+        });
         AdRequest adRequest = new AdRequest.Builder().build();
         viewHolder.mAdView.loadAd(adRequest);
         viewHolder.share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String username = viewHolder.username.getText().toString();
 
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "Check out this video on frooze.ch by @" + username + "\n" + ": " + "https://frooze.ch/post.html?postid=" + post.getPostid());
-                sendIntent.setType("text/plain");
-                Intent shareIntent = Intent.createChooser(sendIntent, null);
-                mContext.startActivity(shareIntent);
-            }
-        });
+                Task<ShortDynamicLink> shortLinkTask = FirebaseDynamicLinks.getInstance().createDynamicLink()
+                        .setLink(Uri.parse("https://app.frooze.ch/post/?postid="+post.getPostid()))
+                        .setDomainUriPrefix("https://app.frooze.ch/link")
+                        .setAndroidParameters(new DynamicLink.AndroidParameters.Builder("com.thilojaeggi.frooze")
+                                .setFallbackUrl(Uri.parse("https://app.frooze.ch/post/?postid="+post.getPostid()))
+                                .build()
+
+                        )
+                        .setIosParameters(new DynamicLink.IosParameters.Builder("com.thilojaeggi.frooze")
+                                .setFallbackUrl(Uri.parse("https://app.frooze.ch/post/?postid="+post.getPostid()))
+                                .build()
+                        )
+                        .buildShortDynamicLink()
+                        .addOnCompleteListener((Activity) mContext, new OnCompleteListener<ShortDynamicLink>() {
+                            @Override
+                            public void onComplete(@NonNull Task<ShortDynamicLink> task) {
+                                if (task.isSuccessful()) {
+                                    // Short link created
+                                    Uri shortLink = task.getResult().getShortLink();
+                                    Uri flowchartLink = task.getResult().getPreviewLink();
+                                    String username = viewHolder.username.getText().toString();
+                                    Intent sendIntent = new Intent();
+                                    sendIntent.setAction(Intent.ACTION_SEND);
+                                    sendIntent.putExtra(Intent.EXTRA_TEXT, "Check out this video on frooze.ch by @" + username + ":\n" + shortLink);
+                                    sendIntent.setType("text/plain");
+                                    Intent shareIntent = Intent.createChooser(sendIntent, null);
+                                    mContext.startActivity(shareIntent);
+                                } else {
+
+                                }
+                            }
+                        });
+
+                        }
+
+                    });
         if (post.getDangerous().equals("true")){
             viewHolder.dangerous.setVisibility(View.VISIBLE);
         }
@@ -237,8 +314,18 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
         }
 
         publisherInfo(viewHolder.image_profile, viewHolder.username, viewHolder.publisher, post.getPublisher());
+        viewHolder.comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent comment = new Intent(mContext, CommentsActivity.class);
+                comment.putExtra("postid", post.getPostid());
+                comment.putExtra("publisherid", post.getPublisher());
+               mContext.startActivity(comment);
 
+            }
+        });
     }
+
 
     @Override
     public int getItemCount() {
@@ -252,10 +339,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
         public TextView username, likes, publisher, description, comments;
         public AppBarLayout dangerous;
         public ImageButton share, open, close;
+        public DoubleTapLikeView doubletap;
         public AdView mAdView;
         public CardView buttonscv;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            doubletap = itemView.findViewById(R.id.doubletap);
             close = itemView.findViewById(R.id.closecv);
             open = itemView.findViewById(R.id.opencv);
             buttonscv = itemView.findViewById(R.id.buttonscv);
@@ -266,15 +355,65 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
             like = itemView.findViewById(R.id.like);
             comment = itemView.findViewById(R.id.comment);
      //       save = itemView.findViewById(R.id.save);
-      //      likes = itemView.findViewById(R.id.likes);
+            likes = itemView.findViewById(R.id.likes);
             dangerous = itemView.findViewById(R.id.dangerous);
            // publisher = itemView.findViewById(R.id.publisher);
             description = itemView.findViewById(R.id.description);
-           // comments = itemView.findViewById(R.id.comments);
+            comments = itemView.findViewById(R.id.comments);
             username = itemView.findViewById(R.id.username);
             player = itemView.findViewById(R.id.videoplayer);
 
         }
+    }
+    private void getComments(String postid, TextView comments){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Comments").child(postid);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                comments.setText(dataSnapshot.getChildrenCount()+"");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void isLiked(String postid, ImageView imageView){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference likereference = FirebaseDatabase.getInstance().getReference()
+                .child("Likes")
+                .child(postid);
+        likereference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child(user.getUid()).exists()){
+                    imageView.setTag("liked");
+                }else{
+                    imageView.setTag("like");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void nrLikes(TextView likes, String postid) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Likes").child(postid);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                likes.setText(dataSnapshot.getChildrenCount()+"");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void publisherInfo(ImageView image_profile, TextView username, TextView publisher, String userid) {

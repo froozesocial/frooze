@@ -11,8 +11,8 @@ android {
         applicationId "com.thilojaeggi.frooze"
         minSdkVersion 22
         targetSdkVersion 28
-        versionCode 16
-        versionName "2.1.2-beta"
+        versionCode 19
+        versionName "2.1.6-beta"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.debug
         lintOptions {
@@ -29,6 +29,9 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    packagingOptions {
+        exclude 'lib/arm64-v8a/libc++_shared.so'
     }
 }
 
@@ -48,7 +51,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.4.0'
     implementation 'com.google.firebase:firebase-perf:19.0.7'
     annotationProcessor 'com.jakewharton:butterknife:10.2.1'
-    implementation 'com.github.MasayukiSuda:Mp4Composer-android:v0.3.9'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     implementation 'com.google.android.exoplayer:exoplayer-hls:2.10.4'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
@@ -62,34 +64,42 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.github.bumptech.glide:glide:4.10.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     annotationProcessor 'com.android.support:support-annotations:28.0.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'com.google.firebase:firebase-database:19.3.0'
     implementation 'com.github.MasayukiSuda:Mp4Composer-android:v0.3.9'
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.7.0'
     implementation 'com.google.android.gms:play-services-auth:18.0.0'
-    implementation "im.ene.toro3:toro:3.0.0-beta1"
     implementation 'cn.jzvd:jiaozivideoplayer:7.2.2'
     annotationProcessor 'com.jakewharton:butterknife:10.2.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
-    implementation 'cn.jzvd:jiaozivideoplayer:7.2.2'
     implementation 'com.race604.waveloading:library:1.1.1'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
-    implementation 'com.github.lsjwzh.RecyclerViewPager:lib:v1.1.1'
     implementation 'com.brouding:android-doubletaplikeview:0.2.0'
-    implementation 'jp.wasabeef:blurry:2.0.3'
+    implementation 'com.android.billingclient:billing:2.2.0'
+    implementation 'com.anjlab.android.iab.v3:library:1.0.44'
+    implementation 'com.github.Mursaat:AnimatedGradientTextView:v0.0.6'
+    implementation 'com.google.firebase:firebase-dynamic-links:19.1.0'
     implementation group: 'com.cloudinary', name: 'cloudinary-android', version: '1.24.0'
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
+    implementation 'com.allattentionhere:autoplayvideos:0.2.0'
+    implementation 'com.brouding:android-doubletaplikeview:0.2.0'
+    implementation 'com.facebook.fresco:fresco:2.2.0'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    compile 'com.allattentionhere:autoplayvideos:0.2.0'
+
+
 }
 repositories {
     mavenCentral()
     jcenter()
-
-    maven { url  "http://tbrandlib.bintray.com/maven" }
+    maven { url "http://tbrandlib.bintray.com/maven" }
     maven { url 'https://jitpack.io' }
 }

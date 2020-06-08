@@ -61,8 +61,10 @@ import org.w3c.dom.Text;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -87,7 +89,7 @@ public class PostActivity extends AppCompatActivity {
 
 
         mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage("Uploading");
+        mProgressDialog.setMessage(getString(R.string.uploading));
         mProgressDialog.setCancelable(false);
         mProgressDialog.setMax(100);
         mProgressDialog.setIndeterminate(false);
@@ -111,22 +113,32 @@ public class PostActivity extends AppCompatActivity {
             if (requestCode == REQUEST_VIDEO_TRIMMER) {
                 final Uri selectedUri = data.getData();
                 if (selectedUri != null) {
-                    VideoView preview = findViewById(R.id.video_added);
-                    preview.setVideoURI(selectedUri);
-                    preview.start();
-                    TextView post = findViewById(R.id.post);
-                    post.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            uploadVideoCloudinary(selectedUri);
-                        }
-                    });
+                    MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+//use one of overloaded setDataSource() functions to set your data source
+                    retriever.setDataSource(getApplicationContext(), selectedUri);
+                    String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                    long timeInMillisec = Long.parseLong(time);
+                    retriever.release();
+                    if (timeInMillisec <= 30000) {
+                        VideoView preview = findViewById(R.id.video_added);
+                        preview.setVideoURI(selectedUri);
+                        preview.start();
+                        TextView post = findViewById(R.id.post);
+                        post.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                uploadVideoCloudinary(selectedUri);
+                            }
+                        });
                     } else {
-                    Toast.makeText(PostActivity.this, "No video selected", Toast.LENGTH_SHORT).show();
-
+                        Toast.makeText(PostActivity.this, getString(R.string.toolong), Toast.LENGTH_SHORT).show();
+                        pickFromGallery();
+                    }
+                        }else {
+                    Toast.makeText(PostActivity.this, getString(R.string.novideoselected), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
-        }
     }
 
 
@@ -137,20 +149,20 @@ public class PostActivity extends AppCompatActivity {
         } else {
             Intent intent = new Intent();
             intent.setTypeAndNormalize("video/*");
+            intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 30);
             intent.setAction(Intent.ACTION_GET_CONTENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
-            startActivityForResult(Intent.createChooser(intent, "Trash"), REQUEST_VIDEO_TRIMMER);
+            startActivityForResult(Intent.createChooser(intent, "Video"), REQUEST_VIDEO_TRIMMER);
         }
     }
 
     private void uploadVideoCloudinary(Uri videoUri) {
+        
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String uid = user.getUid();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
         mProgressDialog.show();
-
         String postid = reference.push().getKey();
-
         String requestId = MediaManager.get().upload(videoUri)
                 .option("public_id", "frooze/posts/" + uid + "/" + postid)
                 .option("resource_type", "video")
@@ -159,7 +171,6 @@ public class PostActivity extends AppCompatActivity {
                 .callback(new UploadCallback() {
                     @Override
                     public void onStart(String requestId) {
-
                         //ringProgressBar.setVisibility(View.VISIBLE);
                     }
 
@@ -174,15 +185,28 @@ public class PostActivity extends AppCompatActivity {
 
                     @Override
                     public void onSuccess(String requestId, Map resultData) {
+                        EditText description = findViewById(R.id.description);
 
+                        String text = description.getText().toString();
+                        String[] hashtags = text.split(" ");
+                        List<String> tags = new ArrayList<String>();
 
+                        for ( String hashtag : hashtags) {
+                            if (hashtag.substring(0, 1).equals("#")) {
+                                tags.add(hashtag);
+                                String hashtagwithouthash = hashtag.replace("#","");
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Hashtags").child(hashtagwithouthash);
+                                reference.child("hashtag").setValue(hashtagwithouthash);
+                                reference.child("posts").child(postid).setValue(true);
+                            }
+                        }
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                         String uid = user.getUid();
                         Switch dangerousswitch = findViewById(R.id.dangerousswitch);
                         Boolean switchState = dangerousswitch.isChecked();
-                        EditText description = findViewById(R.id.description);
                         HashMap<String, Object> hashMap = new HashMap<>();
                         hashMap.put("dangerous", switchState.toString());
+
                         hashMap.put("postid", postid);
                         hashMap.put("postvideo", "https://res.cloudinary.com/frooze/video/upload/q_auto:eco/frooze/posts/" + uid +"/" + postid + ".m3u8");
                         hashMap.put("description", description.getText().toString());
@@ -190,7 +214,7 @@ public class PostActivity extends AppCompatActivity {
 
                         reference.child(postid).setValue(hashMap);
 
-                        Toast.makeText(getApplicationContext(), "Video Uploaded Successfully !",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.success),Toast.LENGTH_LONG).show();
                         //ringProgressBar.setVisibility(View.INVISIBLE);
                         mProgressDialog.dismiss();
                         finish();
@@ -198,7 +222,7 @@ public class PostActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(String requestId, ErrorInfo error) {
-                        Toast.makeText(getApplicationContext(), "Failed to Upload Video !",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.fail),Toast.LENGTH_LONG).show();
                         //ringProgressBar.setVisibility(View.INVISIBLE);
                         mProgressDialog.dismiss();
                     }
@@ -219,8 +243,8 @@ public class PostActivity extends AppCompatActivity {
     private void requestPermission(final String permission, String rationale, final int requestCode) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Permissions required");
-            builder.setMessage("To upload videos we need access to your Gallery");
+            builder.setTitle(getString(R.string.permrequired));
+            builder.setMessage(getString(R.string.permdesc));
             builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

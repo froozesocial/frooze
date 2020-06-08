@@ -9,12 +9,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +32,7 @@ import com.thilojaeggi.frooze.R;
 
 import java.util.List;
 
+import butterknife.Optional;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
@@ -35,12 +40,23 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     private Context mContext;
     private List<User> mUsers;
     private FirebaseUser firebaseUser;
-
+    public DatabaseReference reference;
+    public ValueEventListener listener;
+    String ifollow, follow;
+    private static final int LIST_AD_DELTA = 3;
+    private static final int CONTENT = 0;
+    private static final int AD = 1;
     public UserAdapter(Context mContext, List<User> mUsers) {
         this.mContext = mContext;
         this.mUsers = mUsers;
     }
-
+    @Override
+    public int getItemViewType(int position) {
+        if (position > 0 && position % LIST_AD_DELTA == 0) {
+            return AD;
+        }
+        return CONTENT;
+    }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -52,33 +68,59 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         final User user = mUsers.get(i);
+
+
         viewHolder.btn_follow.setVisibility(View.VISIBLE);
+        if (user.getUsername() != null){
+            viewHolder.username.setText(
+                    user.getUsername());
+        }else {
+            viewHolder.username.setText("Error");
+        }
 
-        viewHolder.username.setText(user.getUsername());
-        viewHolder.fullname.setText(user.getFullname());
-        Glide.with(mContext).load(user.getImageurl()).into(viewHolder.image_profile);
-        isFollowing(user.getId(), viewHolder.btn_follow);
+        if (user.getFullname() != null){
+            viewHolder.fullname.setText(user.getFullname());
+        }else {
+            viewHolder.fullname.setText("Error");
+        }
+        if (user.getImageurl() != null){
+            Glide.with(mContext)
+                    .load(user.getImageurl())
+                    .into(viewHolder.image_profile);
+        }else {
+        }
 
-        if (user.getId().equals(firebaseUser.getUid())){
+        if (user.getId() != null){
+            isFollowing(user.getId(), viewHolder.btn_follow);
+            if (user.getId().equals(firebaseUser.getUid())){
+                viewHolder.btn_follow.setVisibility(View.GONE);
+            }
+        }else {
             viewHolder.btn_follow.setVisibility(View.GONE);
         }
+
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (user.getId() != null){
                 SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
                 editor.putString("profileid", user.getId());
                 editor.apply();
-
-                ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new ProfileFragment()).commit();
+                FragmentTransaction transaction = ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+                transaction.replace(R.id.fragment_container,
+                        new ProfileFragment()).addToBackStack(null).commit();
+                } else {
+                    Toast.makeText(mContext, "Error", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         viewHolder.btn_follow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(viewHolder.btn_follow.getText().toString().equals("follow")){
+                if(viewHolder.btn_follow.getText().toString().equals(mContext.getString(R.string.follow))){
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid())
                             .child("following").child(user.getId()).setValue(true);
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(user.getId())
@@ -90,8 +132,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
                             .child("followers").child(firebaseUser.getUid()).removeValue();
                 }
             }
+
         });
 
+    }
+    @Override
+    public void onViewDetachedFromWindow(@NonNull ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        reference.removeEventListener(listener);
     }
 
     @Override
@@ -117,24 +165,23 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     }
 
     private void isFollowing(String userid, Button button) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+        reference = FirebaseDatabase.getInstance().getReference()
                 .child("Follow").child(firebaseUser.getUid()).child("following");
-        reference.addValueEventListener(new ValueEventListener() {
+        listener = reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.child(userid).exists()){
-                    button.setText("following");
+                    // For some reason if i get the text from values it doesn't work whyyyyyyyyyyyyyyyyyyyyyyyyyy
+                    button.setText(R.string.ifollow);
                     button.setTextSize(17);
                     button.setTextAppearance(mContext, Typeface.BOLD);
                     button.setTextColor(button.getResources().getColor(R.color.dark_blue));
                     button.setPadding(0,0,0,5);
                     button.setBackgroundColor(button.getResources().getColor(R.color.white));
                     button.setShadowLayer(0,0,0,0);
-                    button.setOutlineAmbientShadowColor(0);
-                    button.setOutlineSpotShadowColor(0);
 
                 } else {
-                    button.setText("follow");
+                    button.setText(R.string.follow);
                     button.setTextSize(17);
                     button.setTextAppearance(mContext, Typeface.BOLD);
                     button.setPadding(0,0,0,5);
@@ -150,5 +197,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
             }
         });
     }
+
 
 }

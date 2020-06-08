@@ -38,25 +38,42 @@
 
         android:background="@color/transparent"
         android:textColor="@color/white"
-        android:hint="Search..."
+        android:hint="@string/searchhint"
         android:textColorHint="#D0FFFFFF"
         android:maxLines="1"
         android:layout_marginLeft="10dp"/>
     </androidx.appcompat.widget.Toolbar>
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
         <TextView
-            android:id="@+id/trending"
+            android:id="@+id/users"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/toolbar"
             android:layout_marginStart="10dp"
             android:fontFamily="@font/roboto"
             android:paddingBottom="5dp"
-            android:text="Trending"
+            android:text="Users"
             android:layout_marginTop="-15dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textColor="#FFFFFF"
             android:textStyle="bold" />
+    <TextView
+        android:id="@+id/hashtags"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:fontFamily="@font/roboto"
+        android:paddingBottom="5dp"
+        android:text="Hashtags"
+        android:layout_marginTop="-15dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold" />
+</LinearLayout>
+
     </com.google.android.material.appbar.AppBarLayout>
 
 <RelativeLayout

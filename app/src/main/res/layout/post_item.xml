@@ -20,6 +20,7 @@
         android:background="#000"
         android:layout_gravity="top"
         android:id="@+id/media_container">
+
         <com.google.android.exoplayer2.ui.SimpleExoPlayerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -32,6 +33,8 @@
             app:icon="@drawable/heart"
             app:scaleType="fitCenter"
             app:disableAnimation="false"
+            android:layout_marginTop="70dp"
+            android:layout_marginBottom="70dp"
             app:adjustViewBounds="true"
             app:doubleTapIn="200" />
         <com.google.android.material.appbar.AppBarLayout
@@ -44,7 +47,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Dangerous activities, do not attempt.\n"
+                android:text="@string/disclaimer"
                 android:layout_marginTop="9dp"
                 android:textAlignment="center"
                 android:layout_marginStart="15dp"
@@ -123,12 +126,19 @@
                 android:rotation="180"
                 android:id="@+id/share"
                 android:background="@drawable/ic_share_white_24dp"/>
+            <ImageButton
+                android:id="@+id/more"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/transparent"
+                android:rotation="90"
+                android:tint="@color/white"
+                android:src="@drawable/ic_baseline_more_horiz_24"
+                android:layout_gravity="right"/>
         </androidx.cardview.widget.CardView>
-
-
     </FrameLayout>
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
@@ -151,18 +161,11 @@
                 android:background="@color/transparent"
                 android:layout_marginStart="7dp"
                 android:paddingEnd="8dp"
-                android:text="frooze"
+                android:text="Error"
                 android:textStyle="bold"
                 android:textColor="@color/white"/>
-            <com.google.android.gms.ads.AdView
-                xmlns:ads="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/adView"
-                android:layout_width="match_parent"
-                android:layout_height="65dp"
-                android:layout_gravity="right"
-                ads:adSize="BANNER"
-                ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
-            </com.google.android.gms.ads.AdView>
+
+
         </LinearLayout>
         <TextView
             android:id="@+id/description"

@@ -27,7 +27,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:allowBackup, android:fullBackupContent">
-        <activity android:name=".CommentsActivity"/>
+        <activity android:name=".CommentsActivity" />
         <activity
             android:name="com.google.firebase.auth.internal.FederatedSignInActivity"
             android:launchMode="standard"
@@ -56,6 +56,7 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".PostFromLink" />
+        <activity android:name=".RecorderActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".PremiumActivity" />
         <activity android:name=".ForgotPasswordActivity" />
@@ -64,6 +65,8 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity android:name=".UpdateProfilePicture" />
+        <activity android:name=".EditProfileActivity" />
+        <activity android:name=".Intro.AppIntro" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

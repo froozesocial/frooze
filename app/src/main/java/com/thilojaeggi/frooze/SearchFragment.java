@@ -1,10 +1,12 @@
 package com.thilojaeggi.frooze;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -47,10 +49,23 @@ public class SearchFragment extends Fragment {
     private List<User> userList;
     EditText search_bar;
     private AdView mAdView;
-
+    final float startSize = 33; // Size in pixels
+    final float endSize = 20;
+    long animationDuration = 175; // Animation duration in ms
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_search, container, false);
+        TextView hashtagstext = view.findViewById(R.id.hashtags);
+        ValueAnimator animator = ValueAnimator.ofFloat(startSize, endSize);
+        animator.setDuration(animationDuration);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                float animatedValue = (float) valueAnimator.getAnimatedValue();
+                hashtagstext.setTextSize(animatedValue);
+            }
+        });
+        animator.start();
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -59,8 +74,25 @@ public class SearchFragment extends Fragment {
         userList = new ArrayList<>();
         userAdapter = new UserAdapter(getContext(), userList);
         recyclerView.setAdapter(userAdapter);
-        readUsers();
-        TextView trending = view.findViewById(R.id.trending);
+        Runnable r = new Runnable() {
+            @Override
+            public void run(){
+                readUsers();
+            }
+        };
+        Handler h = new Handler();
+        h.postDelayed(r, 175);
+        TextView hashtags = view.findViewById(R.id.hashtags);
+        hashtags.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment hashtagfrag= new HashtagFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, hashtagfrag)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
         search_bar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -74,14 +106,12 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                trending.setVisibility(View.VISIBLE);
 
             }
         });
         FirebaseAuth user = FirebaseAuth.getInstance();
         String uid = user.getUid();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
-
         reference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -106,10 +136,10 @@ public class SearchFragment extends Fragment {
     }
 
     private void searchUsers(String s){
+        
         Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
                 .startAt(s)
                 .endAt(s+"\uf8ff");
-
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -151,7 +181,6 @@ public class SearchFragment extends Fragment {
                         User user = snapshot.getValue(User.class);
                         userList.add(user);
                     }
-
                     userAdapter.notifyDataSetChanged();
                 }
             }

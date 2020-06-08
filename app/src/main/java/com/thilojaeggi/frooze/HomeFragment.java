@@ -25,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -71,6 +72,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import im.ene.toro.exoplayer.Config;
+import im.ene.toro.exoplayer.MediaSourceBuilder;
+import im.ene.toro.exoplayer.ToroExo;
 
 
 public class HomeFragment extends Fragment {
@@ -79,8 +83,8 @@ public class HomeFragment extends Fragment {
     private PostAdapter.ViewHolder viewHolder;
     private List<Post> postLists;
     private List<String> followingList;
-
-
+    LinearLayoutManager linearLayoutManager;
+    Config config;
 
     private SimpleExoPlayer mPlayer;
 
@@ -90,9 +94,11 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        config = ToroExo.with(getContext()).getDefaultConfig().newBuilder()
+                .setMediaSourceBuilder(MediaSourceBuilder.LOOPING).build();
         recyclerView = rootView.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false);
+        linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -102,6 +108,9 @@ public class HomeFragment extends Fragment {
         checkFollowing();
         PagerSnapHelper helper = new PagerSnapHelper();
         helper.attachToRecyclerView(recyclerView);
+        AdView mAdView = rootView.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 //set adapter
 //You just need to impelement ViewPageAdapter by yourself like a normal RecyclerView.Adpater.
 //        getPlayer();
@@ -113,7 +122,6 @@ public class HomeFragment extends Fragment {
 
     private void checkFollowing() {
     followingList = new ArrayList<>();
-
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow")
             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
             .child("following");
@@ -145,13 +153,11 @@ public class HomeFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
                     for (String id : followingList){
-                        if (post.getPublisher().equals(id)) {
+                        if (post.getPublisher() != null && !post.getPublisher().isEmpty() && post.getPublisher().equals(id)) {
                             postLists.add(post);
                         }
                     }
                 }
-
-
                 postAdapter.notifyDataSetChanged();
             }
 
@@ -162,61 +168,13 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void getPlayer(SimpleExoPlayer mPlayer) {
-        // URL of the video to stream
-        //String videoURL = "https://frooze-hls.cdnvideo.ru/hls/5e554223daed02000157ce82/playlist.m3u8";
-       // Uri uri = Uri.parse(videoURL);
 
-        // Handler for the video player
-        Handler mainHandler = new Handler();
-        //mPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
-	/* A TrackSelector that selects tracks provided by the MediaSource to be consumed by each of the available Renderers.
-	  A TrackSelector is injected when the player is created. */
-      //  BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-      //  TrackSelection.Factory videoTrackSelectionFactory =
-                //new AdaptiveTrackSelection.Factory(bandwidthMeter);
-       // TrackSelector trackSelector =
-        //        new DefaultTrackSelector(videoTrackSelectionFactory);
-
-        // Create the player with previously created TrackSelector
-     //   mPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
-
-        // Load the default controller
-       // mPlayerView.setUseController(false);
-       // mPlayerView.requestFocus();
-        // Load the SimpleExoPlayerView with the created player
-       // mPlayerView.setPlayer(mPlayer);
-
-        // Measures bandwidth during playback. Can be null if not required.
-   //     DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter();
-
-        // Produces DataSource instances through which media data is loaded.
-      //  DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(
-           //     getContext(),
-            //    Util.getUserAgent(getContext(), "frooze"),
-              //  defaultBandwidthMeter);
-
-
-
-        // This is the MediaSource representing the media to be played.
-       // MediaSource videoSource = new HlsMediaSource(
-           //     Uri.parse(videoURL),
-             //   dataSourceFactory,
-             //   null,
-              //  null);
-
-        // Prepare the player with the source.
-//        mPlayer.prepare(videoSource);
-
-        // Autoplay the video when the player is ready
-      //  mPlayer.setPlayWhenReady(true);
-    }
 
     public void onViewCreated(View rootView, Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
         // initialise your views
 
-        SwipeRefreshLayout swipeRefreshLayout = getView().findViewById(R.id.swiperefresh);
+    /*    SwipeRefreshLayout swipeRefreshLayout = getView().findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -230,7 +188,7 @@ public class HomeFragment extends Fragment {
                 }, 2000);
             }
 
-        });
+        });*/
     }
 
 
@@ -238,13 +196,20 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
       super.onDestroyView();
-      //  unbinder.unbind();
-        // Release the player when it is not needed
 
+        postAdapter.releasevideo();
+    }
+    @Override
+    public void onResume() {
+
+        super.onResume();
     }
     @Override
     public void onPause() {
         super.onPause();
+        postAdapter.releasevideo();
 
     }
+
+
 }

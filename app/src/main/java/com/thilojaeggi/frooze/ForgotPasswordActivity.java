@@ -2,11 +2,14 @@ package com.thilojaeggi.frooze;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,10 +28,15 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgotpassword);
+        FrameLayout background = findViewById(R.id.background);
+        background.setBackgroundResource(R.drawable.gradient_animationfpass);
+        AnimationDrawable animation = (AnimationDrawable) background.getBackground();
+        animation.setEnterFadeDuration(10);
+        animation.setExitFadeDuration(5000);
+        animation.start();
 
 
-
-        final TextView back_button = findViewById(R.id.back_button);
+        final ImageButton back_button = findViewById(R.id.back_button);
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -40,7 +48,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             }
         });
 
-        final MaterialButton forgotpass_button = findViewById(R.id.forgotpass_button);
+        final Button forgotpass_button = findViewById(R.id.send);
         forgotpass_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

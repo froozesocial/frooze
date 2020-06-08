@@ -3,9 +3,13 @@ package com.thilojaeggi.frooze.Adaptor;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -68,6 +72,24 @@ private FirebaseUser firebaseUser;
                 mContext.startActivity(intent);
             }
         });
+        viewHolder.more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(mContext, viewHolder.more);
+                popup.getMenuInflater().inflate(R.menu.comment_item, popup.getMenu());
+
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                            if (firebaseUser.getUid() == comment.getPublisher()){
+                                FirebaseDatabase.getInstance().getReference().child("Comments").child(comment.getPostid())
+                                        .child(comment.getKey()).removeValue();
+                            }
+                        return true;
+                    }
+                });
+                popup.show();
+            }
+        });
     }
 
     @Override
@@ -79,10 +101,10 @@ private FirebaseUser firebaseUser;
 
         public CircleImageView image_profile;
         public TextView username, comment;
-
+        ImageButton more;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
+            more = itemView.findViewById(R.id.commentmore);
             image_profile = itemView.findViewById(R.id.image_profile);
             username = itemView.findViewById(R.id.username);
 
@@ -98,10 +120,19 @@ private FirebaseUser firebaseUser;
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Glide.with(mContext)
-                        .load(user.getImageurl())
-                        .into(imageView);
-                username.setText(user.getUsername());
+
+                if (user.getId() != null){
+                    Glide.with(mContext)
+                            .load(user.getImageurl())
+                            .into(imageView);
+                    username.setText(user.getUsername());
+                }
+                if (user.getId() == null){
+                    user.setUsername("Error");
+                    user.setFullname("Error");
+                    user.setBio("Error");
+                    user.setImageurl("https://firebasestorage.googleapis.com/v0/b/frooze-b2248.appspot.com/o/profileimages%2F8x0BVAdw2VUopobTE0sWVadU0ms1_200x200.jpg?alt=media&token=def2aaff-0a0c-4c60-82b4-65b856c2fe95");
+                }
             }
 
             @Override

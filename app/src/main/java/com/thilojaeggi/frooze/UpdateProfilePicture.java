@@ -55,29 +55,14 @@ public class UpdateProfilePicture extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_updateppic);
         close = findViewById(R.id.close);
-        profile_image_added = findViewById(R.id.profile_image_added);
         post = findViewById(R.id.post);
 
         storageReference = FirebaseStorage.getInstance().getReference("profileimages");
 
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
-
-        post.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                uploadImage();
-            }
-        });
-
         CropImage.activity()
                 .setAspectRatio(1,1)
+                .setCropShape(CropImageView.CropShape.OVAL)
                 .start(UpdateProfilePicture.this);
     }
 
@@ -116,6 +101,9 @@ public class UpdateProfilePicture extends AppCompatActivity {
 
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
                         reference.child("imageurl").setValue(myUrlsmall);
+                        Intent intent= new Intent();
+                        intent.putExtra("result", myUrlsmall);
+                        setResult(RESULT_OK,intent);
                         finish();
 
                     } else {
@@ -123,7 +111,7 @@ public class UpdateProfilePicture extends AppCompatActivity {
                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.fragment_container, fragment);
                         transaction.commit();
-                        Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.somethingwentwrong), Toast.LENGTH_LONG).show();
 
                     }
                 }
@@ -134,7 +122,7 @@ public class UpdateProfilePicture extends AppCompatActivity {
                 }
             });
         } else {
-            Toast.makeText(getApplicationContext(),"No Image selected", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),getString(R.string.noimageselected), Toast.LENGTH_LONG).show();
         }
     }
 // ctrl + O
@@ -146,8 +134,7 @@ public class UpdateProfilePicture extends AppCompatActivity {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             profileUri = result.getUri();
-
-            profile_image_added.setImageURI(profileUri);
+            uploadImage();
         } else {
             finish();
         }

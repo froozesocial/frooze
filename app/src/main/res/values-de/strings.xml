@@ -3,22 +3,20 @@
     <!-- App Name und Menu -->
     <string name="app_name">frooze</string>
     <string name="home">Home</string>
-    <string name="search">Search</string>
-    <string name="notifications">Notifications</string>
-    <string name="profile">Profile</string>
+    <string name="search">Suche</string>
+    <string name="notifications">Benachrichtigungen</string>
+    <string name="profile">Profil</string>
 
     <string name="read_file">This app needs access to your file storage so that it can read video.</string>
 
     <!-- Anmeldung/Registrierung/Password Reset -->
     <string name="username">Benutzername</string>
-    <string name="signupinstead">Neu hier? <font fgcolor='#0084ff'>Registrieren</font></string>
-    <string name="forgotpass">Passwort vergessen? <font fgcolor='#0084ff'>Zurücksetzen</font></string>
-    <string name="forgotpassnormal">Passwort vergessen?</string>
+    <string name="signuptext">Noch kein Account?&#160;</string>
+    <string name="forgotpass">Passwort vergessen?</string>
     <string name="password">Passwort</string>
     <string name="greeting">Hi, willkommen zurück</string>
     <string name="alreadysignedup">Schon registriert? <font fgcolor='#0084ff'>Anmelden</font></string>
     <string name="onboarding">Komm an Bord</string>
-    <string name="didnotforgetpass">Passwort nicht vergessen? <font fgcolor='#0084ff'>Zurückgehen</font></string>
     <string name="missingfullname">Name fehlt</string>
     <string name="missingusername">Benutzername fehlt</string>
     <string name="missingmail">E-Mail fehlt</string>
@@ -30,6 +28,8 @@
     <string name="registrationsuccessful">Erfolgreich registriert. Bitte verifiziere deine E-Mail Adresse.</string>
     <string name="usernameexists">Benutzername schon im Gebrauch</string>
     <string name="fullname">Name</string>
+    <string name="send">Senden</string>
+    <string name="create">Erstellen</string>
 
     <!-- Post Activity-->
     <string name="post">Posten</string>
@@ -41,20 +41,73 @@
     <string name="emailsent">E-Mail gesendet</string>
     <string name="emailnotsent">E-Mail nicht gesendet</string>
 
-    <!-- Profil -->
-    <string name="ifollow">I Follow</string>
+    <!--Premium -->
+    <string name="noads"><font fgcolor='#0084ff'>•</font> Keine Werbung</string>
+    <string name="newfeatures"><font fgcolor='#0084ff'>•</font> Neue funktionen früher</string>
+    <string name="longervideos"><font fgcolor='#0084ff'>•</font> Längere videos</string>
+    <string name="premiumbuttontext">Kaufen für </string>
+
+    <!-- Comments -->
+    <string name="comments">Kommentare</string>
+    <string name="commenthint">Kommentar…</string>
+    <string name="empty">Kann nicht leer sein</string>
+
+    <!-- New Post -->
+    <string name="uploading">Hochladen</string>
+    <string name="novideoselected">Kein Video ausgewählt</string>
+    <string name="toolong">Video zu lange, max 17 sekunden</string>
+    <string name="success">Video erfolgreich hochgeladen</string>
+    <string name="fail">Upload fehlgeschlagen, versuchs später nochmal</string>
+    <string name="permrequired">Berechtigung benötigt</string>
+    <string name="permdesc">Um Videos hochzuladen, benötigen wir Zugang zu deiner Galerie</string>
+    <string name="dangerousactivities">Gefährliche Handlung?</string>
+
+    <!-- Post -->
+    <string name="disclaimer">Gefährliche Handlungen, nicht nachmachen.\n</string>
+
+    <!-- Sharing -->
+    <string name="sharetext">Schau dir dieses Video auf frooze.ch an, von @</string>
+
+    <!-- Intro -->
+    <string name="dtlike">2 Tippen zum liken</string>
+    <string name="wholemenu">Tippe &lt; um das ganze Menu zu sehen</string>
+    <string name="tapprofile">Tippe das Profilbild an um anzuzeigen</string>
+    <string name="viewhashtag">Hashtag anklicken um anzuzeigen</string>
+    <string name="thatsall">Das ist alles</string>
+    <string name="shortintroduction">Kurzeinführung</string>
+    <string name="searchexpl">Hier können Sie Benutzer und Hashtags anzeigen. Tippen Sie einfach auf Benutzer oder Hashtags. Um zu einem Benutzer zu gelangen, tippen einfach auf die Karte.</string>
+    <string name="yourprofile">Dein Profil</string>
+    <string name="editprofileexpl">Um dein Profil zu bearbeiten, tippe einfach auf den Stift.\n Wenn du fertig bist, drücke auf Fertig</string>
+
+    <!-- Settings -->
+    <string name="settings">Einstellungen</string>
+    <string name="oss">Open Source Lizensen</string>
+    <string name="ppolicy">Datenschutzerklärung</string>
+    <string name="logout">Abmelden</string>
+    <string name="deleteacc">Account löschen</string>
+
+    <string name="getpremium">Hol dir frooze <b><font fgcolor='#0084ff'>Blue</font></b></string>
+    <string name="chooseemail">Email senden</string>
+    <string name="deleteaccconfirm">Bist du sicher?\nDies kann nicht rückgängig gemacht werden</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="accountdeleted">Account gelöscht</string>
+
+    <!-- Profile -->
+    <string name="ifollow">Ich folge</string>
     <string name="followers">Fans</string>
     <string name="bioplaceholder">Dies ist deine Bio, tippe um zu Bearbeiten</string>
     <string name="likes">Likes</string>
+    <string name="editprofile">Profil bearbeiten</string>
+    <string name="taptoedit">Irgendetwas antippen um zu bearbeiten</string>
+    <string name="somethingwentwrong">Etwas ist schiefgelaufen</string>
+    <string name="noimageselected">Kein Bild ausgewählt</string>
     <string name="follow">Folgen</string>
+    <string name="back">Zurück</string>
+    <string name="done">Fertig</string>
 
-    <!-- Settings -->
-    <string name="getpremium">Get frooze Blue without Ads</string>
-
-    <!--Premium -->
-    <string name="noads"><font fgcolor='#0084ff'>•</font> Keine Werbung</string>
-    <string name="newfeatures"><font fgcolor='#0084ff'>•</font> Keine Werbung</string>
-    <string name="longervideos"><font fgcolor='#0084ff'>•</font> Keine Werbung</string>
-    <string name="premiumbuttontext">Kaufen für </string>
-
+    <!-- Search -->
+    <string name="searchhint">Suchen…</string>
+    <!-- Notifications -->
+    <string name="notificationstab">Benachrichtigungen</string>
 </resources>

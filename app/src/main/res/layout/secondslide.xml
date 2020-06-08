@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+<com.google.android.exoplayer2.ui.SimpleExoPlayerView
+    android:id="@+id/videoview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+        <TextView
+            android:id="@+id/videotext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:text=""
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:layout_marginBottom="70dp"/>
+    </FrameLayout>
+</LinearLayout>

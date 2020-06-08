@@ -23,9 +23,13 @@
     <color name="ff000000">#000000</color>
     <color name="alpha60_black">#66000000</color>
     <color name="premium">#00FFD9</color>
-
+    <color name="colorGradientStart">#0090FF</color>
+    <color name="colorGradientCenter">#31EFF6</color>
+    <color name="colorGradientEnd">#0048FF</color>
 
 
     <color name="ms_red">#D0021B</color>
+
+    <color name="black_overlay">#66000000</color>
 
 </resources>

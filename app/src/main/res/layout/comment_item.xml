@@ -2,12 +2,13 @@
 <androidx.cardview.widget.CardView android:layout_height="wrap_content"
     android:layout_width="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     app:cardCornerRadius="10dp"
     android:layout_marginEnd="7dp"
     android:layout_marginStart="5dp"
     android:layout_marginTop="5dp"
     android:layout_marginBottom="3dp"
-
+    tools:context=".CommentsActivity"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 <RelativeLayout
@@ -43,6 +44,14 @@
             android:id="@+id/comment"/>
 
     </LinearLayout>
-
+    <ImageButton
+        android:id="@+id/commentmore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_more_horiz_24"
+        android:layout_alignParentEnd="true"
+        android:background="@color/transparent"
+        android:layout_centerVertical="true"
+        android:rotation="90"/>
 </RelativeLayout>
 </androidx.cardview.widget.CardView>

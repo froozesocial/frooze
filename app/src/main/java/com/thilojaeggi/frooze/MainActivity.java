@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
@@ -38,32 +39,25 @@ import java.io.Console;
 import java.util.HashMap;
 import java.util.Map;
 
+import im.ene.toro.exoplayer.Config;
+import im.ene.toro.exoplayer.MediaSourceBuilder;
+import im.ene.toro.exoplayer.ToroExo;
+
 public class MainActivity  extends AppCompatActivity implements BillingProcessor.IBillingHandler {
     Context mContext = this;
-    private PlayerView playerView;
-    private boolean playWhenReady = true;
-    private int currentWindow = 0;
-    private long playbackPosition = 0;
-    private static final String SUBSCRIPTION_ID = "subspro";
     private BillingProcessor bp;
-
+    private int startingPosition;
+    private int newPosition;
+    Config config;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fresco.initialize(this);
 
         setContentView(R.layout.activity_main);
-        SharedPreferences sharedPreferences = this.getSharedPreferences("com.thilojaeggi.frooze.app_preferences", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("com.package.name_preferences.products.cache.v2_6.version", "");
-        editor.putString("com.package.name_preferences.products.cache.v2_6", "");
-        editor.putBoolean("com.package.name_preferences.products.restored.v2_6", false);
-        editor.putString("com.package.name_preferences.subscriptions.cache.v2_6", "");
-        editor.putString("com.package.name_preferences.subscriptions.cache.v2_6.version", "");
         Bundle intent = getIntent().getExtras();
         if (intent != null){
             String publisher = intent.getString("publisherid");
-
             SharedPreferences.Editor editor2 = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
             editor2.putString("profileid", publisher);
             editor2.apply();
@@ -72,7 +66,6 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
 
         }
-        editor.apply();
         FirebaseDynamicLinks.getInstance()
                 .getDynamicLink(getIntent())
                 .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
@@ -110,13 +103,11 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
                 startActivity(intent);
             }
         });
-        //I added this if statement to keep the selected fragment when rotating the device
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new HomeFragment()).commit();
+            loadFragment(new HomeFragment(), 1);
+
         }
-        // playerView = findViewById(R.id.video_view);
-//Corner radius
+
     }
 
 
@@ -129,29 +120,55 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
                     switch (item.getItemId()) {
                         case R.id.nav_home:
                             selectedFragment = new HomeFragment();
+                            newPosition = 1;
+
                             break;
                         case R.id.nav_search:
                             selectedFragment = new SearchFragment();
+                            newPosition = 2;
+
                             break;
 
                         case R.id.nav_notifications:
                             selectedFragment = new NotificationFragment();
+                            newPosition = 3;
+
                             break;
 
                         case R.id.nav_profile:
                             selectedFragment = new ProfileFragment();
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
+                            editor.putString("profileid", user.getUid());
+                            editor.apply();
+                            newPosition = 4;
+
                             break;
                     }
 
-
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                            selectedFragment).commit();
-
-                    return true;
-
+                    return loadFragment(selectedFragment, newPosition);
                 }
             };
+    private boolean loadFragment(Fragment fragment, int newPosition) {
+        if(fragment != null) {
+            if(startingPosition > newPosition) {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right );
+                transaction.replace(R.id.fragment_container, fragment);
+                transaction.commit();
+            }
+            if(startingPosition < newPosition) {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+                transaction.replace(R.id.fragment_container, fragment);
+                transaction.commit();
+            }
+            startingPosition = newPosition;
+            return true;
+        }
 
+        return false;
+    }
     @Override
     public void onProductPurchased(String productId, TransactionDetails details) {
 

@@ -7,9 +7,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,8 +31,7 @@ import java.util.List;
 
 public class CommentsActivity extends AppCompatActivity {
     EditText addcomment;
-    TextView post;
-    ImageButton finish;
+    ImageButton finish, post, more;
     String postid;
     String publisherid;
     private RecyclerView recyclerView;
@@ -58,7 +59,7 @@ public class CommentsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (addcomment.getText().toString().isEmpty()){
-                    Toast.makeText(getApplicationContext(),"Cannot be empty", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.empty), Toast.LENGTH_LONG).show();
                 } else{
                     addcomment();
                 }
@@ -72,14 +73,19 @@ public class CommentsActivity extends AppCompatActivity {
             }
         });
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
     }
 
     private void addcomment(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Comments").child(postid);
+        String key = reference.push().getKey();
+
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("comment", addcomment.getText().toString());
         hashMap.put("publisher", firebaseUser.getUid());
-        reference.push().setValue(hashMap);
+        hashMap.put("key", key);
+        hashMap.put("postid", postid);
+        reference.child(key).setValue(hashMap);
         addcomment.setText("");
     }
 

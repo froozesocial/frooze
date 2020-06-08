@@ -2,6 +2,7 @@ package com.thilojaeggi.frooze;
 
 import android.content.Intent;
 
+import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -35,13 +37,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.thilojaeggi.frooze.Intro.AppIntro;
+
 import java.util.HashMap;
 public class SignUpActivity extends AppCompatActivity {
 
 
     private EditText emailTV, passwordTV, usernameTV, fullnameTV;
-    private MaterialButton regBtn;
-    private ProgressBar progressBar;
+    private Button regBtn;
     private FirebaseAuth mAuth;
     private static FirebaseAnalytics firebaseAnalytics;
     DatabaseReference reference;
@@ -51,7 +54,12 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         mAuth = FirebaseAuth.getInstance();
-
+        FrameLayout background = findViewById(R.id.background);
+        background.setBackgroundResource(R.drawable.gradient_animationregister);
+        AnimationDrawable animation = (AnimationDrawable) background.getBackground();
+        animation.setEnterFadeDuration(10);
+        animation.setExitFadeDuration(5000);
+        animation.start();
         initializeUI();
 
         regBtn.setOnClickListener(new View.OnClickListener() {
@@ -60,8 +68,8 @@ public class SignUpActivity extends AppCompatActivity {
                 usernamecheck();
             }
         });
-        final TextView signup_button = findViewById(R.id.back_button);
-        signup_button.setOnClickListener(new View.OnClickListener() {
+        final ImageButton backbutton = findViewById(R.id.back_button);
+        backbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
@@ -97,7 +105,6 @@ public class SignUpActivity extends AppCompatActivity {
 
 
     private void registerNewUser() {
-        progressBar.setVisibility(View.VISIBLE);
 
         String email, password, username, fullname;
         fullname = fullnameTV.getText().toString();
@@ -107,22 +114,18 @@ public class SignUpActivity extends AppCompatActivity {
 
         if (TextUtils.isEmpty(fullname)) {
             Toast.makeText(getApplicationContext(), getString(R.string.missingfullname), Toast.LENGTH_LONG).show();
-            progressBar.setVisibility(View.GONE);
             return;
         }
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(getApplicationContext(), getString(R.string.missingusername), Toast.LENGTH_LONG).show();
-            progressBar.setVisibility(View.GONE);
             return;
         }
         if (TextUtils.isEmpty(email)) {
             Toast.makeText(getApplicationContext(), getString(R.string.missingmail), Toast.LENGTH_LONG).show();
-            progressBar.setVisibility(View.GONE);
             return;
         }
         if (TextUtils.isEmpty(password)) {
             Toast.makeText(getApplicationContext(), getString(R.string.missingpassword), Toast.LENGTH_LONG).show();
-            progressBar.setVisibility(View.GONE);
             return;
         }
 
@@ -151,8 +154,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         // Verification Mail
                                         sendVerificationEmail();
                                         FirebaseAuth.getInstance().signOut();
-                                        progressBar.setVisibility(View.GONE);
-                                        Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                                        Intent intent = new Intent(SignUpActivity.this, AppIntro.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(intent);
                                     }
@@ -163,7 +165,6 @@ public class SignUpActivity extends AppCompatActivity {
                         else {
                             // If registration fails
                             Toast.makeText(getApplicationContext(), getString(R.string.registrationfail), Toast.LENGTH_LONG).show();
-                            progressBar.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -191,7 +192,6 @@ public class SignUpActivity extends AppCompatActivity {
         usernameTV = findViewById(R.id.username);
         passwordTV = findViewById(R.id.password);
         regBtn = findViewById(R.id.register);
-        progressBar = findViewById(R.id.progressBar);
     }
     @Override
     public void finish(){

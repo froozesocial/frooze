@@ -33,7 +33,6 @@ import static android.drm.DrmInfoRequest.SUBSCRIPTION_ID;
 public class PremiumActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler{
     private BillingClient billingClient;
     BillingProcessor bp;
-    private static final String SUBSCRIPTION_ID = "subspro";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,11 +1,7 @@
 package com.thilojaeggi.frooze;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.ActivityOptions;
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,9 +13,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingClientStateListener;
-import com.android.billingclient.api.BillingResult;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -27,8 +20,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.thilojaeggi.frooze.Intro.AppIntro;
+
 public class SettingsActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     @Override
@@ -56,6 +53,14 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         });
+
+        Button privacypolicy = findViewById(R.id.privacypolicy);
+        privacypolicy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://frooze.ch/?page_id=83575")));
+            }
+        });
         Button oss = findViewById(R.id.oss);
         oss.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +68,7 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), OssLicensesMenuActivity.class));
             }
         });
+
         Button getpremium = findViewById(R.id.getpremium);
         getpremium.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,17 +91,19 @@ public class SettingsActivity extends AppCompatActivity {
                         "mailto","support@frooze.ch", null));
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Support Android");
                 intent.putExtra(Intent.EXTRA_TEXT, "Device: " + device + "\n OS: " + version + "\n App Version: " + versionName + "\n User: " + uid + "\n" + yourproblem);
-                startActivity(Intent.createChooser(intent, "Choose an Email client:"));            }
+                startActivity(Intent.createChooser(intent, getString(R.string.chooseemail)));
+            }
         });
         Button delete = findViewById(R.id.delete);
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                new AlertDialog.Builder(SettingsActivity.this)
-                        .setMessage("Are you sure?\nThis cannot be undone")
+                AlertDialog.Builder alert = new AlertDialog.Builder(SettingsActivity.this)
+                        .setMessage(getString(R.string.deleteaccconfirm))
                         .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                        .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which)
                             {
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -135,20 +143,23 @@ public class SettingsActivity extends AppCompatActivity {
                                 userRef.removeValue();
                                 user.delete();
                                 FirebaseAuth.getInstance().signOut();
-                                Toast.makeText(getApplicationContext(), "Account deleted", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), getString(R.string.accountdeleted), Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                                 dialog.cancel();
                             }
                         })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which)
                             {
 
                                 dialog.cancel();
                             }
-                        }).show();
+
+                        });
+
+                alert.show();
             }
 
         });

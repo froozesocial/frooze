@@ -13,5 +13,5 @@ You can learn more on [frooze.ch](https://frooze.ch "frooze.ch")**
 
 
 
-##Security Vulnerabilities
+## Security Vulnerabilities
 If you manage to find any security vulnerabilities, please contact me immediately at thilojaeggi@frooze.ch.

@@ -15,6 +15,7 @@ You can learn more on [frooze.ch](https://frooze.ch "frooze.ch")**
 
 ## Security Vulnerabilities
 If you manage to find any security vulnerabilities, please contact me immediately at thilojaeggi@frooze.ch.
+## Download
 Either Download from the "releases" tab or get it on the Google Play Store
 <br>
 <a href="https://play.google.com/store/apps/details?id=com.thilojaeggi.frooze">

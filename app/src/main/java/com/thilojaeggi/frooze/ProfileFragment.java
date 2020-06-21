@@ -1,45 +1,27 @@
 package com.thilojaeggi.frooze;
 
-
-import android.app.Activity;
-import android.app.ActivityOptions;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.google.android.gms.ads.NativeExpressAdView;
-import com.google.android.gms.ads.VideoController;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,13 +31,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.thilojaeggi.frooze.Adaptor.GridPostsAdapter;
 import com.thilojaeggi.frooze.Model.Post;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 public class ProfileFragment extends Fragment {
@@ -63,16 +43,17 @@ public class ProfileFragment extends Fragment {
     SimpleDraweeView draweeView;
     public Button followbutton;
     public String profileid;
-    public ImageButton goback;
     private String m_Text = "";
     public Uri imageuri;
     private GridPostsAdapter gridPostsAdapter;
     private RecyclerView recyclerView;
-    public TextView biotv, fullnametv, backbutton, followers, following, posts;
+    AppCompatButton backbutton;
+    public TextView biotv, fullnametv, followers, following, posts;
     public FirebaseUser firebaseUser;
     public ValueEventListener followlistener;
     public DatabaseReference reference;
     public ArrayList postList;
+    private static final int EDIT_PROFILE = 1991;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -94,7 +75,6 @@ public class ProfileFragment extends Fragment {
         postList = new ArrayList<>();
         recyclerView.setHasFixedSize(true);
         int mNoOfColumns = Utility.calculateNoOfColumns(getContext(), 130);
-
         LinearLayoutManager mLayoutManager = new GridLayoutManager(getContext(), mNoOfColumns);
         recyclerView.setLayoutManager(mLayoutManager);
         gridPostsAdapter = new GridPostsAdapter(getContext(), postList);
@@ -120,36 +100,14 @@ public class ProfileFragment extends Fragment {
                     String imageurl = dataSnapshot.child("imageurl").getValue(String.class);
                     String premium = dataSnapshot.child("premium").getValue(String.class);
                     String biography = dataSnapshot.child("bio").getValue(String.class);
-                    //  profileImageView = view.findViewById(R.id.profile_image);
                     draweeView = (SimpleDraweeView) view.findViewById(R.id.profile_image);
-
-
-                    if (premium.equals("true")) {
-                        int color = getResources().getColor(R.color.premium);
                         RoundingParams roundingParams = RoundingParams.fromCornersRadius(5f);
-                        roundingParams.setBorder(color, 22f);
                         roundingParams.setRoundAsCircle(true);
                         draweeView.setHierarchy(new GenericDraweeHierarchyBuilder(getResources())
                                 .setRoundingParams(roundingParams)
                                 .build());
-                    } else {
-                        //   profileImageView.setBorderColor(getResources().getColor(R.color.transparent));
-                        //   profileImageView.setBorderWidth(0);
-                        int color = getResources().getColor(R.color.transparent);
-                        RoundingParams roundingParams = RoundingParams.fromCornersRadius(5f);
-                        roundingParams.setBorder(color, 0f);
-                        roundingParams.setRoundAsCircle(true);
-                        draweeView.setHierarchy(new GenericDraweeHierarchyBuilder(getResources())
-                                .setRoundingParams(roundingParams)
-                                .build());
-                    }
-
                     imageuri = Uri.parse(imageurl);
                     draweeView.setImageURI(imageuri);
-                    if (profileid == firebaseUser.getUid()) {
-
-
-                    }
                     if (!biography.isEmpty()) {
                         biotv.setText(biography);
                     }
@@ -173,6 +131,7 @@ public class ProfileFragment extends Fragment {
                             .child("following").child(profileid).setValue(true);
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(profileid)
                             .child("followers").child(firebaseUser.getUid()).setValue(true);
+                    sendNotification();
                 } else{
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(firebaseUser.getUid())
                             .child("following").child(profileid).removeValue();
@@ -202,8 +161,7 @@ public class ProfileFragment extends Fragment {
                     editprofileintent.putExtra("name", fullnametv.getText().toString());
                     editprofileintent.putExtra("bio", biotv.getText().toString());
                     editprofileintent.putExtra("oldimage", imageuri);
-
-                    startActivity(editprofileintent);
+                    startActivityForResult(editprofileintent, EDIT_PROFILE);
                 }
             });
 
@@ -303,6 +261,33 @@ public class ProfileFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK){
+            if (requestCode == EDIT_PROFILE) {
+                String bio = data.getStringExtra("bio");
+                String name =  data.getStringExtra("fullname");
+                String image = data.getStringExtra("image");
+                if (image != null && !image.isEmpty()){
+                    draweeView.setImageURI(Uri.parse(image));
+                }
+                biotv.setText(bio);
+                fullnametv.setText(name);
+            }
+        }
+    }
+
+    private void sendNotification(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(profileid);
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("userid", firebaseUser.getUid());
+        hashMap.put("text", "followingyou");
+        hashMap.put("postid", "");
+        hashMap.put("ispost", false);
+        reference.push().setValue(hashMap);
+    }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     }
@@ -312,11 +297,6 @@ public class ProfileFragment extends Fragment {
     }
 
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-    }
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

@@ -30,11 +30,20 @@
     <string name="fullname">Name</string>
     <string name="send">Send</string>
     <string name="create">Create</string>
+    <string name="welcome">Welcome</string>
+    <string name="nochange">This cannot be changed later</string>
+    <string name="toolonguser">Username too long</string>
+
+    <!-- No Internet -->
+    <string name="nointernet">No Internet connection</string>
+    <string name="nointernetdesc">You are not connected to the Internet \nMake sure WiFi is on, AirPlane Mode is off\nand try again.</string>
+    <string name="reload">Reload</string>
 
     <!-- Post Activity-->
     <string name="post">Post</string>
     <string name="description">Description</string>
     <string name="newpost">New Post</string>
+    <string name="textcolor">Text Farbe auswählen</string>
 
     <!-- Support Mail -->
     <string name="yourproblem">Your Problem:</string>
@@ -54,6 +63,9 @@
 
     <!-- New Post -->
     <string name="uploading">Uploading</string>
+    <string name="source">Source</string>
+    <string name="selectcamera">Video aufnehmen</string>
+    <string name="pickvideo">Video aus Gallerie wählen</string>
     <string name="novideoselected">No video selected</string>
     <string name="toolong">Video too long, max is 17 seconds</string>
     <string name="success">Video uploaded successfully</string>
@@ -64,8 +76,12 @@
 
     <!-- Post -->
     <string name="disclaimer">Dangerous activities, do not attempt.\n</string>
+    <string name="noposts">No posts</string>
     <!-- Sharing -->
     <string name="sharetext">Check out this video on frooze.ch by @</string>
+    <string name="sortbynew">New</string>
+    <string name="sortbytrending">Trending</string>
+    <string name="sortbyfollowing">Following</string>
 
     <!-- Intro -->
     <string name="dtlike">Double tap to like</string>
@@ -93,7 +109,8 @@
     <string name="accountdeleted">Account deleted</string>
 
     <!-- Profile -->
-    <string name="ifollow">I Follow</string>
+    <string name="unfollow">Unfollow</string>
+    <string name="ifollow">I follow</string>
 
     <string name="followers">Fans</string>
     <string name="likes">Likes</string>
@@ -105,9 +122,26 @@
     <string name="follow">Follow</string>
     <string name="back">Back</string>
     <string name="done">Done</string>
+    <string name="followingyou">started following you</string>
+    <string name="likedyourpost">liked your post</string>
+    <string name="trending">Congrats, you\'re trending</string>
+    <string name="commented">commented:</string>
 
     <!-- Search -->
     <string name="searchhint">Search…</string>
     <string name="notificationstab">Notifications</string>
 
+    <string name="cancel">Cancel</string>
+    <string name="save">Ok</string>
+    <string name="short_seconds">sec</string>
+    <string name="megabyte">MB</string>
+    <string name="kilobyte">KB</string>
+
+    <string name="permstorage">Required to pick videos from Gallery</string>
+    <string name="permcamera">Required to record video</string>
+
+    <string name="signupconfirm">If you continue, you accept frooze\'s &lt;a href=https://frooze.ch/?page_id=83621>terms of use&lt;/a> and confirm that you have read our &lt;a href=https://frooze.ch/?page_id=83575>privacy policy&lt;/a>.</string>
+
+    <string name="twitter_consumer_key" translatable="false">5b58Ow8AVJfdv89KZIzBoJ6Jj</string>
+    <string name="twitter_consumer_secret" translatable="false">Tx1tcn03GvNodHnO2335PUGguDw3LDCetFUb662UNmnYzIoqhS</string>
 </resources>

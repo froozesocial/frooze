@@ -6,11 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -18,7 +20,9 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +34,12 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.brouding.doubletaplikeview.DoubleTapLikeView;
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -63,6 +73,8 @@ import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.ShortDynamicLink;
 
+import java.util.HashMap;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -75,6 +87,7 @@ public class ShowSinglePost  extends Fragment {
     public AppBarLayout dangerous;
     public ImageButton share, open, close;
     public DoubleTapLikeView doubletap;
+    ImageButton more;
     public AdView mAdView;
     public CardView buttonscv;
     ValueEventListener likelistener, islikedlistener;
@@ -97,6 +110,7 @@ public class ShowSinglePost  extends Fragment {
         comments = view.findViewById(R.id.comments);
         usernametv = view.findViewById(R.id.username);
         player = view.findViewById(R.id.videoplayer);
+        more = view.findViewById(R.id.more);
         ImageButton finish = view.findViewById(R.id.finish);
         like.setBackgroundResource(R.drawable.heart_white);
 
@@ -105,6 +119,17 @@ public class ShowSinglePost  extends Fragment {
         String publisher = prefs.getString("publisher", "none");
         String postvideo = prefs.getString("postvideo", "none");
         String description = prefs.getString("description", "none");
+        String textcolor = prefs.getString("textcolor", "none");
+
+        if (textcolor.equals("black")){
+            finish.setColorFilter(Color.BLACK);
+            usernametv.setTextColor(Color.BLACK);
+            descriptiontv.setTextColor(Color.BLACK);
+        } else {
+            finish.setColorFilter(Color.WHITE);
+            usernametv.setTextColor(Color.WHITE);
+            descriptiontv.setTextColor(Color.WHITE);
+        }
 
 
         descriptiontv.setText(description);
@@ -124,6 +149,7 @@ public class ShowSinglePost  extends Fragment {
                     like.setBackgroundResource(R.drawable.heart);
                     FirebaseDatabase.getInstance().getReference().child("Likes").child(postid)
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
+                    sendNotification(publisher, postid);
                 } else {
                     like.setBackgroundResource(R.drawable.heart_white);
                     FirebaseDatabase.getInstance().getReference().child("Likes").child(postid)
@@ -137,6 +163,29 @@ public class ShowSinglePost  extends Fragment {
 
             }
         });
+        if (!postid.isEmpty()){
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts").child(postid);
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()){
+
+                        if (dataSnapshot.child("trendingviewedby").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).exists()) {
+
+                        } else {
+                            Integer views =  dataSnapshot.child("trendingviews").getValue(Integer.class);
+                            Integer viewed = views + 1;
+                            reference.child("trendingviews").setValue(viewed);
+                            reference.child("trendingviewedby").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
+                        }
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,6 +221,66 @@ public class ShowSinglePost  extends Fragment {
                                 }
                             }
                         });
+
+            }
+        });
+        more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(getContext(), more);
+                if (publisher.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    popup.getMenuInflater().inflate(R.menu.delete, popup.getMenu());
+                } else {
+                    popup.getMenuInflater().inflate(R.menu.post_menu, popup.getMenu());
+                }
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (item.toString().equals("Report")){
+                            RequestQueue queue = Volley.newRequestQueue(getContext());
+                            String url = "https://maker.ifttt.com/trigger/froozereport/with/key/bX8uNSFbAeoqUKPdfSztoA?value1=https://app.frooze.ch/post/?postid=" + postid;
+// Request a string response from the provided URL.
+                            StringRequest reportRequest = new StringRequest(Request.Method.POST, url,
+                                    new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            Toast.makeText(getContext(), "Successfully reported", Toast.LENGTH_SHORT).show();
+                                            // Display the first 500 characters of the response string.
+                                        }
+                                    }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Toast.makeText(getContext(), "An error occured. Please contact support.", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            queue.add(reportRequest);
+
+                        } if (item.toString().equals("Delete") && publisher.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                            RequestQueue queue = Volley.newRequestQueue(getContext());
+                            String url = "https://maker.ifttt.com/trigger/postdeleted/with/key/bX8uNSFbAeoqUKPdfSztoA?value1="+postid;
+// Request a string response from the provided URL.
+                            StringRequest deleteRequest = new StringRequest(Request.Method.POST, url,
+                                    new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            // Display the first 500 characters of the response string.
+                                        }
+                                    }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                }
+                            });
+                            queue.add(deleteRequest);
+                            FirebaseDatabase.getInstance().getReference("Posts").child(postid).removeValue();
+                            FirebaseDatabase.getInstance().getReference("Comments").child(postid).removeValue();
+                            FirebaseDatabase.getInstance().getReference("Likes").child(postid).removeValue();
+                            FragmentManager fragmentManager = getFragmentManager();
+                            fragmentManager.popBackStack(null, 0);
+                        }
+                            Toast.makeText(getContext(), item.toString(), Toast.LENGTH_LONG).show();
+                        return true;
+                    }
+                });
+                popup.show();
 
             }
         });
@@ -243,9 +352,9 @@ public class ShowSinglePost  extends Fragment {
             public void onClick(View v) {
                 if (like.getTag().equals("like")){
                     like.setBackgroundResource(R.drawable.heart);
-
                     FirebaseDatabase.getInstance().getReference().child("Likes").child(postid)
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
+                    sendNotification(publisher, postid);
                 } else{
                     like.setBackgroundResource(R.drawable.heart_white);
 
@@ -260,11 +369,15 @@ public class ShowSinglePost  extends Fragment {
                 if (mPlayer.getPlayWhenReady() == true){
                     mPlayer.setPlayWhenReady(false);
                 }
-                Intent comment = new Intent(getContext(), CommentsActivity.class);
-                comment.putExtra("postid", postid);
-                comment.putExtra("publisherid", publisher);
-                startActivity(comment);
 
+                SharedPreferences.Editor editor = getContext().getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
+                editor.putString("postid", postid);
+                editor.putString("publisher", postid);
+                editor.apply();
+               CommentsActivity commentsActivity =
+                        CommentsActivity.newInstance();
+                commentsActivity.show(((FragmentActivity)getContext()).getSupportFragmentManager(),
+                        "comments");
             }
         });
         profileimg.setOnClickListener(new View.OnClickListener() {
@@ -381,7 +494,15 @@ public class ShowSinglePost  extends Fragment {
             }
         });
     }
-
+    private void sendNotification(String userid, String postid){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("userid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        hashMap.put("text", "likedyourpost");
+        hashMap.put("postid", postid);
+        hashMap.put("ispost", true);
+        reference.push().setValue(hashMap);
+    }
 
     @Override
     public void onDestroyView() {

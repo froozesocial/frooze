@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -35,6 +36,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ShareCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,6 +48,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.brouding.doubletaplikeview.DoubleTapLikeView;
 import com.bumptech.glide.Glide;
+import com.cloudinary.Cloudinary;
 import com.cloudinary.Search;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -74,6 +77,9 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.cache.Cache;
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
+import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -104,13 +110,18 @@ import com.volokh.danylo.hashtaghelper.HashTagHelper;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.ene.toro.CacheManager;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
+import im.ene.toro.exoplayer.Config;
 import im.ene.toro.exoplayer.ExoPlayerViewHelper;
+import im.ene.toro.exoplayer.MediaSourceBuilder;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
 
@@ -121,12 +132,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
     private FirebaseUser firebaseUser;
     Uri uri;
     Post post;
+    Config config;
+    private static long cacheFile = 2 * 2048 * 2048;
+    SimpleCache cache;
+    DatabaseReference reference;
+    ValueEventListener listener, likelistener, nrlikelistener;
+    CommentsActivity commentsActivity;
     private SimpleExoPlayer mPlayer;
     private HashTagHelper mTextHashTagHelper;
     private static final int CONTENT_TYPE = 0;
     private static final int AD_TYPE = 1;
     private int[] viewTypes;
     public int viewType;
+    DatabaseReference likereference;
     public PostAdapter(Context mContext, List<Post> mPost) {
         this.mContext = mContext;
         this.mPost = mPost;
@@ -137,7 +155,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.post_item, viewGroup, false);
         return new PostAdapter.ViewHolder(view);
-
     }
 
 
@@ -485,10 +502,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
 
         @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
             return helper != null ? helper.getLatestPlaybackInfo() : new PlaybackInfo();
+
         }
 
         @Override
         public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+           try {
+
+           } catch (Exception e){
+            
+           }
+
+            config = new Config.Builder().setMediaSourceBuilder(MediaSourceBuilder.LOOPING)
+                    .setCache(cache)
+                    .build();//this is use for lopping
             post = mPost.get(getPosition());
             publisherInfo(profileimage, username, post.getPublisher());
             if (post.getPostid() != null && !post.getPostid().isEmpty()){
@@ -499,6 +526,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                 like.setVisibility(View.GONE);
                 comment.setVisibility(View.GONE);
                 share.setVisibility(View.GONE);
+            }
+            if (post.getTextColor() != null && !post.getTextColor().isEmpty()){
+                if (post.getTextColor().equals("black")){
+                    description.setTextColor(Color.BLACK);
+                } else {
+                    description.setTextColor(Color.WHITE);
+                }
+            } else {
+                description.setTextColor(Color.WHITE);
+            }
+            // For trending function
+            if (post.getPostid() != null && !post.getPostid().isEmpty()){
+            FirebaseDatabase.getInstance().getReference("Posts").child(post.getPostid()).child("trendingviewedby").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
             }
             profileimage.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -517,7 +557,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                                         @Override
                                         public void onClick(View v) {
                                             PopupMenu popup = new PopupMenu(mContext, more);
-                                            popup.getMenuInflater().inflate(R.menu.post_menu, popup.getMenu());
+                                            if (post.getPublisher().equals(firebaseUser.getUid())){
+                                                popup.getMenuInflater().inflate(R.menu.delete, popup.getMenu());
+                                            } else {
+                                                popup.getMenuInflater().inflate(R.menu.post_menu, popup.getMenu());
+                                            }
 
                                             popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                                                 public boolean onMenuItemClick(MenuItem item) {
@@ -541,8 +585,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                                                         queue.add(reportRequest);
 
                                                     }
-                                                    Toast.makeText(mContext, item.toString(), Toast.LENGTH_LONG).show();
-
+                                                    if (item.toString().equals("Delete") && post.getPublisher().equals(firebaseUser.getUid())){
+                                                        RequestQueue queue = Volley.newRequestQueue(mContext);
+                                                        String url = "https://maker.ifttt.com/trigger/postdeleted/with/key/bX8uNSFbAeoqUKPdfSztoA?value1=" + post.getPostid();
+                                                        StringRequest reportRequest = new StringRequest(Request.Method.POST, url,
+                                                                new Response.Listener<String>() {
+                                                                    @Override
+                                                                    public void onResponse(String response) {
+                                                                        Toast.makeText(mContext, "Successfully reported", Toast.LENGTH_SHORT).show();
+                                                                        // Display the first 500 characters of the response string.
+                                                                    }
+                                                                }, new Response.ErrorListener() {
+                                                            @Override
+                                                            public void onErrorResponse(VolleyError error) {
+                                                                Toast.makeText(mContext, "An error occured. Please contact support.", Toast.LENGTH_LONG).show();
+                                                            }
+                                                        });
+                                                        queue.add(reportRequest);
+                                                    }
                                                     return true;
                                                 }
                                             });
@@ -626,6 +686,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                         if (like.getTag().equals("like")) {
                             FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                                     .child(firebaseUser.getUid()).setValue(true);
+                            sendNotification(post.getPublisher(), post.getPostid());
+
                         } else {
                             FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                                     .child(firebaseUser.getUid()).removeValue();
@@ -646,6 +708,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                     if (like.getTag().equals("like")) {
                         FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                                 .child(firebaseUser.getUid()).setValue(true);
+                        sendNotification(post.getPublisher(), post.getPostid());
+
                     } else {
                         FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                                 .child(firebaseUser.getUid()).removeValue();
@@ -656,11 +720,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
             comment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    pause();
-                    Intent comment = new Intent(mContext, CommentsActivity.class);
-                    comment.putExtra("postid", post.getPostid());
-                    comment.putExtra("publisherid", post.getPublisher());
-                    mContext.startActivity(comment);
+                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
+                    editor.putString("postid", post.getPostid());
+                    editor.putString("publisher", post.getPublisher());
+                    editor.apply();
+                    commentsActivity =
+                            CommentsActivity.newInstance();
+                    commentsActivity.show(((FragmentActivity)mContext).getSupportFragmentManager(),
+                            "comments");
+
                 }
             });
             if (post.getDescription().equals("")){
@@ -673,7 +741,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                     public void onHashTagClicked(String hashTag) {
                         pause();
                         SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
-                        editor.putString("hashtag", hashTag);
+                        editor.putString("hashtag", hashTag.toLowerCase());
                         editor.apply();
                         FragmentTransaction transaction = ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction();
                         transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,R.anim.slide_in_left, R.anim.slide_out_right);
@@ -685,7 +753,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
 
             }
             if (helper == null) {
-                helper = new ExoPlayerViewHelper(this, uri);
+                helper = new ExoPlayerViewHelper(this, uri, null, config);
 
             }
             helper.initialize(container, playbackInfo);
@@ -719,8 +787,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
         }
     }
     private void getComments(String postid, TextView comments){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Comments").child(postid);
-        reference.addValueEventListener(new ValueEventListener() {
+        reference = FirebaseDatabase.getInstance().getReference().child("Comments").child(postid);
+        listener = reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 comments.setText(dataSnapshot.getChildrenCount()+"");
@@ -734,10 +802,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
     }
     private void isLiked(String postid, ImageView imageView){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference likereference = FirebaseDatabase.getInstance().getReference()
+        likereference = FirebaseDatabase.getInstance().getReference()
                 .child("Likes")
                 .child(postid);
-        likereference.addValueEventListener(new ValueEventListener() {
+        likelistener = likereference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.child(user.getUid()).exists()){
@@ -759,8 +827,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
     }
 
     private void nrLikes(TextView likes, String postid) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Likes").child(postid);
-        reference.addValueEventListener(new ValueEventListener() {
+        nrlikelistener = likereference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 likes.setText(dataSnapshot.getChildrenCount()+"");
@@ -778,23 +845,30 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
         editor.putString("profileid", publisher);
         editor.apply();
         FragmentTransaction transaction = ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_left);
+        transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
         transaction.replace(R.id.fragment_container,
                 new ProfileFragment()).addToBackStack(null).commit();
     }
 
     private void publisherInfo(ImageView image_profile, TextView username, String userid) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
-
+         reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Glide.with(mContext)
-                        .load(user.getImageurl())
-                        .into(image_profile);
-                        username.setText(user.getUsername());
+                if (user != null) {
+                    if (user.getImageurl() != null && !user.getImageurl().isEmpty()) {
+                        Glide.with(mContext)
+                                .load(user.getImageurl())
+                                .into(image_profile);
+                    } else {
+                        Toast.makeText(mContext, "Error", Toast.LENGTH_SHORT).show();
 
+                    }
+                    if (user.getUsername() != null && !user.getUsername().isEmpty()) {
+                        username.setText(user.getUsername());
+                    }
+                }
             }
 
             @Override
@@ -838,17 +912,33 @@ public void sharepost(TextView username){
                 }
             });
 }
+    private void sendNotification(String userid, String postid){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("userid", firebaseUser.getUid());
+        hashMap.put("text", "likedyourpost");
+        hashMap.put("postid", postid);
+        hashMap.put("ispost", true);
+        reference.push().setValue(hashMap);
+    }
     public void clear() {
         mPost.clear();
         notifyDataSetChanged();
     }
-    public void releasevideo() {
-    if (mPlayer != null){
-        mPlayer.setPlayWhenReady(false);
-        mPlayer.release();
+
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        if (reference != null && listener != null) {
+            reference.removeEventListener(listener);
         }
-
-
+        if (likereference != null && likelistener != null) {
+            likereference.removeEventListener(likelistener);
+        }
+        if (likereference != null && nrlikelistener != null) {
+            likereference.removeEventListener(nrlikelistener);
+        }
     }
 
     // Add a list of items -- change to type used

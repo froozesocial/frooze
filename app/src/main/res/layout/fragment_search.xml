@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/bar"
+        app:elevation="0dp"
         android:outlineAmbientShadowColor="@color/transparent"
         android:outlineSpotShadowColor="@color/transparent"
         android:background="@drawable/searchappbar"
@@ -92,7 +93,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         ads:adSize="SMART_BANNER"
-        ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+        ads:adUnitId="ca-app-pub-7280179625741556/8953401066">
     </com.google.android.gms.ads.AdView>
 </RelativeLayout>
     </LinearLayout>

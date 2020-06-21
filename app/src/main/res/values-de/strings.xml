@@ -30,12 +30,15 @@
     <string name="fullname">Name</string>
     <string name="send">Senden</string>
     <string name="create">Erstellen</string>
+    <string name="welcome">Willkommen</string>
+    <string name="nochange">This cannot be changed later</string>
+    <string name="toolonguser">Benutzername zu lange</string>
 
     <!-- Post Activity-->
     <string name="post">Posten</string>
     <string name ="newpost">Neuer Post</string>
     <string name="description">Beschreibung</string>
-
+    <string name="textcolor">Textfarbe auswählen</string>
     <!-- Support Mail-->
     <string name="yourproblem">Dein Problem:</string>
     <string name="emailsent">E-Mail gesendet</string>
@@ -54,6 +57,9 @@
 
     <!-- New Post -->
     <string name="uploading">Hochladen</string>
+    <string name="source">Quelle</string>
+    <string name="selectcamera">Video aufnehmen</string>
+    <string name="pickvideo">Video aus Gallerie wählen</string>
     <string name="novideoselected">Kein Video ausgewählt</string>
     <string name="toolong">Video zu lange, max 17 sekunden</string>
     <string name="success">Video erfolgreich hochgeladen</string>
@@ -64,6 +70,10 @@
 
     <!-- Post -->
     <string name="disclaimer">Gefährliche Handlungen, nicht nachmachen.\n</string>
+    <string name="noposts">Keine Posts</string>
+    <string name="sortbynew">Neu</string>
+    <string name="sortbytrending">Trending</string>
+    <string name="sortbyfollowing">Ich folge</string>
 
     <!-- Sharing -->
     <string name="sharetext">Schau dir dieses Video auf frooze.ch an, von @</string>
@@ -94,6 +104,7 @@
     <string name="accountdeleted">Account gelöscht</string>
 
     <!-- Profile -->
+    <string name="unfollow">Entfolgen</string>
     <string name="ifollow">Ich folge</string>
     <string name="followers">Fans</string>
     <string name="bioplaceholder">Dies ist deine Bio, tippe um zu Bearbeiten</string>
@@ -105,9 +116,27 @@
     <string name="follow">Folgen</string>
     <string name="back">Zurück</string>
     <string name="done">Fertig</string>
+    <string name="followingyou">folgt dir nun</string>
+    <string name="likedyourpost">mag deinen Post</string>
+    <string name="trending">Dein Post ist in den Trends!</string>
+    <string name="commented">kommentierte:</string>
 
+
+    <!-- No Internet -->
+    <string name="nointernet">Keine Verbindung</string>
+    <string name="nointernetdesc">Du bist nicht mit dem Internet verbunden.</string>
+    <string name="reload">Neu laden</string>
     <!-- Search -->
     <string name="searchhint">Suchen…</string>
     <!-- Notifications -->
     <string name="notificationstab">Benachrichtigungen</string>
+
+    <string name="cancel">Abbrechen</string>
+    <string name="save">Ok</string>
+    <string name="short_seconds">sec</string>
+    <string name="megabyte">MB</string>
+    <string name="kilobyte">KB</string>
+    <string name="permstorage">Wird benötigt um Videos aus der Gallerie zu wählen</string>
+    <string name="permcamera">Wird benötigt um Videos aufzunehmen</string>
+    <string name="signupconfirm">Wenn du fortfährst, akzeptierst du frooze\'s &lt;a href=https://frooze.ch/?page_id=83621>Nutzungsbedingungen&lt;/a> und bestätigst, dass du unsere &lt;a href=https://frooze.ch/?page_id=83575>Datenschutzerklärung&lt;/a> gelesen hast.</string>
 </resources>

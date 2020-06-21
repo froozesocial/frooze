@@ -4,29 +4,32 @@ import androidx.annotation.NonNull;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
-import android.os.CountDownTimer;
+import android.os.Build;
 import android.util.Log;
 import android.view.*;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.androidstudy.networkmanager.Monitor;
+import com.androidstudy.networkmanager.Tovuti;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
 import com.cloudinary.android.MediaManager;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,13 +38,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 
-import java.io.Console;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import im.ene.toro.exoplayer.Config;
-import im.ene.toro.exoplayer.MediaSourceBuilder;
-import im.ene.toro.exoplayer.ToroExo;
 
 public class MainActivity  extends AppCompatActivity implements BillingProcessor.IBillingHandler {
     Context mContext = this;
@@ -49,13 +50,25 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
     private int startingPosition;
     private int newPosition;
     Config config;
+    public static final int ITEMS_PER_AD = 9;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fresco.initialize(this);
-
         setContentView(R.layout.activity_main);
+        Intent notifications = new Intent(this, NotificationService.class);
+        startService(notifications);
         Bundle intent = getIntent().getExtras();
+
+        try {
+            Map config = new HashMap();
+            config.put("cloud_name", "froozevideo");
+            MediaManager.init(this, config);
+        } catch (Exception e){
+
+        }
+
         if (intent != null){
             String publisher = intent.getString("publisherid");
             SharedPreferences.Editor editor2 = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
@@ -63,7 +76,7 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
             editor2.apply();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
         } else{
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FollowPostsFragment()).commit();
 
         }
         FirebaseDynamicLinks.getInstance()
@@ -94,6 +107,9 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
         bp.loadOwnedPurchasesFromGoogle();
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
+        bottomNav.setSelectedItemId(R.id.nav_home);
+
+
         FloatingActionButton uploadvideobutton = findViewById(R.id.upload);
         final FloatingActionButton uploadvideo = uploadvideobutton;
         uploadvideo.setOnClickListener(new View.OnClickListener() {
@@ -104,10 +120,19 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
             }
         });
         if (savedInstanceState == null) {
-            loadFragment(new HomeFragment(), 1);
+            loadFragment(new TrendingPostsFragment(), 1);
 
         }
-
+        Tovuti.from(this).monitor(new Monitor.ConnectivityListener(){
+            @Override
+            public void onConnectivityChanged(int connectionType, boolean isConnected, boolean isFast){
+                // TODO: Handle the connection...
+                if (!isConnected){
+                    Intent intent = new Intent(MainActivity.this, NoInternetActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
 
@@ -119,7 +144,7 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
 
                     switch (item.getItemId()) {
                         case R.id.nav_home:
-                            selectedFragment = new HomeFragment();
+                            selectedFragment = new TrendingPostsFragment();
                             newPosition = 1;
 
                             break;
@@ -186,7 +211,7 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
 
     @Override
     public void onBillingInitialized() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    /*    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
 
         boolean purchaseResult = bp.loadOwnedPurchasesFromGoogle();
@@ -204,6 +229,6 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
         }else{
             Log.d("BILLING", "loadOwnedPurchasesFromGoogle returned false");
         }
-        }
+        }*/
     }
 }

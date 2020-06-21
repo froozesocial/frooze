@@ -22,12 +22,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Locale;
+
 public class ForgotPasswordActivity extends AppCompatActivity {
     private EditText mailView;
+    private FirebaseAuth mAuth;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgotpassword);
+        mAuth = FirebaseAuth.getInstance();
+
+        String locale = Locale.getDefault().getLanguage();
+        mAuth.setLanguageCode(locale);
         FrameLayout background = findViewById(R.id.background);
         background.setBackgroundResource(R.drawable.gradient_animationfpass);
         AnimationDrawable animation = (AnimationDrawable) background.getBackground();
@@ -55,8 +62,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 EditText edt = findViewById(R.id.email);
                 String mail = edt.getText().toString();
                 if (!TextUtils.isEmpty(mail)) {
-                    FirebaseAuth auth = FirebaseAuth.getInstance();
-                    auth.sendPasswordResetEmail(mail)
+                    mAuth.sendPasswordResetEmail(mail)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {

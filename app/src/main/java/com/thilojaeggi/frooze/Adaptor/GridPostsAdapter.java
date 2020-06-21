@@ -2,6 +2,7 @@ package com.thilojaeggi.frooze.Adaptor;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,7 @@ public class GridPostsAdapter extends RecyclerView.Adapter<GridPostsAdapter.View
     public Context mContext;
     public List<Post> mPost;
     private FirebaseUser firebaseUser;
-    String postvideo, postid, publisher, description;
+    String postvideo, postid, publisher, description, textcolor;
     String thumbnailurl;
     public GridPostsAdapter(Context mContext, List<Post> mPost) {
         this.mContext = mContext;
@@ -79,16 +80,28 @@ public class GridPostsAdapter extends RecyclerView.Adapter<GridPostsAdapter.View
                 } else {
                     postid ="Error";
                 }
-                if (post.getDescription() != null && !post.getDescription().isEmpty()){
+                if (post.getDescription() != null){
                     description = post.getDescription();
                 } else {
                     description ="Error";
+                }
+                if (post.getTextColor() != null && !post.getTextColor().isEmpty()){
+                    if (post.getTextColor().equals("black")){
+                        textcolor = "black";
+                    } else {
+                        textcolor = "white";
+
+                    }
+                } else {
+                    textcolor = "white";
                 }
                 SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
                 editor.putString("postid", postid);
                 editor.putString("publisher", publisher);
                 editor.putString("postvideo", postvideo);
                 editor.putString("description", description);
+                editor.putString("textcolor", textcolor);
+
                 editor.apply();
                 FragmentTransaction transaction = ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.slide_in_bottom,

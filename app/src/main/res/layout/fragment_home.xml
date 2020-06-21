@@ -5,12 +5,10 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/black"
-    tools:context=".HomeFragment">
+    tools:context=".FollowPostsFragment">
 <FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-
         <im.ene.toro.widget.Container
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
@@ -19,11 +17,63 @@
         <com.google.android.gms.ads.AdView
             xmlns:ads="http://schemas.android.com/apk/res-auto"
             android:id="@+id/adView"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             ads:adSize="BANNER"
             ads:adUnitId="ca-app-pub-3940256099942544/6300978111"/>
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            app:cardCornerRadius="20dp"
+            android:backgroundTint="#FFFFFF"
+            android:layout_marginTop="2dp">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sortbynew"
+                    android:id="@+id/newposts"
+                    android:layout_marginEnd="5dp"
+                    android:textSize="14sp"
+                    android:layout_marginStart="7dp"
+                    android:textColor="@color/black"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sortbytrending"
+                    android:id="@+id/trendingposts"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="7dp"
+                    android:textSize="14sp"
+
+                    android:textColor="@color/black"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sortbyfollowing"
+                    android:id="@+id/followingposts"
+                    android:textSize="18sp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="7dp"
+                    android:textColor="@color/black"/>
+        </LinearLayout>
+        </androidx.cardview.widget.CardView>
+<TextView
+    android:id="@+id/listempty"
+    android:visibility="gone"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/noposts"
+        android:textColor="@color/white"
+        android:textSize="29sp"/>
 </FrameLayout>
 </LinearLayout>
 

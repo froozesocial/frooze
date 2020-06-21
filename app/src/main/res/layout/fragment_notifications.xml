@@ -7,14 +7,6 @@
     tools:context="NotificationFragment"
     android:background="@color/background_color" >
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:outlineAmbientShadowColor="@color/transparent"
-        android:outlineSpotShadowColor="@color/transparent"
-        android:id="@+id/bar"
-
-        android:background="@drawable/searchappbar">
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,8 +30,26 @@
                 android:textColor="@color/white"
 
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+           <RelativeLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content">
+            <ImageButton
+                android:id="@+id/clearnotifs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_delete_black_24dp"
+                android:tint="@color/white"
+                android:layout_alignParentEnd="true"
+                android:backgroundTint="@color/transparent"
+                android:layout_marginEnd="20dp"
+                android:foregroundGravity="right"/>
+           </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
 
+<androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/notif_rv"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@id/toolbar"/>
 
 </RelativeLayout>

@@ -8,5 +8,8 @@
         <attr name="metaButtonBarStyle" format="reference" />
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
+        <declare-styleable name="TemplateView">
+            <attr name="gnt_template_type" format="reference"/>
+        </declare-styleable>
 
 </resources>

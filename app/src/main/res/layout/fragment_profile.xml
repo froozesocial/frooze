@@ -6,9 +6,6 @@
     tools:context="com.thilojaeggi.frooze.ProfileFragment"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
-
-
 <FrameLayout
     android:layout_width="match_parent"
     android:background="@drawable/profileframe"
@@ -47,7 +44,6 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_gravity="end"
-
                 tools:context="com.thilojaeggi.frooze.ProfileFragment"
                 android:src="@drawable/ic_baseline_edit_24" />
         </Toolbar>
@@ -71,14 +67,17 @@
         android:layout_gravity="left"
         android:layout_marginStart="10dp"
         />
-            <TextView
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/backbutton"
                 android:layout_width="wrap_content"
+                android:layout_marginTop="-10dp"
+                android:layout_marginStart="-10dp"
+                android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:text="@string/back"
-                android:visibility="gone"
-                android:textSize="20sp"
+                android:background="@drawable/button_back"
+                android:textSize="14sp"
                 android:textStyle="bold"/>
         </FrameLayout>
     <TextView
@@ -117,7 +116,6 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/white"
             android:layout_toEndOf="@+id/framelinear"
-            android:text=""
             android:layout_marginBottom="15dp"
             android:textSize="17sp"
             android:textStyle="normal" />
@@ -164,7 +162,7 @@
                         android:id="@+id/followers"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1"
+                        android:text="0"
                         android:textStyle="bold"
                         android:textColor="@color/white"
                         android:textSize="20sp"/>
@@ -187,7 +185,7 @@
                         android:id="@+id/following"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1205"
+                        android:text="0"
                         android:textStyle="bold"
                         android:textColor="@color/white"
 
@@ -215,7 +213,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
-                        android:text="360"
+                        android:text="0"
                         android:textStyle="bold"
                         android:textSize="20sp"/>
                     <TextView
@@ -229,21 +227,14 @@
 
                 </LinearLayout>
             </LinearLayout>
-
         </androidx.cardview.widget.CardView>
-
     </RelativeLayout>
-
 </FrameLayout>
 
 <androidx.recyclerview.widget.RecyclerView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/recyclerview"/>
-
-
-
-
 </LinearLayout>
 
 

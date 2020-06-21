@@ -7,8 +7,11 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.format.Formatter;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -37,9 +40,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.thilojaeggi.frooze.Intro.AppIntro;
 
 import java.util.HashMap;
+import java.util.Locale;
+
 public class SignUpActivity extends AppCompatActivity {
 
 
@@ -47,6 +51,7 @@ public class SignUpActivity extends AppCompatActivity {
     private Button regBtn;
     private FirebaseAuth mAuth;
     private static FirebaseAnalytics firebaseAnalytics;
+    TextView disclaimer;
     DatabaseReference reference;
 
     @Override
@@ -54,6 +59,8 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         mAuth = FirebaseAuth.getInstance();
+        String locale = Locale.getDefault().getLanguage();
+        mAuth.setLanguageCode(locale);
         FrameLayout background = findViewById(R.id.background);
         background.setBackgroundResource(R.drawable.gradient_animationregister);
         AnimationDrawable animation = (AnimationDrawable) background.getBackground();
@@ -61,11 +68,14 @@ public class SignUpActivity extends AppCompatActivity {
         animation.setExitFadeDuration(5000);
         animation.start();
         initializeUI();
-
+        disclaimer = findViewById(R.id.disclaimer);
+        Spanned disclaimertext = Html.fromHtml(getString(R.string.signupconfirm));
+        disclaimer.setText(disclaimertext);
+        disclaimer.setMovementMethod(LinkMovementMethod.getInstance());
         regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                usernamecheck();
+                usernamecheck(usernameTV.getText().toString());
             }
         });
         final ImageButton backbutton = findViewById(R.id.back_button);
@@ -82,15 +92,14 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-    private void usernamecheck() {
-        String username;
-        username = usernameTV.getText().toString();
+    private void usernamecheck(String username) {
         DatabaseReference ref=FirebaseDatabase.getInstance().getReference().child("Users");
         ref.orderByChild("username").equalTo(username).addListenerForSingleValueEvent(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot){
                 if(!dataSnapshot.exists()) {
                     registerNewUser();
+
                 }
                 else{
                     Toast.makeText(getApplicationContext(), getString(R.string.usernameexists), Toast.LENGTH_LONG).show();
@@ -128,7 +137,10 @@ public class SignUpActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), getString(R.string.missingpassword), Toast.LENGTH_LONG).show();
             return;
         }
-
+        if (username.length() >8) {
+            Toast.makeText(getApplicationContext(), getString(R.string.toolonguser), Toast.LENGTH_LONG).show();
+            return;
+        }
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -137,9 +149,7 @@ public class SignUpActivity extends AppCompatActivity {
                             WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                             String userid = user.getUid();
-
                             reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userid);
-
                             HashMap<String, Object> hashMap = new HashMap<>();
                             hashMap.put("premium", "false");
                             hashMap.put("id", userid);
@@ -154,13 +164,11 @@ public class SignUpActivity extends AppCompatActivity {
                                         // Verification Mail
                                         sendVerificationEmail();
                                         FirebaseAuth.getInstance().signOut();
-                                        Intent intent = new Intent(SignUpActivity.this, AppIntro.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
                                         startActivity(intent);
                                     }
                                 }
                             });
-
                         }
                         else {
                             // If registration fails

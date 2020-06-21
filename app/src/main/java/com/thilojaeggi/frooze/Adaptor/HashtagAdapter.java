@@ -86,4 +86,6 @@ public class HashtagAdapter extends RecyclerView.Adapter<HashtagAdapter.ViewHold
             hashtag = itemView.findViewById(R.id.hashtag);
         }
     }
+
+
 }

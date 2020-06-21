@@ -53,6 +53,11 @@ public class EditProfileActivity extends AppCompatActivity {
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
                 reference.child("bio").setValue(bio.getText().toString());
                 reference.child("fullname").setValue(name.getText().toString());
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("bio",bio.getText().toString());
+                returnIntent.putExtra("fullname",name.getText().toString());
+                returnIntent.putExtra("image", result);
+                setResult(RESULT_OK,returnIntent);
                 finish();
             }
         });
@@ -68,7 +73,6 @@ public class EditProfileActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String imageurl = dataSnapshot.getValue(String.class);
                 profileimage.setImageURI(Uri.parse(imageurl));
-
             }
 
             @Override

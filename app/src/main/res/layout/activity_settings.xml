@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:background="@drawable/searchappbar"
         android:minHeight="?attr/actionBarSize"
-
         android:theme="?attr/actionBarTheme">
         <ImageButton
             android:id="@+id/backbutton"
@@ -115,7 +114,6 @@
     <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <Button
         android:id="@+id/logout"
         android:layout_width="match_parent"

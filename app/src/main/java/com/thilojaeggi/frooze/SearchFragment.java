@@ -148,13 +148,11 @@ public class SearchFragment extends Fragment {
                     User user = snapshot.getValue(User.class);
                     userList.add(user);
                 }
-
                 userAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
@@ -179,6 +177,7 @@ public class SearchFragment extends Fragment {
                     userList.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                         User user = snapshot.getValue(User.class);
+
                         userList.add(user);
                     }
                     userAdapter.notifyDataSetChanged();

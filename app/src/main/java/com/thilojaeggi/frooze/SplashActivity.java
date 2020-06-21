@@ -1,13 +1,20 @@
 package com.thilojaeggi.frooze;
 
 import android.content.Intent;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
+import android.graphics.drawable.Icon;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Arrays;
 
 public class SplashActivity extends AppCompatActivity {
     FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -24,6 +31,7 @@ public class SplashActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
+
                     Intent mainactivity = new Intent(SplashActivity.this, MainActivity.class);
                     startActivity(mainactivity);
                     finish();

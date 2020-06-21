@@ -1,6 +1,7 @@
 package com.thilojaeggi.frooze;
 
 import android.animation.ValueAnimator;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -36,6 +37,8 @@ import java.util.regex.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
+
 
 public class HashtagFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -50,7 +53,7 @@ public class HashtagFragment extends Fragment {
     final float startSize = 33; // Size in pixels
     final float endSize = 20;
     long animationDuration = 175; // Animation duration in ms
-
+    LinearLayoutManager linearLayoutManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,7 +61,7 @@ public class HashtagFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_hashtag, container, false);
         recyclerView = rootView.findViewById(R.id.hashtagrecyclerview);
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false);
+        linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -66,6 +69,7 @@ public class HashtagFragment extends Fragment {
         hashtagAdapter = new HashtagAdapter(getContext(), hashtagLists);
         recyclerView.setAdapter(hashtagAdapter);
         TextView users = rootView.findViewById(R.id.users);
+
         ValueAnimator animator = ValueAnimator.ofFloat(startSize, endSize);
         animator.setDuration(animationDuration);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -126,6 +130,8 @@ public class HashtagFragment extends Fragment {
                 throw databaseError.toException();
             }
         });
+
+
         return rootView;
     }
 
@@ -176,6 +182,7 @@ public class HashtagFragment extends Fragment {
 
     public void onViewCreated(View rootView, Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
+
 
     }
 

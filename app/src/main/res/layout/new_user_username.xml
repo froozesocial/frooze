@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/username"
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:textColorHint="@color/alpha60_black"
+        android:drawablePadding="5dp"
+        android:hint="@string/username"
+        android:inputType="textNoSuggestions"
+        android:textColor="@color/alpha60_black"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginStart="10dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/alpha60_black"
+        android:text="This cannot be changed later"/>
+    <TextView
+        android:id="@+id/disclaimer"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:textAlignment="center"
+        android:textColor="@color/alpha60_black"
+        android:layout_marginTop="10dp"
+        android:linksClickable="true"
+        android:clickable="true"
+        android:layout_marginBottom="20dp"
+        android:textColorLink="@color/progress_color"
+        android:text="@string/signupconfirm"
+        android:focusable="true" />
+</LinearLayout>

@@ -1,0 +1,18 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="upload"
+        android:enabled="true"
+        android:icon="@drawable/ic_file_upload_black_24dp"
+        android:shortcutShortLabel="@string/newpost"
+        android:shortcutLongLabel="@string/newpost"
+        android:shortcutDisabledMessage="@string/newpost">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.thilojaeggi.frooze"
+            android:targetClass="com.thilojaeggi.frooze.PostActivity" />
+        <!-- If your shortcut is associated with multiple intents, include them
+             here. The last intent in the list determines what the user sees when
+             they launch this shortcut. -->
+    </shortcut>
+    <!-- Specify more shortcuts here. -->
+</shortcuts>

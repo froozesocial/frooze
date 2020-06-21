@@ -8,12 +8,14 @@ public class Post {
     private String description;
     private String publisher;
     private String dangerous;
-    public Post(String postid, String postvideo, String description, String publisher, String dangerous) {
+    private String textcolor;
+    public Post(String postid, String postvideo, String description, String publisher, String dangerous, String textcolor) {
         this.postid = postid;
         this.dangerous = dangerous;
         this.postvideo = postvideo;
         this.description = description;
         this.publisher = publisher;
+        this.textcolor = textcolor;
     }
 
     public Post() {
@@ -29,6 +31,13 @@ public class Post {
 
     public String getPostvideo() {
         return postvideo;
+    }
+
+    public String getTextColor() {
+        return textcolor;
+    }
+    public void setTextColor(String textcolor) {
+        this.textcolor = textcolor;
     }
 
     public void setPostvideo(String postvideo) {

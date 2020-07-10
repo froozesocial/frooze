@@ -1,5 +1,6 @@
 package com.thilojaeggi.frooze;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -10,7 +11,9 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
@@ -19,6 +22,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -31,16 +36,20 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.thilojaeggi.frooze.Adaptor.GridPostsAdapter;
 import com.thilojaeggi.frooze.Model.Post;
+import com.thilojaeggi.frooze.Model.User;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 public class ProfileFragment extends Fragment {
 
-    SimpleDraweeView draweeView;
+    CircleImageView profileimage;
     public Button followbutton;
     public String profileid;
     private String m_Text = "";
@@ -48,6 +57,7 @@ public class ProfileFragment extends Fragment {
     private GridPostsAdapter gridPostsAdapter;
     private RecyclerView recyclerView;
     AppCompatButton backbutton;
+    FrameLayout profileframe;
     public TextView biotv, fullnametv, followers, following, posts;
     public FirebaseUser firebaseUser;
     public ValueEventListener followlistener;
@@ -78,6 +88,10 @@ public class ProfileFragment extends Fragment {
         LinearLayoutManager mLayoutManager = new GridLayoutManager(getContext(), mNoOfColumns);
         recyclerView.setLayoutManager(mLayoutManager);
         gridPostsAdapter = new GridPostsAdapter(getContext(), postList);
+        profileframe = view.findViewById(R.id.profileframe);
+        if (profileid.equals("n4nLAkT3lIfe8zdqcqI3XYpknQd2")){
+            profileframe.setBackgroundResource(R.drawable.profileframe_special);
+        }
         recyclerView.setAdapter(gridPostsAdapter);
         if (profileid.equals(firebaseUser.getUid())) {
             followbutton.setVisibility(View.GONE);
@@ -95,26 +109,21 @@ public class ProfileFragment extends Fragment {
             reference.child(profileid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    String username = dataSnapshot.child("username").getValue(String.class);
-                    String fullname = dataSnapshot.child("fullname").getValue(String.class);
-                    String imageurl = dataSnapshot.child("imageurl").getValue(String.class);
-                    String premium = dataSnapshot.child("premium").getValue(String.class);
-                    String biography = dataSnapshot.child("bio").getValue(String.class);
-                    draweeView = (SimpleDraweeView) view.findViewById(R.id.profile_image);
-                        RoundingParams roundingParams = RoundingParams.fromCornersRadius(5f);
-                        roundingParams.setRoundAsCircle(true);
-                        draweeView.setHierarchy(new GenericDraweeHierarchyBuilder(getResources())
-                                .setRoundingParams(roundingParams)
-                                .build());
-                    imageuri = Uri.parse(imageurl);
-                    draweeView.setImageURI(imageuri);
-                    if (!biography.isEmpty()) {
-                        biotv.setText(biography);
+                    User user = dataSnapshot.getValue(User.class);
+
+                    profileimage = (CircleImageView) view.findViewById(R.id.profile_image);
+                    if (user.getImageurl() != null && !user.getImageurl().isEmpty()){
+                        imageuri = Uri.parse(user.getImageurl());
+                        Glide.with(view).load(imageuri).into(profileimage);
+                    }
+
+                    if (!user.getBio().isEmpty()) {
+                        biotv.setText(user.getBio());
                     }
 
                     TextView usernametv = view.findViewById(R.id.username);
-                    usernametv.setText("@" + username);
-                    fullnametv.setText(fullname);
+                    usernametv.setText("@" + user.getUsername());
+                    fullnametv.setText(user.getFullname());
                 }
 
                 @Override
@@ -220,6 +229,10 @@ public class ProfileFragment extends Fragment {
         });
     }
     private void getPosts() {
+        SharedPreferences.Editor editor = getContext().getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
+        editor.putString("type", "user");
+        editor.putString("user", profileid);
+        editor.apply();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -270,7 +283,7 @@ public class ProfileFragment extends Fragment {
                 String name =  data.getStringExtra("fullname");
                 String image = data.getStringExtra("image");
                 if (image != null && !image.isEmpty()){
-                    draweeView.setImageURI(Uri.parse(image));
+                    Glide.with(getContext()).load(Uri.parse(image)).into(profileimage);
                 }
                 biotv.setText(bio);
                 fullnametv.setText(name);

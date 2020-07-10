@@ -31,7 +31,7 @@ import java.util.List;
 import static android.content.Context.MODE_PRIVATE;
 
 
-public class ViewHashtagFragment extends Fragment {
+public class GridView extends Fragment {
     public String hashtag;
     private GridPostsAdapter postAdapter;
     private List<Post> postLists;
@@ -67,12 +67,11 @@ public class ViewHashtagFragment extends Fragment {
         postLists = new ArrayList<>();
         postAdapter = new GridPostsAdapter(getContext(), postLists);
         recyclerView.setAdapter(postAdapter);
-
-        getHashtags();
+        getHashtagPosts();
         return view;
     }
 
-    private void getHashtags() {
+    private void getHashtagPosts() {
         hashtagPostsList = new ArrayList<>();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Hashtags")
                 .child(hashtag)

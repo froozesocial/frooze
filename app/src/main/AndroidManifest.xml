@@ -3,18 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.thilojaeggi.frooze">
 
+    <!-- Include required permissions for Google Mobile Ads to run. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="com.android.vending.BILLING" />
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="true" />
+        android:required="false" />
 
     <application
         android:allowBackup="false"
@@ -27,7 +28,15 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:allowBackup, android:fullBackupContent">
-        <activity android:name=".AdActivity"></activity>
+
+        <!--
+        This is the sample AdMob App ID. Insert your own AdMob App ID in quotes
+        https://googlemobileadssdk.page.link/admob-android-update-manifest
+        -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
+
         <activity android:name=".NewUser.NewUser" />
         <activity android:name=".TrimVideoActivity" />
         <activity
@@ -82,9 +91,6 @@
             android:name=".PostFromLink"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".RecorderActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".SignUpActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -108,14 +114,11 @@
             android:screenOrientation="portrait" />
 
         <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-7280179625741556~4518908638" />
-        <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
         <meta-data
-            android:name="http://res.cloudinary.com/froozevideo"
-            android:value="cloudinary://125123534835197:RRrlIPUfPDzmpjISgqDx6-1DH2I@froozevideo" />
+            android:name="http://res.cloudinary.com/froozecdn"
+            android:value="cloudinary://842792783494851:nWoD4Js5MZ4Qje79Xk2QorRD5cE@froozecdn" />
         <meta-data
             android:name="firebase_performance_logcat_enabled"
             android:value="true" />

@@ -1,11 +1,7 @@
 package com.thilojaeggi.frooze;
 
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -21,10 +17,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.ImageViewCompat;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.brouding.doubletaplikeview.DoubleTapLikeView;
 import com.bumptech.glide.Glide;
@@ -58,8 +50,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.ShortDynamicLink;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostFromLink extends AppCompatActivity {
     private SimpleExoPlayer mPlayer;
@@ -275,7 +265,7 @@ public class PostFromLink extends AppCompatActivity {
                         if (mPlayer.getPlayWhenReady() == true){
                             mPlayer.setPlayWhenReady(false);
                         }
-                        Intent comment = new Intent(PostFromLink.this, CommentsActivity.class);
+                        Intent comment = new Intent(PostFromLink.this, CommentFragment.class);
                         comment.putExtra("postid", postid);
                         comment.putExtra("publisherid", publisher);
                         startActivity(comment);

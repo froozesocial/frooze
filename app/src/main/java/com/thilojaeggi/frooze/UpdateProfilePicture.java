@@ -58,7 +58,7 @@ public class UpdateProfilePicture extends AppCompatActivity {
         close = findViewById(R.id.close);
         post = findViewById(R.id.post);
 
-        storageReference = FirebaseStorage.getInstance().getReference("profileimages");
+        storageReference = FirebaseStorage.getInstance().getReference("profileimages").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         CropImage.activity()
                 .setAspectRatio(1,1)
@@ -77,7 +77,7 @@ public class UpdateProfilePicture extends AppCompatActivity {
         if (profileUri != null){
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             String uid = user.getUid();
-            StorageReference filereference = storageReference.child(uid
+            StorageReference filereference = storageReference.child("profileimage"
                     + "."+ "jpg");
 
 

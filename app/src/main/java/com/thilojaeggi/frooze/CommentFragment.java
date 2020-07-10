@@ -6,11 +6,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
+import android.os.Handler;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,11 +18,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.deishelon.roundedbottomsheet.RoundedBottomSheetDialog;
 import com.deishelon.roundedbottomsheet.RoundedBottomSheetDialogFragment;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -41,7 +37,7 @@ import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class CommentsActivity extends RoundedBottomSheetDialogFragment {
+public class CommentFragment extends RoundedBottomSheetDialogFragment {
     EditText addcomment;
     ImageButton finish, post, more;
     String postid;
@@ -50,10 +46,12 @@ public class CommentsActivity extends RoundedBottomSheetDialogFragment {
     private CommentAdapter commentAdapter;
     private List<Comment> commentList;
     FirebaseUser firebaseUser;
-    private static CommentsActivity instance;
+    private static CommentFragment instance;
+    Handler handler;
+    Runnable runnable;
 
-    public static CommentsActivity newInstance() {
-        return new CommentsActivity();
+    public static CommentFragment newInstance() {
+        return new CommentFragment();
     }
 
     @Override
@@ -90,6 +88,7 @@ public class CommentsActivity extends RoundedBottomSheetDialogFragment {
         readComments();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
         return view;
     }
 
@@ -166,10 +165,13 @@ public class CommentsActivity extends RoundedBottomSheetDialogFragment {
 
     @Override
     public void dismiss() {
+        handler.removeCallbacksAndMessages(null);
         super.dismiss();
     }
 
-    public static CommentsActivity getInstance() {
+    public static CommentFragment getInstance() {
         return instance;
     }
+
+
 }

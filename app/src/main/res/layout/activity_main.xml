@@ -15,48 +15,37 @@
         android:layout_marginBottom="53dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="53dp"
         android:layout_gravity="bottom"
         android:clickable="false"
-        android:background="@color/transparent"
-
         app:fabAlignmentMode="center" />
-
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom">
-
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             style="@style/Widget.MaterialComponents.BottomNavigationView"
             android:layout_width="match_parent"
-            android:layout_height="53dp"
+            android:layout_height="wrap_content"
             android:clickable="false"
-            android:background="@drawable/bottom_navigation_background"
-            app:menu="@menu/bottom_navigation" />
+            android:background="@color/transparent"
+            android:layout_gravity="bottom"
+            app:itemTextAppearanceActive="@style/BottomNavigationView.Active"
+            app:itemTextAppearanceInactive="@style/BottomNavigationView"
+            app:labelVisibilityMode="labeled"
+            app:itemTextColor="#99000000"
+            app:menu="@menu/bottom_navigation" >
 
+            <ImageButton
+                android:id="@+id/upload"
+                android:layout_width="70dp"
+                android:layout_height="45dp"
+                android:tint="@color/white"
+                android:src="@drawable/ic_file_upload_black_24dp"
+                android:background="@drawable/upload_button"
 
-    </FrameLayout>
-
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/upload"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/transparent"
-        android:backgroundTint="#007BFF"
-        android:src="@drawable/ic_file_upload_black_24dp"
-        android:scaleType="center"
-
-        app:fabCustomSize="60dp"
-        app:layout_anchor="@id/bottom_bar"
-
-        app:maxImageSize="30dp"/>
-
+                android:layout_gravity="center"/>
+        </com.google.android.material.bottomnavigation.BottomNavigationView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

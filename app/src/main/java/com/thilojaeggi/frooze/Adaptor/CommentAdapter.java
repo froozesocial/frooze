@@ -150,6 +150,8 @@ private FirebaseUser firebaseUser;
         });
     }
     private void showprofile(String publisher){
+        
+
         SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
         editor.putString("profileid", publisher);
         editor.apply();

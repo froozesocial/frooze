@@ -57,10 +57,11 @@ public class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        holder.setIsRecyclable(false);
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             final User user = mUsers.get(position);
-            UserViewHolder viewHolder = (UserViewHolder) holder;
-
+        UserViewHolder viewHolder = (UserViewHolder) holder;
+        isFollowing(user.getId(), viewHolder.btn_follow);
             viewHolder.btn_follow.setVisibility(View.VISIBLE);
             if (user.getUsername() != null) {
                 viewHolder.username.setText(
@@ -88,7 +89,6 @@ public class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             } else {
                 viewHolder.btn_follow.setVisibility(View.GONE);
             }
-
 
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -199,7 +199,6 @@ public class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     button.setPadding(0,0,0,5);
                     button.setBackgroundColor(button.getResources().getColor(R.color.white));
                     button.setShadowLayer(0,0,0,0);
-
                 } else {
                     button.setText("Follow");
                     button.setTextSize(17);
@@ -207,10 +206,8 @@ public class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     button.setPadding(0,0,0,5);
                     button.setTextColor(button.getResources().getColor(R.color.white));
                     button.setBackgroundColor(button.getResources().getColor(R.color.dark_blue));
-
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 

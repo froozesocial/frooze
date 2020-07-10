@@ -1,9 +1,7 @@
 package com.thilojaeggi.frooze;
 
 import android.animation.ValueAnimator;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -15,7 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -30,29 +27,23 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.thilojaeggi.frooze.Adaptor.HashtagAdapter;
 import com.thilojaeggi.frooze.Adaptor.PostAdapter;
-import com.thilojaeggi.frooze.Model.Hashtag;
-import com.thilojaeggi.frooze.Model.Post;
-import com.thilojaeggi.frooze.Model.User;
-import java.util.regex.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.content.Context.MODE_PRIVATE;
 
-
-public class HashtagFragment extends Fragment {
+public class HashtagListFragment extends Fragment {
     private RecyclerView recyclerView;
     private HashtagAdapter hashtagAdapter;
     private PostAdapter.ViewHolder viewHolder;
-    private List<Hashtag> hashtagLists;
+    private List<String> hashtagLists;
 
 
 
     private SimpleExoPlayer mPlayer;
-
-    final float startSize = 33; // Size in pixels
+    final float startSize = 33;
     final float endSize = 20;
-    long animationDuration = 175; // Animation duration in ms
+    long animationDuration = 175;
     LinearLayoutManager linearLayoutManager;
 
     @Override
@@ -65,7 +56,7 @@ public class HashtagFragment extends Fragment {
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
-        hashtagLists = new ArrayList<>();
+        hashtagLists = new ArrayList<String>();
         hashtagAdapter = new HashtagAdapter(getContext(), hashtagLists);
         recyclerView.setAdapter(hashtagAdapter);
         TextView users = rootView.findViewById(R.id.users);
@@ -146,8 +137,9 @@ public class HashtagFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 hashtagLists.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Hashtag hashtag = snapshot.getValue(Hashtag.class);
-                    hashtagLists.add(hashtag);
+              //      Hashtag hashtag = snapshot.getValue(Hashtag.class);
+                    String hashtagkey = snapshot.getKey().toString();
+                    hashtagLists.add(hashtagkey);
                 }
                 hashtagAdapter.notifyDataSetChanged();
             }
@@ -165,8 +157,9 @@ public class HashtagFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 hashtagLists.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Hashtag hashtag = snapshot.getValue(Hashtag.class);
-                            hashtagLists.add(hashtag);
+                   // Hashtag hashtag = snapshot.getValue(Hashtag.class);
+                    String hashtagkey = snapshot.getKey().toString();
+                    hashtagLists.add(hashtagkey);
                 }
                 hashtagAdapter.notifyDataSetChanged();
             }

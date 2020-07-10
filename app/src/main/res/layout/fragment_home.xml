@@ -28,42 +28,71 @@
             android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
             app:cardCornerRadius="20dp"
-            android:backgroundTint="#FFFFFF"
-            android:layout_marginTop="2dp">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sortbynew"
-                    android:id="@+id/newposts"
-                    android:layout_marginEnd="5dp"
-                    android:textSize="14sp"
-                    android:layout_marginStart="7dp"
-                    android:textColor="@color/black"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sortbytrending"
-                    android:id="@+id/trendingposts"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginStart="7dp"
-                    android:textSize="14sp"
 
-                    android:textColor="@color/black"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sortbyfollowing"
-                    android:id="@+id/followingposts"
-                    android:textSize="18sp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginStart="7dp"
-                    android:textColor="@color/black"/>
-        </LinearLayout>
+            android:layout_marginTop="2dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="20dp"
+                    android:weightSum="3">
+                        <LinearLayout
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_height="match_parent">
+
+                                <TextView
+                                    android:id="@+id/newposts"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="10dp"
+                                    android:text="@string/sortbynew"/>
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_marginStart="20dp"
+
+                            android:layout_weight="1"
+                            android:layout_height="match_parent">
+                                <TextView
+                                    android:id="@+id/trendingposts"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/sortbytrending"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="10dp"
+                                    />
+
+
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="20dp"
+
+                            android:layout_height="match_parent">
+                                <TextView
+                                    android:id="@+id/followingposts"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="10dp"
+                                    android:text="@string/sortbyfollowing"/>
+
+
+                        </LinearLayout>
+                </LinearLayout>
+
         </androidx.cardview.widget.CardView>
 <TextView
     android:id="@+id/listempty"

@@ -1,5 +1,6 @@
 package com.thilojaeggi.frooze;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,10 +68,11 @@ public class NewPostsFragment extends Fragment {
         mAdView.loadAd(adRequest);
         TextView newposts = rootView.findViewById(R.id.newposts);
         TextView followingposts = rootView.findViewById(R.id.followingposts);
-        followingposts.setTextSize(14);
+        followingposts.setTextSize(13);
         TextView trendingposts = rootView.findViewById(R.id.trendingposts);
-        trendingposts.setTextSize(14);
-        newposts.setTextSize(18);
+        trendingposts.setTextSize(13);
+        newposts.setTextSize(17);
+        newposts.setTypeface(newposts.getTypeface(), Typeface.BOLD);
         followingposts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

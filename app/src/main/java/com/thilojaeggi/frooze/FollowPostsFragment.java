@@ -1,6 +1,7 @@
 package com.thilojaeggi.frooze;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -115,9 +116,11 @@ public class FollowPostsFragment extends Fragment {
         TextView newposts = rootView.findViewById(R.id.newposts);
         TextView trendingposts = rootView.findViewById(R.id.trendingposts);
         TextView followingposts = rootView.findViewById(R.id.followingposts);
-        trendingposts.setTextSize(14);
-        newposts.setTextSize(14);
-        followingposts.setTextSize(18);
+        trendingposts.setTextSize(13);
+        newposts.setTextSize(13);
+        followingposts.setTextSize(17);
+        followingposts.setTypeface(followingposts.getTypeface(), Typeface.BOLD);
+
         emptylist = rootView.findViewById(R.id.listempty);
         newposts.setOnClickListener(new View.OnClickListener() {
             @Override

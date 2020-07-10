@@ -4,7 +4,7 @@
     <string name="app_name">frooze</string>
     <string name="home">Home</string>
     <string name="search">Suche</string>
-    <string name="notifications">Benachrichtigungen</string>
+    <string name="notifications">Posteingang</string>
     <string name="profile">Profil</string>
 
     <string name="read_file">This app needs access to your file storage so that it can read video.</string>
@@ -139,4 +139,18 @@
     <string name="permstorage">Wird benötigt um Videos aus der Gallerie zu wählen</string>
     <string name="permcamera">Wird benötigt um Videos aufzunehmen</string>
     <string name="signupconfirm">Wenn du fortfährst, akzeptierst du frooze\'s &lt;a href=https://frooze.ch/?page_id=83621>Nutzungsbedingungen&lt;/a> und bestätigst, dass du unsere &lt;a href=https://frooze.ch/?page_id=83575>Datenschutzerklärung&lt;/a> gelesen hast.</string>
+
+    <!-- Rating -->
+    <string name="rate_dialog_title">frooze bewerten</string>
+    <string name="rate_dialog_message">Falls du ein fan von froze bist dann bewerte uns bitte im Play Store.</string>
+    <string name="rate_dialog_action_rate">Bewerten</string>
+    <string name="rate_dialog_action_never">Nein Danke</string>
+    <string name="rate_dialog_action_later">Später</string>
+    <string name="rate_dialog_thank_you">Danke</string>
+
+    <string-array name="exploretabs">
+        <item>Neu</item>
+        <item>Trending</item>
+        <item>Ich folge</item>
+    </string-array>
 </resources>

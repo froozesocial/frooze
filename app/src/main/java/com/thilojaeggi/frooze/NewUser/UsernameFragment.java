@@ -60,7 +60,7 @@ public class UsernameFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editor.putString("username", username.getText().toString());
+                editor.putString("username", username.getText().toString().toLowerCase());
                 editor.apply();
             }
 

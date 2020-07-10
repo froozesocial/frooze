@@ -1,33 +1,22 @@
 package com.thilojaeggi.frooze;
 
 import android.animation.ValueAnimator;
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.RequestConfiguration;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,9 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.thilojaeggi.frooze.Adaptor.UserAdapter;
 import com.thilojaeggi.frooze.Model.User;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SearchFragment extends Fragment {
@@ -69,30 +56,25 @@ public class SearchFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
         search_bar = view.findViewById(R.id.search_bar);
         userList = new ArrayList<>();
         userAdapter = new UserAdapter(getContext(), userList);
         recyclerView.setAdapter(userAdapter);
-        Runnable r = new Runnable() {
-            @Override
-            public void run(){
-                readUsers();
-            }
-        };
-        Handler h = new Handler();
-        h.postDelayed(r, 175);
+        readUsers();
         TextView hashtags = view.findViewById(R.id.hashtags);
         hashtags.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment hashtagfrag= new HashtagFragment();
+                Fragment hashtagfrag= new HashtagListFragment();
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, hashtagfrag)
                         .addToBackStack(null)
                         .commit();
             }
         });
+
         search_bar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -101,7 +83,7 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                searchUsers(s.toString().toLowerCase());
+                searchUsers(s.toString().toLowerCase().replaceAll("\\s",""));
             }
 
             @Override

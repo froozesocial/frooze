@@ -26,7 +26,6 @@
     <color name="colorGradientStart">#0090FF</color>
     <color name="colorGradientCenter">#31EFF6</color>
     <color name="colorGradientEnd">#0048FF</color>
-
     <!-- VIDEO TRIMMER -->
     <color name="background_video_color">#2f3031</color>
     <color name="background_progress_color">#6C6D6D</color>
@@ -47,4 +46,6 @@
     <color name="gnt_ad_green">#3A6728</color>
     <color name="gnt_gray">#808080</color>
     <color name="gnt_outline">#E0E0E0</color>
+
+
 </resources>

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    tools:context=".HashtagFragment"
+    tools:context=".HashtagListFragment"
     android:background="@color/background_color">
 
     <com.google.android.material.appbar.AppBarLayout

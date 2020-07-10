@@ -1,17 +1,12 @@
 package com.thilojaeggi.frooze.Adaptor;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.Handler;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,24 +14,16 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.AbsListView;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.ShareCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,45 +35,13 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.brouding.doubletaplikeview.DoubleTapLikeView;
 import com.bumptech.glide.Glide;
-import com.cloudinary.Cloudinary;
-import com.cloudinary.Search;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DataSpec;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.Cache;
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
-import com.google.android.exoplayer2.util.Util;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -97,26 +52,22 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.ShortDynamicLink;
-import com.thilojaeggi.frooze.CommentsActivity;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
+import com.thilojaeggi.frooze.CommentFragment;
 import com.thilojaeggi.frooze.Model.Post;
 import com.thilojaeggi.frooze.Model.User;
-import com.thilojaeggi.frooze.OnSwipeTouchListener;
-import com.thilojaeggi.frooze.PostActivity;
 import com.thilojaeggi.frooze.ProfileFragment;
 import com.thilojaeggi.frooze.R;
-import com.thilojaeggi.frooze.SearchFragment;
-import com.thilojaeggi.frooze.ViewHashtagFragment;
+import com.thilojaeggi.frooze.GridView;
 import com.volokh.danylo.hashtaghelper.HashTagHelper;
 
-import org.w3c.dom.Text;
-
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import im.ene.toro.CacheManager;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.exoplayer.Config;
@@ -124,6 +75,7 @@ import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 import im.ene.toro.exoplayer.MediaSourceBuilder;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
+import okhttp3.OkHttpClient;
 
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> implements ExoPlayer.EventListener {
@@ -133,18 +85,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
     Uri uri;
     Post post;
     Config config;
-    private static long cacheFile = 2 * 2048 * 2048;
+    private static long cacheFile = 90 * 1024 * 1024;
     SimpleCache cache;
     DatabaseReference reference;
     ValueEventListener listener, likelistener, nrlikelistener;
-    CommentsActivity commentsActivity;
+    CommentFragment commentsActivity;
     private SimpleExoPlayer mPlayer;
     private HashTagHelper mTextHashTagHelper;
     private static final int CONTENT_TYPE = 0;
     private static final int AD_TYPE = 1;
     private int[] viewTypes;
     public int viewType;
+    OkHttpClient client = new OkHttpClient();
     DatabaseReference likereference;
+    private FirebaseFunctions mFunctions;
+// ...
     public PostAdapter(Context mContext, List<Post> mPost) {
         this.mContext = mContext;
         this.mPost = mPost;
@@ -161,6 +116,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
       firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        post = mPost.get(i);
 
       /*    viewHolder.setIsRecyclable(true);
         //URL of the video to stream
@@ -439,6 +395,33 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
             }
         });
         */
+        viewHolder.doubletap.setOnTapListener(new DoubleTapLikeView.OnTapListener() {
+            @Override
+            public void onDoubleTap(View view) {
+                if (post.getPostid() != null && !post.getPostid().isEmpty()) {
+                    if (viewHolder.like.getTag().equals("like")) {
+                        FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
+                                .child(firebaseUser.getUid()).setValue(true);
+                        sendNotification(post.getPublisher(), post.getPostid());
+
+                    } else {
+                        FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
+                                .child(firebaseUser.getUid()).removeValue();
+                    }
+                } else {
+                    Toast.makeText(mContext, "Error", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onTap() {
+                if (viewHolder.isPlaying()){
+                    viewHolder.pause();
+                } else {
+                    viewHolder.play();
+                }
+            }
+        });
     }
 
 
@@ -483,6 +466,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
         CardView buttonscv;
         @BindView(R.id.doubletap)
         DoubleTapLikeView doubletap;
+
         ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -494,6 +478,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
             if (item != null) {
                 mediaUri = item;
             }
+
         }
 
         @NonNull @Override public View getPlayerView() {
@@ -502,22 +487,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
 
         @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
             return helper != null ? helper.getLatestPlaybackInfo() : new PlaybackInfo();
-
         }
-
         @Override
         public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
-           try {
-
-           } catch (Exception e){
-            
-           }
-
-            config = new Config.Builder().setMediaSourceBuilder(MediaSourceBuilder.LOOPING)
-                    .setCache(cache)
-                    .build();//this is use for lopping
             post = mPost.get(getPosition());
             publisherInfo(profileimage, username, post.getPublisher());
+            config = new Config.Builder()
+                    .setMediaSourceBuilder(MediaSourceBuilder.LOOPING)
+                    .build();
             if (post.getPostid() != null && !post.getPostid().isEmpty()){
                 isLiked(post.getPostid(), like);
                 nrLikes(likes, post.getPostid());
@@ -529,14 +506,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
             }
             if (post.getTextColor() != null && !post.getTextColor().isEmpty()){
                 if (post.getTextColor().equals("black")){
+                    username.setTextColor(Color.BLACK);
                     description.setTextColor(Color.BLACK);
                 } else {
+                    username.setTextColor(Color.WHITE);
                     description.setTextColor(Color.WHITE);
                 }
             } else {
                 description.setTextColor(Color.WHITE);
             }
-            // For trending function
             if (post.getPostid() != null && !post.getPostid().isEmpty()){
             FirebaseDatabase.getInstance().getReference("Posts").child(post.getPostid()).child("trendingviewedby").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
             }
@@ -585,23 +563,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                                                         queue.add(reportRequest);
 
                                                     }
-                                                    if (item.toString().equals("Delete") && post.getPublisher().equals(firebaseUser.getUid())){
+                                                    if (item.toString().equals("Delete") && post.getPublisher().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                                        deletePost(post.getPostid());
                                                         RequestQueue queue = Volley.newRequestQueue(mContext);
-                                                        String url = "https://maker.ifttt.com/trigger/postdeleted/with/key/bX8uNSFbAeoqUKPdfSztoA?value1=" + post.getPostid();
-                                                        StringRequest reportRequest = new StringRequest(Request.Method.POST, url,
+                                                        String url = "https://maker.ifttt.com/trigger/postdeleted/with/key/bX8uNSFbAeoqUKPdfSztoA?value1="+post.getPostid();
+                                                        StringRequest deleteRequest = new StringRequest(Request.Method.POST, url,
                                                                 new Response.Listener<String>() {
                                                                     @Override
                                                                     public void onResponse(String response) {
-                                                                        Toast.makeText(mContext, "Successfully reported", Toast.LENGTH_SHORT).show();
                                                                         // Display the first 500 characters of the response string.
                                                                     }
                                                                 }, new Response.ErrorListener() {
                                                             @Override
                                                             public void onErrorResponse(VolleyError error) {
-                                                                Toast.makeText(mContext, "An error occured. Please contact support.", Toast.LENGTH_LONG).show();
                                                             }
                                                         });
-                                                        queue.add(reportRequest);
+                                                        queue.add(deleteRequest);
+                                                        String postid = post.getPostid();
+                                                        FirebaseDatabase.getInstance().getReference("Posts").child(postid).removeValue();
+                                                        FirebaseDatabase.getInstance().getReference("Comments").child(postid).removeValue();
+                                                        FirebaseDatabase.getInstance().getReference("Likes").child(postid).removeValue();
+
                                                     }
                                                     return true;
                                                 }
@@ -669,7 +651,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
             if (post.getPostvideo() != null && !post.getPostvideo().isEmpty()){
                 uri = Uri.parse(post.getPostvideo());
             } else {
-                uri = Uri.parse("https://res.cloudinary.com/frooze/video/upload/v1591303571/piu9bb4bk0tj0m8yv2us.m3u8");
+                uri = Uri.parse("https://res.cloudinary.com/froozecdn/video/upload/v1593292413/novideo.m3u8");
             }
             FirebaseAuth user = FirebaseAuth.getInstance();
             String uid = user.getUid();
@@ -679,29 +661,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                 sharepost(username);
                 }
             });
-            doubletap.setOnTapListener(new DoubleTapLikeView.OnTapListener() {
-                @Override
-                public void onDoubleTap(View view) {
-                    if (post.getPostid() != null && !post.getPostid().isEmpty()) {
-                        if (like.getTag().equals("like")) {
-                            FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
-                                    .child(firebaseUser.getUid()).setValue(true);
-                            sendNotification(post.getPublisher(), post.getPostid());
 
-                        } else {
-                            FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
-                                    .child(firebaseUser.getUid()).removeValue();
-                        }
-                    } else {
-                        Toast.makeText(mContext, "Error", Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onTap() {
-
-                }
-            });
             like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -725,7 +685,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                     editor.putString("publisher", post.getPublisher());
                     editor.apply();
                     commentsActivity =
-                            CommentsActivity.newInstance();
+                            CommentFragment.newInstance();
                     commentsActivity.show(((FragmentActivity)mContext).getSupportFragmentManager(),
                             "comments");
 
@@ -746,7 +706,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                         FragmentTransaction transaction = ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction();
                         transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,R.anim.slide_in_left, R.anim.slide_out_right);
                         transaction.replace(R.id.fragment_container,
-                                new ViewHashtagFragment()).addToBackStack(null).commit();
+                                new GridView()).addToBackStack(null).commit();
                     }
                 });
                 mTextHashTagHelper.handle(description);
@@ -924,6 +884,20 @@ public void sharepost(TextView username){
     public void clear() {
         mPost.clear();
         notifyDataSetChanged();
+    }
+    private void deletePost(String postid) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("postid", postid);
+        FirebaseFunctions.getInstance() // Optional region: .getInstance("europe-west1")
+                .getHttpsCallable("deletePost")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+            @Override
+            public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                String result = (String) task.getResult().getData();
+                return result;
+            }
+        });
     }
 
 

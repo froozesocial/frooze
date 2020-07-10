@@ -1,90 +1,54 @@
 package com.thilojaeggi.frooze;
 
 import android.Manifest;
-import android.app.ActivityOptions;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import com.cloudinary.Cloudinary;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
-import com.cloudinary.android.preprocess.ImagePreprocessChain;
-import com.cloudinary.android.preprocess.Limit;
-import com.cloudinary.utils.ObjectUtils;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
-
-import com.thilojaeggi.frooze.Model.Post;
-
-import org.w3c.dom.Text;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.net.URL;
-import java.text.SimpleDateFormat;
+import com.sandrios.sandriosCamera.internal.SandriosCamera;
+import com.sandrios.sandriosCamera.internal.configuration.CameraConfiguration;
+import com.sandrios.sandriosCamera.internal.ui.model.Media;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import life.knowledge4.videotrimmer.interfaces.OnTrimVideoListener;
 import life.knowledge4.videotrimmer.utils.FileUtils;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
-import static android.media.MediaRecorder.VideoSource.CAMERA;
-
-
 public class PostActivity extends AppCompatActivity {
     TextView post;
-
     private static final int Gallery = 0x01;
     private static final int Camera = 2;
     private static final int VIDEO_TRIMMER = 3;
+    private AppCompatActivity activity;
 
     static final String EXTRA_VIDEO_PATH = "EXTRA_VIDEO_PATH";
     public static final int MULTIPLE_PERMISSIONS = 10;
@@ -94,11 +58,13 @@ public class PostActivity extends AppCompatActivity {
     String[] permissions = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.RECORD_AUDIO};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity = this;
         setContentView(R.layout.activity_post);
         post = findViewById(R.id.post);
         textcolorvalue ="white";
@@ -107,15 +73,6 @@ public class PostActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Sign in first", Toast.LENGTH_SHORT).show();
             finish();
         }
-        ArrayList<String> colors = new ArrayList<>();
-        colors.add("#82B926");
-        colors.add("#a276eb");
-        colors.add("#6a3ab2");
-        colors.add("#666666");
-        colors.add("#FFFF00");
-        colors.add("#3C8D2F");
-        colors.add("#FA9F00");
-        colors.add("#FF0000");
         textcolor = findViewById(R.id.textcolor);
         textcolor.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,6 +242,24 @@ public class PostActivity extends AppCompatActivity {
             }
         }
         }
+        if (resultCode == Activity.RESULT_OK
+                && requestCode == SandriosCamera.RESULT_CODE
+                && data != null) {
+            if (data.getSerializableExtra(SandriosCamera.MEDIA) instanceof Media) {
+                Media media = (Media) data.getSerializableExtra(SandriosCamera.MEDIA);
+                VideoView preview = findViewById(R.id.video_added);
+                preview.setVideoURI(Uri.parse(media.getPath()));
+                preview.start();
+                preview.start();
+                TextView post = findViewById(R.id.post);
+                post.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        uploadVideoCloudinary(Uri.parse(media.getPath()));
+                    }
+                });
+            }
+        }
 }
     private void startTrimActivity(@NonNull Uri uri) {
             Intent intent = new Intent(this, TrimVideoActivity.class);
@@ -302,11 +277,17 @@ public class PostActivity extends AppCompatActivity {
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             startActivityForResult(Intent.createChooser(intent, "Video"), Gallery);
 
+
     }
     private void takeVideoFromCamera() {
 
-            Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-            startActivityForResult(intent, Camera);
+        SandriosCamera
+                .with()
+                .setShowPicker(true)
+                .setVideoFileSize(30)
+                .setMediaAction(CameraConfiguration.MEDIA_ACTION_VIDEO)
+                .launchCamera(activity);
+
     }
     private void uploadVideoCloudinary(Uri videoUri) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -314,7 +295,6 @@ public class PostActivity extends AppCompatActivity {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
         mProgressDialog.show();
         String postid = reference.push().getKey();
-
         MediaManager.get().upload(videoUri)
                 .maxFileSize(62914560)
                 .option("public_id", "frooze/posts/" + uid + "/" + postid)
@@ -347,13 +327,12 @@ public class PostActivity extends AppCompatActivity {
                                     tags.add(hashtag);
                                     String hashtagwithouthash = hashtag.replace("#","").toLowerCase();
                                     DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Hashtags").child(hashtagwithouthash);
-                                    reference.child("hashtag").setValue(hashtagwithouthash);
                                     reference.child("posts").child(postid).setValue(true);
                                 }
                             }
                         }
-                        String hls = resultData.get("secure_url").toString().replace("mp4","m3u8");
-
+                        String hls = resultData.get("secure_url").toString().replace("mp4", "m3u8");
+                        String lowquality = hls.replace("/video/upload/", "/video/upload/q_40/");
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                         String uid = user.getUid();
                         Switch dangerousswitch = findViewById(R.id.dangerousswitch);
@@ -361,15 +340,13 @@ public class PostActivity extends AppCompatActivity {
                         HashMap<String, Object> hashMap = new HashMap<>();
                         hashMap.put("dangerous", switchState.toString());
                         hashMap.put("postid", postid);
-                        hashMap.put("postvideo", hls);
+                        hashMap.put("postvideo", lowquality);
                         hashMap.put("description", description.getText().toString());
                         hashMap.put("trendingviews", 0);
                         hashMap.put("textcolor", textcolorvalue);
                         hashMap.put("publisher", uid);
                         reference.child(postid).setValue(hashMap);
-
                         Toast.makeText(getApplicationContext(), getString(R.string.success),Toast.LENGTH_LONG).show();
-                        //ringProgressBar.setVisibility(View.INVISIBLE);
                         mProgressDialog.dismiss();
                         finish();
                     }
@@ -432,11 +409,8 @@ public class PostActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "These permissions are necessary", Toast.LENGTH_LONG).show();
                             finish();
                         }
-
                     }
-
-                    // Show permissionsDenied
-                    //updateViews();
+                    showDialog();
                 }
                 return;
             }

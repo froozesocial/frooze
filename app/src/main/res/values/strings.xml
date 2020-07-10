@@ -129,7 +129,7 @@
 
     <!-- Search -->
     <string name="searchhint">Search…</string>
-    <string name="notificationstab">Notifications</string>
+    <string name="notificationstab">Notifs</string>
 
     <string name="cancel">Cancel</string>
     <string name="save">Ok</string>
@@ -144,4 +144,19 @@
 
     <string name="twitter_consumer_key" translatable="false">5b58Ow8AVJfdv89KZIzBoJ6Jj</string>
     <string name="twitter_consumer_secret" translatable="false">Tx1tcn03GvNodHnO2335PUGguDw3LDCetFUb662UNmnYzIoqhS</string>
+
+    <!-- Rating -->
+    <string name="rate_dialog_title">Rate us</string>
+    <string name="rate_dialog_message">If you enjoy using %s, please help us by rating it. It only takes a few seconds!</string>
+    <string name="rate_dialog_action_rate">Rate</string>
+    <string name="rate_dialog_action_never">No, thanks</string>
+    <string name="rate_dialog_action_later">Later</string>
+    <string name="rate_dialog_thank_you">Thank you!</string>
+
+    <string-array name="exploretabs">
+        <item>New</item>
+        <item>Trending</item>
+        <item>Following</item>
+    </string-array>
+
 </resources>

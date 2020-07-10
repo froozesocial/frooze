@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,8 +26,6 @@ import com.thilojaeggi.frooze.Model.User;
 import com.thilojaeggi.frooze.PostFromLink;
 import com.thilojaeggi.frooze.ProfileFragment;
 import com.thilojaeggi.frooze.R;
-import com.thilojaeggi.frooze.SearchFragment;
-import com.thilojaeggi.frooze.ShowSinglePost;
 
 import java.util.List;
 

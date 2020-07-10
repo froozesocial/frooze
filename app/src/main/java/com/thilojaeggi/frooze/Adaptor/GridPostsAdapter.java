@@ -2,7 +2,6 @@ package com.thilojaeggi.frooze.Adaptor;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +39,7 @@ public class GridPostsAdapter extends RecyclerView.Adapter<GridPostsAdapter.View
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.hashtag_post, viewGroup, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.grid_item, viewGroup, false);
         return new GridPostsAdapter.ViewHolder(view);
     }
 
@@ -50,58 +49,25 @@ public class GridPostsAdapter extends RecyclerView.Adapter<GridPostsAdapter.View
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         Post post = mPost.get(i);
         if (post.getPostvideo() != null && !post.getPostvideo().isEmpty()){
-            thumbnailurl = post.getPostvideo().replace("m3u8","jpg");
+            String thumbnailgif = post.getPostvideo().replace("m3u8","jpg");
+            thumbnailurl = thumbnailgif.replace("/video/upload/", "/video/upload/q_30/");
         } else {
             thumbnailurl = "https://res.cloudinary.com/frooze/video/upload/paiiyo6qjfca5bktzhuc.jpg";
-
         }
         RoundingParams roundingParams = RoundingParams.fromCornersRadius(5f);
         roundingParams.setBorder(mContext.getResources().getColor(R.color.transparent), 0f);
         viewHolder.thumbnail.setHierarchy(new GenericDraweeHierarchyBuilder(mContext.getResources())
                 .setRoundingParams(roundingParams)
                 .build());
+
         viewHolder.thumbnail.setImageURI(Uri.parse(thumbnailurl));
         System.out.println(post.getPostid());
         viewHolder.cardview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (post.getPostvideo() != null && !post.getPostvideo().isEmpty()){
-                    postvideo = post.getPostvideo();
-                } else {
-                    postvideo = "https://res.cloudinary.com/frooze/video/upload/paiiyo6qjfca5bktzhuc.m3u8";
-                }
-                if (post.getPublisher() != null && !post.getPublisher().isEmpty()){
-                    publisher = post.getPublisher();
-                } else {
-                    publisher ="Error";
-                }
-                if (post.getPostid() != null && !post.getPostid().isEmpty()){
-                    postid = post.getPostid();
-                } else {
-                    postid ="Error";
-                }
-                if (post.getDescription() != null){
-                    description = post.getDescription();
-                } else {
-                    description ="Error";
-                }
-                if (post.getTextColor() != null && !post.getTextColor().isEmpty()){
-                    if (post.getTextColor().equals("black")){
-                        textcolor = "black";
-                    } else {
-                        textcolor = "white";
 
-                    }
-                } else {
-                    textcolor = "white";
-                }
                 SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
-                editor.putString("postid", postid);
-                editor.putString("publisher", publisher);
-                editor.putString("postvideo", postvideo);
-                editor.putString("description", description);
-                editor.putString("textcolor", textcolor);
-
+                editor.putInt("position", viewHolder.getAdapterPosition());
                 editor.apply();
                 FragmentTransaction transaction = ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.slide_in_bottom,

@@ -2,11 +2,15 @@ package com.thilojaeggi.frooze;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -47,7 +51,9 @@ import java.util.List;
 public class SettingsActivity extends AppCompatActivity {
     FirebaseUser user;
     List<String> listposts = new ArrayList<String>();
-    TemplateView adView;
+    Integer selection;
+    SharedPreferences.Editor editor;
+    SharedPreferences prefs;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +80,39 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         });
-
+        editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+        prefs = getSharedPreferences("PREFS", MODE_PRIVATE);
+        Button selectdefaulttab = findViewById(R.id.defaulttab);
+        selectdefaulttab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selection = prefs.getInt("selectdefaulttab", 1);
+                String[] exploretabitems = getResources().getStringArray(R.array.exploretabs);
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(SettingsActivity.this);
+                mBuilder.setTitle("Choose default tab");
+                mBuilder.setSingleChoiceItems(exploretabitems, selection, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        selection = i;
+                        editor.putInt("selectdefaulttab", i);
+                        String selection = "Selection: " + i;
+                        Toast.makeText(getApplicationContext(), selection, Toast.LENGTH_SHORT).show();
+                        editor.apply();
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run(){
+                                dialogInterface.dismiss();
+                            }
+                        };
+                        Handler h = new Handler();
+                        h.postDelayed(r, 500);
+                    }
+                });
+                AlertDialog mDialog = mBuilder.create();
+                mDialog.setIcon(R.drawable.ic_baseline_library_music_24);
+                mDialog.show();
+            }
+        });
         Button privacypolicy = findViewById(R.id.privacypolicy);
         privacypolicy.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +124,7 @@ public class SettingsActivity extends AppCompatActivity {
         oss.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), AdActivity.class));
+                startActivity(new Intent(getApplicationContext(), OssLicensesMenuActivity.class));
             }
         });
 
@@ -141,18 +179,13 @@ public class SettingsActivity extends AppCompatActivity {
                                     }
                                 });
                                 queue.add(deleteRequest);
-                                user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                        FirebaseAuth.getInstance().signOut();
-                                        Toast.makeText(getApplicationContext(), getString(R.string.accountdeleted), Toast.LENGTH_LONG).show();
-                                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(intent);
-                                        dialog.cancel();
-                                    }
-                                });
+                                user.delete();
+                                FirebaseAuth.getInstance().signOut();
+                                Toast.makeText(getApplicationContext(), getString(R.string.accountdeleted), Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                dialog.cancel();
 
                             }
                         })

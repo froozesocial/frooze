@@ -21,7 +21,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.thilojaeggi.frooze.LoginActivity;
 import com.thilojaeggi.frooze.MainActivity;
 import com.thilojaeggi.frooze.R;
 
@@ -44,9 +43,7 @@ public class NewUser extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment visibleFragment = getCurrentFragment();
-                String[] currentFragment = visibleFragment.toString().split("\\{");
-                if (currentFragment[0].equals("UsernameFragment")) {
+                if (getCurrentFragment().equals("UsernameFragment")) {
                     String username = prefs.getString("username", "none");
                     if (username.length() >8) {
                         Toast.makeText(getApplicationContext(), getString(R.string.toolonguser), Toast.LENGTH_LONG).show();
@@ -54,7 +51,7 @@ public class NewUser extends AppCompatActivity {
                         usernamecheck(username);
                     }
                 }
-                if (currentFragment[0].equals("NicknameFragment")) {
+                if (getCurrentFragment().equals("NicknameFragment")) {
                     String username = prefs.getString("username", "none");
                     String nickname = prefs.getString("nickname", "none");
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -105,10 +102,10 @@ public class NewUser extends AppCompatActivity {
             }
         });
     }
-    Fragment getCurrentFragment()
-    {
-        Fragment currentFragment = getSupportFragmentManager()
+    String getCurrentFragment() {
+        Fragment visiblefragment = getSupportFragmentManager()
                 .findFragmentById(R.id.newusercontainer);
-        return currentFragment;
+        String[] currentFragment = visiblefragment.toString().split("\\{");
+        return currentFragment[0];
     }
 }

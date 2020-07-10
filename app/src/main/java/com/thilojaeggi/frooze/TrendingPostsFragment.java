@@ -1,5 +1,6 @@
 package com.thilojaeggi.frooze;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +62,6 @@ public class TrendingPostsFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
         postLists = new ArrayList<>();
         postAdapter = new PostAdapter(getContext(), postLists);
-
         recyclerView.setAdapter(postAdapter);
         readPosts();
         PagerSnapHelper helper = new PagerSnapHelper();
@@ -72,9 +72,11 @@ public class TrendingPostsFragment extends Fragment {
         TextView followingposts = rootView.findViewById(R.id.followingposts);
         TextView newposts = rootView.findViewById(R.id.newposts);
         TextView trendingposts = rootView.findViewById(R.id.trendingposts);
-        trendingposts.setTextSize(18);
-        newposts.setTextSize(14);
-        followingposts.setTextSize(14);
+        trendingposts.setTextSize(17);
+        trendingposts.setTypeface(trendingposts.getTypeface(), Typeface.BOLD);
+
+        newposts.setTextSize(13);
+        followingposts.setTextSize(13);
         followingposts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

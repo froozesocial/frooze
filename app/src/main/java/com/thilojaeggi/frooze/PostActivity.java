@@ -54,6 +54,7 @@ public class PostActivity extends AppCompatActivity {
     public static final int MULTIPLE_PERMISSIONS = 10;
     Button textcolor;
     String textcolorvalue;
+    EditText description;
     private static ProgressDialog mProgressDialog;
     String[] permissions = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -66,6 +67,8 @@ public class PostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         activity = this;
         setContentView(R.layout.activity_post);
+        description = findViewById(R.id.description);
+
         post = findViewById(R.id.post);
         textcolorvalue ="white";
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -89,16 +92,16 @@ public class PostActivity extends AppCompatActivity {
                         .setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
                             @Override
                             public void onChooseColor(int position, int color) {
-                                Log.d("position", "" + position);// will be fired only when OK button was tapped
                                 textcolor.setBackgroundColor(color);
                                 if (position == 1){
                                     textcolor.setTextColor(Color.WHITE);
                                     textcolorvalue = "black";
-
                                 }
+                                description.setTextColor(color);
                                 textcolor.setBackgroundColor(color);
                                 if (position == 0){
                                     textcolor.setTextColor(Color.BLACK);
+
                                     textcolorvalue = "white";
                                 }
                             }
@@ -317,7 +320,6 @@ public class PostActivity extends AppCompatActivity {
 
                     @Override
                     public void onSuccess(String requestId, Map resultData) {
-                        EditText description = findViewById(R.id.description);
                         String text = description.getText().toString();
                         if (!text.isEmpty()){
                             String[] hashtags = text.split(" ");

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -91,7 +92,6 @@ public class HashtagListFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String swithouthashtag = s.toString().replaceAll("#","");
-
                 searchHashtags(swithouthashtag.toLowerCase());
             }
 
@@ -128,8 +128,7 @@ public class HashtagListFragment extends Fragment {
 
 
     private void searchHashtags(String s){
-
-        Query query = FirebaseDatabase.getInstance().getReference("Hashtags").orderByChild("hashtag")
+        Query query = FirebaseDatabase.getInstance().getReference("Hashtags").orderByKey()
                 .startAt(s)
                 .endAt(s+"\uf8ff");
         query.addListenerForSingleValueEvent(new ValueEventListener() {

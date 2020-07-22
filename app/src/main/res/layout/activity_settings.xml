@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar3"
         android:layout_width="match_parent"
@@ -92,7 +91,7 @@
         android:id="@+id/defaulttab"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:text="Default Tab"
+        android:text="@string/defaulttab"
         android:textAlignment="viewStart"
         android:textAllCaps="false"
         android:textColor="@color/black"
@@ -181,5 +180,4 @@
             android:layout_alignParentBottom="true"/>
 
     </RelativeLayout>
-
 </LinearLayout>

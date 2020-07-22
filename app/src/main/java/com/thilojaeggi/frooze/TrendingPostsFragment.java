@@ -72,11 +72,9 @@ public class TrendingPostsFragment extends Fragment {
         TextView followingposts = rootView.findViewById(R.id.followingposts);
         TextView newposts = rootView.findViewById(R.id.newposts);
         TextView trendingposts = rootView.findViewById(R.id.trendingposts);
-        trendingposts.setTextSize(17);
-        trendingposts.setTypeface(trendingposts.getTypeface(), Typeface.BOLD);
-
-        newposts.setTextSize(13);
-        followingposts.setTextSize(13);
+        trendingposts.setTextColor(getResources().getColor(R.color.colorPrimary));
+        newposts.setTextColor(getResources().getColor(R.color.white));
+        followingposts.setTextColor(getResources().getColor(R.color.white));
         followingposts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

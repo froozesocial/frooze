@@ -16,8 +16,7 @@
         app:elevation="0dp"
         android:outlineAmbientShadowColor="@color/transparent"
         android:outlineSpotShadowColor="@color/transparent"
-        android:background="@drawable/searchappbar"
-        >
+        android:background="@drawable/searchappbar">
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -57,7 +56,6 @@
                 android:fontFamily="@font/roboto"
                 android:paddingBottom="5dp"
                 android:text="Users"
-                android:layout_marginTop="-15dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold" />
@@ -70,7 +68,6 @@
                 android:fontFamily="@font/roboto"
                 android:paddingBottom="5dp"
                 android:text="Hashtags"
-                android:layout_marginTop="-15dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold" />

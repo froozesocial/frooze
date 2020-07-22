@@ -7,7 +7,7 @@
     <string name="notifications">Posteingang</string>
     <string name="profile">Profil</string>
 
-    <string name="read_file">This app needs access to your file storage so that it can read video.</string>
+    <string name="read_file">Diese Anwendung benötigt Zugriff auf deinen Speicher, damit sie Videos lesen kann.</string>
 
     <!-- Anmeldung/Registrierung/Password Reset -->
     <string name="username">Benutzername</string>
@@ -142,7 +142,7 @@
 
     <!-- Rating -->
     <string name="rate_dialog_title">frooze bewerten</string>
-    <string name="rate_dialog_message">Falls du ein fan von froze bist dann bewerte uns bitte im Play Store.</string>
+    <string name="rate_dialog_message">Falls du ein fan von frooze bist dann bewerte uns bitte im Play Store.</string>
     <string name="rate_dialog_action_rate">Bewerten</string>
     <string name="rate_dialog_action_never">Nein Danke</string>
     <string name="rate_dialog_action_later">Später</string>
@@ -153,4 +153,6 @@
         <item>Trending</item>
         <item>Ich folge</item>
     </string-array>
+    <string name="selectdefaulttab">Standard Tab auswählen</string>
+    <string name="defaulttab">Standard Tab</string>
 </resources>

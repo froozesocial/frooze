@@ -4,16 +4,20 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="0dp"
-    android:layout_marginTop="1dp"
-
+    app:cardCornerRadius="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="?android:attr/selectableItemBackground"
-    >
+    android:background="?android:attr/selectableItemBackground">
 <TextView
     android:id="@+id/hashtag"
     android:layout_width="wrap_content"
@@ -23,9 +27,17 @@
     android:textStyle="bold"
     android:layout_centerVertical="true"
     android:text="#ExampleHashtag"/>
-
+<TextView
+    android:id="@+id/postcount"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="50 posts"
+    android:textSize="20sp"
+    android:layout_centerVertical="true"
+    android:layout_toStartOf="@id/forwardbutton"
+    />
     <ImageButton
-        android:id="@+id/backbutton"
+        android:id="@+id/forwardbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/transparent"
@@ -35,5 +47,7 @@
         android:layout_marginEnd="5dp"
         android:tint="@color/alpha60_black"
         android:src="@drawable/jz_click_back_selector"/>
+
 </RelativeLayout>
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

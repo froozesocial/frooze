@@ -107,7 +107,6 @@ public class FollowPostsFragment extends Fragment {
         postLists = new ArrayList<>();
         postAdapter = new PostAdapter(getContext(), postLists);
         recyclerView.setAdapter(postAdapter);
-        checkFollowing();
         PagerSnapHelper helper = new PagerSnapHelper();
         helper.attachToRecyclerView(recyclerView);
         AdView mAdView = rootView.findViewById(R.id.adView);
@@ -116,12 +115,9 @@ public class FollowPostsFragment extends Fragment {
         TextView newposts = rootView.findViewById(R.id.newposts);
         TextView trendingposts = rootView.findViewById(R.id.trendingposts);
         TextView followingposts = rootView.findViewById(R.id.followingposts);
-        trendingposts.setTextSize(13);
-        newposts.setTextSize(13);
-        followingposts.setTextSize(17);
-        followingposts.setTypeface(followingposts.getTypeface(), Typeface.BOLD);
-
-        emptylist = rootView.findViewById(R.id.listempty);
+        trendingposts.setTextColor(getResources().getColor(R.color.white));
+        newposts.setTextColor(getResources().getColor(R.color.white));
+        followingposts.setTextColor(getResources().getColor(R.color.colorPrimary));
         newposts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,60 +141,56 @@ public class FollowPostsFragment extends Fragment {
 //set adapter
 //You just need to impelement ViewPageAdapter by yourself like a normal RecyclerView.Adpater.
 //        getPlayer();
+        checkFollowing();
 
         return rootView;
     }
 
 
+    private void checkFollowing(){
+        followingList = new ArrayList<>();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("following");
 
-    private void checkFollowing() {
-    followingList = new ArrayList<>();
-        String mUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-         reference = FirebaseDatabase.getInstance().getReference("Follow")
-            .child(mUid)
-            .child("following");
-
-    listener = reference.addValueEventListener(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            followingList.clear();
-            for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                followingList.add(snapshot.getKey());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                followingList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    followingList.add(snapshot.getKey());
+                }
+                readPosts();
             }
-            readPosts();
 
-        }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-        }
-    });
+            }
+        });
     }
 
-    private void readPosts() {
+    private void readPosts(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 postLists.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Post post = snapshot.getValue(Post.class);
                     for (String id : followingList){
-                        if (post.getPublisher() != null && !post.getPublisher().isEmpty() && post.getPublisher().equals(id)) {
+                        if (post.getPublisher().equals(id)){
                             postLists.add(post);
                         }
                     }
                 }
+
                 postAdapter.notifyDataSetChanged();
-                if (postLists.isEmpty()) {
-                    emptylist.setVisibility(View.VISIBLE);
-                }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });

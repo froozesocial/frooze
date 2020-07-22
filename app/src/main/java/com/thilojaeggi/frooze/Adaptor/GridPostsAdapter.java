@@ -6,6 +6,9 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -13,16 +16,27 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.thilojaeggi.frooze.Model.Post;
+import com.thilojaeggi.frooze.Model.User;
 import com.thilojaeggi.frooze.R;
 import com.thilojaeggi.frooze.ShowSinglePost;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class GridPostsAdapter extends RecyclerView.Adapter<GridPostsAdapter.ViewHolder>{
@@ -31,6 +45,7 @@ public class GridPostsAdapter extends RecyclerView.Adapter<GridPostsAdapter.View
     private FirebaseUser firebaseUser;
     String postvideo, postid, publisher, description, textcolor;
     String thumbnailurl;
+    SharedPreferences prefs;
     public GridPostsAdapter(Context mContext, List<Post> mPost) {
         this.mContext = mContext;
         this.mPost = mPost;
@@ -66,7 +81,7 @@ public class GridPostsAdapter extends RecyclerView.Adapter<GridPostsAdapter.View
             @Override
             public void onClick(View v) {
 
-                SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
+                SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
                 editor.putInt("position", viewHolder.getAdapterPosition());
                 editor.apply();
                 FragmentTransaction transaction = ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction();
@@ -78,9 +93,43 @@ public class GridPostsAdapter extends RecyclerView.Adapter<GridPostsAdapter.View
                         new ShowSinglePost()).addToBackStack(null).commit();
             }
         });
+        prefs = mContext.getSharedPreferences("PREFS", MODE_PRIVATE);
+        String type = prefs.getString("type", "null");
+        if (!type.equals("user")){
+            publisherInfo(viewHolder.profile, viewHolder.username, post.getPublisher());
+            if (post.getTextColor().equals("black")){
+                viewHolder.username.setTextColor(mContext.getResources().getColor(R.color.black));
+            }
+        }
+    }
+    private void publisherInfo(ImageView image_profile, TextView username, String userid) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if (user != null) {
+                    if (user.getImageurl() != null && !user.getImageurl().isEmpty()) {
+                        Glide.with(mContext)
+                                .load(user.getImageurl())
+                                .into(image_profile);
+                    } else {
+                        Toast.makeText(mContext, "Error", Toast.LENGTH_SHORT).show();
+
+                    }
+                    if (user.getUsername() != null && !user.getUsername().isEmpty()) {
+                        username.setText(user.getUsername());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
-
 
     @Override
     public int getItemCount() {
@@ -90,12 +139,15 @@ public class GridPostsAdapter extends RecyclerView.Adapter<GridPostsAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         CardView cardview;
+        TextView username;
+        CircleImageView profile;
         SimpleDraweeView thumbnail;
         ViewHolder(View itemView) {
             super(itemView);
+            username = itemView.findViewById(R.id.username);
             cardview = itemView.findViewById(R.id.cardview);
             thumbnail = itemView.findViewById(R.id.thumbnail);
-
+            profile = itemView.findViewById(R.id.profile);
         }
     }
 

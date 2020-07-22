@@ -17,6 +17,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,12 +37,14 @@ import com.android.volley.toolbox.Volley;
 import com.brouding.doubletaplikeview.DoubleTapLikeView;
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -77,6 +80,8 @@ import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
 import okhttp3.OkHttpClient;
 
+import static java.util.Objects.requireNonNull;
+
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> implements ExoPlayer.EventListener {
     public Context mContext;
@@ -85,20 +90,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
     Uri uri;
     Post post;
     Config config;
-    private static long cacheFile = 90 * 1024 * 1024;
-    SimpleCache cache;
+    Runnable runnable;
     DatabaseReference reference;
     ValueEventListener listener, likelistener, nrlikelistener;
     CommentFragment commentsActivity;
     private SimpleExoPlayer mPlayer;
     private HashTagHelper mTextHashTagHelper;
-    private static final int CONTENT_TYPE = 0;
-    private static final int AD_TYPE = 1;
-    private int[] viewTypes;
-    public int viewType;
-    OkHttpClient client = new OkHttpClient();
     DatabaseReference likereference;
-    private FirebaseFunctions mFunctions;
 // ...
     public PostAdapter(Context mContext, List<Post> mPost) {
         this.mContext = mContext;
@@ -117,7 +115,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
       firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         post = mPost.get(i);
-
+      /*  String thumbnailimage = post.getPostvideo().replace("m3u8", "jpg");
+        Glide.with(mContext)
+                .load(thumbnailimage)
+                .thumbnail(0.15f)
+                .into(viewHolder.thumbnail);
+*/
       /*    viewHolder.setIsRecyclable(true);
         //URL of the video to stream
         if (post.getPostid() != null && !post.getPostid().isEmpty()){
@@ -422,6 +425,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                 }
             }
         });
+
     }
 
 
@@ -431,7 +435,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
         return mPost.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
+    public class ViewHolder extends RecyclerView.ViewHolder implements ToroPlayer, ToroPlayer.EventListener {
 
         static final int LAYOUT_RES = R.layout.post_item;
 
@@ -458,28 +462,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
         ImageView more;
         @BindView(R.id.share)
         ImageView share;
-        @BindView(R.id.opencv)
-        ImageButton open;
-        @BindView(R.id.closecv)
-        ImageButton close;
-        @BindView(R.id.buttonscv)
-        CardView buttonscv;
+        @BindView(R.id.dangerous)
+        AppBarLayout dangerous;
+        @BindView(R.id.playprogress)
+        ProgressBar playprogress;
         @BindView(R.id.doubletap)
         DoubleTapLikeView doubletap;
-
+        @BindView(R.id.thumbnail)
+        ImageView thumbnail;
         ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-
-        // called from Adapter to setup the media
-        void bind(@NonNull RecyclerView.Adapter adapter, Uri item, List<Object> payloads) {
-            if (item != null) {
-                mediaUri = item;
-            }
-
-        }
 
         @NonNull @Override public View getPlayerView() {
             return playerView;
@@ -505,18 +500,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                 share.setVisibility(View.GONE);
             }
             if (post.getTextColor() != null && !post.getTextColor().isEmpty()){
-                if (post.getTextColor().equals("black")){
-                    username.setTextColor(Color.BLACK);
-                    description.setTextColor(Color.BLACK);
-                } else {
-                    username.setTextColor(Color.WHITE);
-                    description.setTextColor(Color.WHITE);
+                switch(post.getTextColor()){
+                    case "black":
+                        username.setTextColor(Color.BLACK);
+                        description.setTextColor(Color.BLACK);
+                        break;
+                    default:
+                        username.setTextColor(Color.WHITE);
+                        description.setTextColor(Color.WHITE);
                 }
-            } else {
-                description.setTextColor(Color.WHITE);
             }
             if (post.getPostid() != null && !post.getPostid().isEmpty()){
             FirebaseDatabase.getInstance().getReference("Posts").child(post.getPostid()).child("trendingviewedby").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
+            }
+            if (post.getDangerous().equals("true")){
+                dangerous.setVisibility(View.VISIBLE);
             }
             profileimage.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -593,60 +591,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                                         }
                                     });
 
-            open.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    RotateAnimation rotate = new RotateAnimation(0, 180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                    rotate.setDuration(200);
-                    rotate.setInterpolator(new LinearInterpolator());
-                    ImageButton image= (ImageButton) open;
-                    image.startAnimation(rotate);
-                    buttonscv.setVisibility(View.VISIBLE);
-                    buttonscv.setAlpha(1.0f);
-                    buttonscv.animate()
-                            .translationX(- buttonscv.getWidth())
-                            .alpha(1.0f)
-                            .setListener(null);
-                    Runnable r = new Runnable() {
-                        @Override
-                        public void run(){
-                            open.setVisibility(View.GONE);
-                            close.setVisibility(View.VISIBLE);
-                        }
-                    };
 
-                    Handler h = new Handler();
-                    h.postDelayed(r, 200);
 
-                }
-            });
-            close.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    RotateAnimation rotate = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                    rotate.setDuration(200);
-                    rotate.setInterpolator(new LinearInterpolator());
-                    ImageButton image= (ImageButton) close;
-                    image.startAnimation(rotate);
-                    buttonscv.setVisibility(View.VISIBLE);
-                    buttonscv.setAlpha(1.0f);
-                    buttonscv.animate()
-                            .translationX(+ buttonscv.getWidth() - buttonscv.getWidth())
-                            .alpha(1.0f)
-                            .setListener(null);
-                    Runnable r = new Runnable() {
-                        @Override
-                        public void run(){
-                            open.setVisibility(View.VISIBLE);
-                            close.setVisibility(View.GONE);
-                        }
-                    };
-
-                    Handler h = new Handler();
-                    h.postDelayed(r, 200);
-
-                }
-            });
 
             if (post.getPostvideo() != null && !post.getPostvideo().isEmpty()){
                 uri = Uri.parse(post.getPostvideo());
@@ -710,14 +656,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                     }
                 });
                 mTextHashTagHelper.handle(description);
-
             }
             if (helper == null) {
                 helper = new ExoPlayerViewHelper(this, uri, null, config);
 
             }
             helper.initialize(container, playbackInfo);
+
         }
+
 
         @Override public void release() {
             if (helper != null) {
@@ -725,6 +672,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                 helper = null;
             }
         }
+
 
         @Override public void play() {
             if (helper != null) helper.play();
@@ -745,6 +693,32 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
         @Override public int getPlayerOrder() {
             return getAdapterPosition();
         }
+
+        @Override
+        public void onFirstFrameRendered() {
+//            thumbnail.setVisibility(View.GONE);
+
+        }
+
+        @Override
+        public void onBuffering() {
+
+        }
+
+        @Override
+        public void onPlaying() {
+    //        thumbnail.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onPaused() {
+
+        }
+
+        @Override
+        public void onCompleted() {
+
+        }
     }
     private void getComments(String postid, TextView comments){
         reference = FirebaseDatabase.getInstance().getReference().child("Comments").child(postid);
@@ -760,6 +734,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
             }
         });
     }
+    private void isWTF(){}
     private void isLiked(String postid, ImageView imageView){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         likereference = FirebaseDatabase.getInstance().getReference()
@@ -770,7 +745,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.child(user.getUid()).exists()){
                     imageView.setBackgroundResource(R.drawable.heart);
-
                     imageView.setTag("liked");
                 }
                 else{

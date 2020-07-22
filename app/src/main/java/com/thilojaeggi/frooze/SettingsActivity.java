@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.BuildConfig;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -89,7 +90,7 @@ public class SettingsActivity extends AppCompatActivity {
                 selection = prefs.getInt("selectdefaulttab", 1);
                 String[] exploretabitems = getResources().getStringArray(R.array.exploretabs);
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(SettingsActivity.this);
-                mBuilder.setTitle("Choose default tab");
+                mBuilder.setTitle(getString(R.string.selectdefaulttab));
                 mBuilder.setSingleChoiceItems(exploretabitems, selection, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -198,8 +199,7 @@ public class SettingsActivity extends AppCompatActivity {
                 alert.show();
             }
         });
-
-        String versionName = BuildConfig.VERSION_NAME;
+        String versionName = com.thilojaeggi.frooze.BuildConfig.VERSION_NAME;
         TextView credits = findViewById(R.id.credits);
         credits.setText("Version " + versionName + "\n © 2020 frooze a Jaeggi company");
     }

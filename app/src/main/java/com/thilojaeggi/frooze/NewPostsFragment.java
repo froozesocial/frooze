@@ -68,11 +68,10 @@ public class NewPostsFragment extends Fragment {
         mAdView.loadAd(adRequest);
         TextView newposts = rootView.findViewById(R.id.newposts);
         TextView followingposts = rootView.findViewById(R.id.followingposts);
-        followingposts.setTextSize(13);
+        followingposts.setTextColor(getResources().getColor(R.color.white));
         TextView trendingposts = rootView.findViewById(R.id.trendingposts);
-        trendingposts.setTextSize(13);
-        newposts.setTextSize(17);
-        newposts.setTypeface(newposts.getTypeface(), Typeface.BOLD);
+        trendingposts.setTextColor(getResources().getColor(R.color.white));
+        newposts.setTextColor(getResources().getColor(R.color.colorPrimary));
         followingposts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

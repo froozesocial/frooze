@@ -9,6 +9,7 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.IBinder;
 import android.view.View;
@@ -43,6 +44,7 @@ public class NotificationService extends Service {
     private NotificationAdapter notificationAdapter;
     private List<Notifications> notificationList;
     String notificationtext;
+    SharedPreferences.Editor editor;
     String username, commented;
     Context mContext;
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -82,9 +84,9 @@ public class NotificationService extends Service {
                         notificationtext = commented;
                     }
                      if (username != null && !notification.getUserid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+
                         showNotification(getApplicationContext(), username, notificationtext);
                     }
-
                 }
 
 
@@ -144,13 +146,16 @@ public class NotificationService extends Service {
                 .setContentTitle(title)
                 .setContentText(body);
 
-     /*   TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-      //  stackBuilder.addNextIntent(intent);
+   /*   TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+      Intent intent = new Intent(this, MainActivity.class);
+        stackBuilder.addNextIntent(intent);
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
                 0,
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
        mBuilder.setContentIntent(resultPendingIntent);*/
+        editor = getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
+        editor.putBoolean("hasnotifs", true).apply();
         notificationManager.notify(notificationId, mBuilder.build());
     }
 }

@@ -37,7 +37,9 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,13 +60,12 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
     private BillingProcessor bp;
     private int startingPosition;
     private int newPosition;
-    Config config;
     private InterstitialAd mInterstitialAd;
     SharedPreferences prefs;
     Integer selection;
     BottomNavigationView bottomNav;
-    ColorStateList ColorStateList1;
     ImageButton uploadvideobutton;
+    View notificationBadge;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,7 +101,6 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
         }
         prefs = getSharedPreferences("PREFS", MODE_PRIVATE);
 
-
         FirebaseDynamicLinks.getInstance()
                 .getDynamicLink(getIntent())
                 .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
@@ -128,24 +128,9 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
         bp.initialize();
         bp.loadOwnedPurchasesFromGoogle();
         bottomNav = findViewById(R.id.bottom_navigation);
+
         bottomNav.setOnNavigationItemSelectedListener(navListener);
         bottomNav.setSelectedItemId(R.id.nav_home);
-        int[][] state = new int[][] {
-                new int[] {-android.R.attr.state_enabled}, // disabled
-                new int[] {android.R.attr.state_enabled}, // enabled
-                new int[] {-android.R.attr.state_checked}, // unchecked
-                new int[] { android.R.attr.state_pressed}  // pressed
-
-        };
-
-        int[] color = new int[] {
-                Color.WHITE,
-                Color.BLUE,
-                Color.WHITE,
-                Color.WHITE
-        };
-
-        ColorStateList1 = new ColorStateList(state, color);
 
         uploadvideobutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,7 +152,13 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
                 }
             }
         });
-
+        addBadgeView();
+        boolean hasnotifs = prefs.getBoolean("hasnotifs", false);
+        if (hasnotifs){
+            notificationBadge.setVisibility(View.VISIBLE);
+        } else {
+            notificationBadge.setVisibility(View.GONE);
+        }
     }
 
 
@@ -179,7 +170,6 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
                     switch (item.getItemId()) {
                         case R.id.nav_home:
                             selection = prefs.getInt("selectdefaulttab", 1);
-
                             switch (selection){
                                 case 0:
                                     selectedFragment = new NewPostsFragment();
@@ -192,32 +182,15 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
                                     break;
                             }
                             newPosition = 1;
-                            bottomNav.setBackgroundColor(getResources().getColor(R.color.black));
-                            bottomNav.setItemIconTintList(ColorStateList.valueOf(Color.parseColor("#dedcdc")));
-                            bottomNav.setItemTextColor(ColorStateList.valueOf(Color.parseColor("#ffffff")));
-                            uploadvideobutton.setBackground(getDrawable(R.drawable.upload_button));
-
                             break;
                         case R.id.nav_search:
                             selectedFragment = new SearchFragment();
                             newPosition = 2;
-                            bottomNav.setBackgroundColor(getResources().getColor(R.color.white));
-                            bottomNav.setItemIconTintList(ColorStateList.valueOf(Color.parseColor("#99000000")));
-                            bottomNav.setItemTextColor(ColorStateList.valueOf(Color.parseColor("#99000000")));
-                            bottomNav.setBackgroundColor(getResources().getColor(R.color.transparent));
-                            uploadvideobutton.setBackground(getDrawable(R.drawable.upload_button_without_line));
-
                             break;
 
                         case R.id.nav_notifications:
                             selectedFragment = new NotificationFragment();
                             newPosition = 3;
-                            bottomNav.setBackgroundColor(getResources().getColor(R.color.white));
-                            bottomNav.setItemIconTintList(ColorStateList.valueOf(Color.parseColor("#99000000")));
-                            bottomNav.setItemTextColor(ColorStateList.valueOf(Color.parseColor("#99000000")));
-                            bottomNav.setBackgroundColor(getResources().getColor(R.color.transparent));
-                            uploadvideobutton.setBackground(getDrawable(R.drawable.upload_button_without_line));
-
                             break;
 
                         case R.id.nav_profile:
@@ -227,11 +200,6 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
                             editor.putString("profileid", user.getUid());
                             editor.apply();
                             newPosition = 4;
-                            bottomNav.setBackgroundColor(getResources().getColor(R.color.white));
-                            bottomNav.setItemIconTintList(ColorStateList.valueOf(Color.parseColor("#99000000")));
-                            bottomNav.setBackgroundColor(getResources().getColor(R.color.transparent));
-                            bottomNav.setItemTextColor(ColorStateList.valueOf(Color.parseColor("#99000000")));
-                            uploadvideobutton.setBackground(getDrawable(R.drawable.upload_button_without_line));
                             break;
                     }
                     return loadFragment(selectedFragment, newPosition);
@@ -256,6 +224,14 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
         }
 
         return false;
+    }
+    private void addBadgeView() {
+        BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottomNav.getChildAt(0);
+        BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(3);
+
+        notificationBadge = LayoutInflater.from(this).inflate(R.layout.notification_badge, menuView, false);
+        itemView.addView(notificationBadge);
+
     }
     @Override
     public void onProductPurchased(String productId, TransactionDetails details) {
@@ -294,4 +270,5 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
         }
         }*/
     }
+
 }

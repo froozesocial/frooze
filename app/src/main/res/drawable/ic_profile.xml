@@ -1,21 +1,26 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="494dp"
-    android:height="506.53dp"
-    android:viewportWidth="494"
-    android:viewportHeight="506.53">
+    android:width="512dp"
+    android:height="512dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
   <path
-      android:pathData="M247,143.18m-130.68,0a130.68,130.68 0,1 1,261.36 0a130.68,130.68 0,1 1,-261.36 0"
-      android:strokeWidth="25"
-      android:fillColor="#00000000"
-      android:strokeColor="#000"/>
+      android:fillColor="#FF000000"
+      android:strokeWidth="1"
+      android:pathData="M255.27,109.81m-105.51,0a105.51,105.51 0,1 1,211.02 0a105.51,105.51 0,1 1,-211.02 0"
+      android:strokeColor="#000000"/>
   <path
-      android:pathData="M12.5,378.57h0A104.72,104.72 0,0 1,117.22 273.85L342.09,273.85A139.42,139.42 0,0 1,481.5 413.26L481.5,477.92A16.11,16.11 0,0 1,465.39 494.02L127.96,494.02A115.46,115.46 0,0 1,12.5 378.57Z"
-      android:strokeWidth="25"
-      android:fillColor="#00000000"
-      android:strokeColor="#000"/>
+      android:fillColor="#FF000000"
+      android:strokeWidth="1"
+      android:pathData="M285.78,498.81"
+      android:strokeColor="#000000"/>
   <path
-      android:pathData="M247,143.18"
-      android:strokeWidth="9"
-      android:fillColor="#fff"
-      android:strokeColor="#000"/>
+      android:fillColor="#FF000000"
+      android:strokeWidth="1"
+      android:pathData="M349.31,314.51c0,-16.82 8.92,-32.39 23.43,-40.89l69.57,-40.76c11.29,-6.61 16.4,-20.22 12.26,-32.63l0,0c-5.53,-16.59 -24.88,-23.96 -40.04,-15.24l-32.59,18.73c-27.97,16.07 -58.48,27.22 -90.22,32.97l0,0c-24.14,4.37 -48.83,4.77 -73.1,1.19l0,0c-27.02,-3.99 -53.06,-13.02 -76.74,-26.63l-45.41,-26.1c-15.17,-8.72 -34.51,-1.35 -40.04,15.24l0,0c-4.14,12.41 0.98,26.02 12.26,32.63l69.85,40.92c14.37,8.42 23.26,23.75 23.43,40.4"
+      android:strokeColor="#000000"/>
+  <path
+      android:fillColor="#FF000000"
+      android:strokeWidth="1.5"
+      android:pathData="M334.82,500.35h-79.55h-78.28c-8.02,0 -14.52,-6.5 -14.52,-14.52V313.48h186.87v172.35C349.34,493.85 342.84,500.35 334.82,500.35z"
+      android:strokeColor="#000000"/>
 </vector>

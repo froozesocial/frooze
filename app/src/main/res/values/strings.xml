@@ -64,8 +64,8 @@
     <!-- New Post -->
     <string name="uploading">Uploading</string>
     <string name="source">Source</string>
-    <string name="selectcamera">Video aufnehmen</string>
-    <string name="pickvideo">Video aus Gallerie wählen</string>
+    <string name="selectcamera">Record Video</string>
+    <string name="pickvideo">Choose Video from Gallery</string>
     <string name="novideoselected">No video selected</string>
     <string name="toolong">Video too long, max is 17 seconds</string>
     <string name="success">Video uploaded successfully</string>
@@ -142,12 +142,9 @@
 
     <string name="signupconfirm">If you continue, you accept frooze\'s &lt;a href=https://frooze.ch/?page_id=83621>terms of use&lt;/a> and confirm that you have read our &lt;a href=https://frooze.ch/?page_id=83575>privacy policy&lt;/a>.</string>
 
-    <string name="twitter_consumer_key" translatable="false">5b58Ow8AVJfdv89KZIzBoJ6Jj</string>
-    <string name="twitter_consumer_secret" translatable="false">Tx1tcn03GvNodHnO2335PUGguDw3LDCetFUb662UNmnYzIoqhS</string>
-
     <!-- Rating -->
     <string name="rate_dialog_title">Rate us</string>
-    <string name="rate_dialog_message">If you enjoy using %s, please help us by rating it. It only takes a few seconds!</string>
+    <string name="rate_dialog_message">If you enjoy using frooze, please help us by rating it. It only takes a few seconds!</string>
     <string name="rate_dialog_action_rate">Rate</string>
     <string name="rate_dialog_action_never">No, thanks</string>
     <string name="rate_dialog_action_later">Later</string>
@@ -158,5 +155,6 @@
         <item>Trending</item>
         <item>Following</item>
     </string-array>
-
+    <string name="selectdefaulttab">Choose default Tab</string>
+    <string name="defaulttab">Default Tab</string>
 </resources>

@@ -23,18 +23,13 @@
             android:layout_gravity="bottom"
             ads:adSize="BANNER"
             ads:adUnitId="ca-app-pub-3940256099942544/6300978111"/>
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_gravity="center_horizontal"
-            app:cardCornerRadius="20dp"
 
-            android:layout_marginTop="2dp">
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginStart="20dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="10dp"
                     android:weightSum="3">
                         <LinearLayout
                             android:gravity="center"
@@ -49,6 +44,8 @@
                                     android:layout_height="wrap_content"
                                     android:paddingTop="10dp"
                                     android:paddingBottom="10dp"
+                                    android:textSize="17sp"
+                                    android:textColor="@color/white"
                                     android:text="@string/sortbynew"/>
 
                         </LinearLayout>
@@ -56,8 +53,7 @@
                             android:gravity="center"
                             android:orientation="vertical"
                             android:layout_width="wrap_content"
-                            android:layout_marginStart="20dp"
-
+                            android:layout_marginStart="10dp"
                             android:layout_weight="1"
                             android:layout_height="match_parent">
                                 <TextView
@@ -67,6 +63,8 @@
                                     android:text="@string/sortbytrending"
                                     android:paddingTop="10dp"
                                     android:paddingBottom="10dp"
+                                    android:textColor="@color/white"
+                                    android:textSize="17sp"
                                     />
 
 
@@ -77,8 +75,7 @@
                             android:orientation="vertical"
                             android:layout_width="wrap_content"
                             android:layout_weight="1"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginEnd="20dp"
+                            android:layout_marginStart="10dp"
 
                             android:layout_height="match_parent">
                                 <TextView
@@ -87,22 +84,13 @@
                                     android:layout_height="wrap_content"
                                     android:paddingTop="10dp"
                                     android:paddingBottom="10dp"
+                                    android:textColor="@color/white"
+                                    android:textSize="17sp"
                                     android:text="@string/sortbyfollowing"/>
 
 
                         </LinearLayout>
                 </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-<TextView
-    android:id="@+id/listempty"
-    android:visibility="gone"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/noposts"
-        android:textColor="@color/white"
-        android:textSize="29sp"/>
 </FrameLayout>
 </LinearLayout>
 

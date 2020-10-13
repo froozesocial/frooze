@@ -13,13 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.efaso.admob_advanced_native_recyvlerview.AdmobNativeAdAdapter;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
@@ -27,7 +25,6 @@ import com.thilojaeggi.frooze.Adaptor.PostAdapter;
 import com.thilojaeggi.frooze.Model.Post;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import im.ene.toro.exoplayer.Config;

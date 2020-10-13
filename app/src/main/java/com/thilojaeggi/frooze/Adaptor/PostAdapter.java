@@ -6,16 +6,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -36,6 +32,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.brouding.doubletaplikeview.DoubleTapLikeView;
 import com.bumptech.glide.Glide;
+import com.facebook.ads.AdSize;
+import com.facebook.ads.AdView;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -78,11 +76,6 @@ import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 import im.ene.toro.exoplayer.MediaSourceBuilder;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
-import okhttp3.OkHttpClient;
-
-import static java.util.Objects.requireNonNull;
-
-
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> implements ExoPlayer.EventListener {
     public Context mContext;
     public List<Post> mPost;
@@ -90,14 +83,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
     Uri uri;
     Post post;
     Config config;
-    Runnable runnable;
+    AdView adView;
     DatabaseReference reference;
     ValueEventListener listener, likelistener, nrlikelistener;
     CommentFragment commentsActivity;
-    private SimpleExoPlayer mPlayer;
-    private HashTagHelper mTextHashTagHelper;
     DatabaseReference likereference;
-// ...
     public PostAdapter(Context mContext, List<Post> mPost) {
         this.mContext = mContext;
         this.mPost = mPost;
@@ -109,295 +99,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
         View view = LayoutInflater.from(mContext).inflate(R.layout.post_item, viewGroup, false);
         return new PostAdapter.ViewHolder(view);
     }
-
-
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
       firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         post = mPost.get(i);
-      /*  String thumbnailimage = post.getPostvideo().replace("m3u8", "jpg");
-        Glide.with(mContext)
-                .load(thumbnailimage)
-                .thumbnail(0.15f)
-                .into(viewHolder.thumbnail);
-*/
-      /*    viewHolder.setIsRecyclable(true);
-        //URL of the video to stream
-        if (post.getPostid() != null && !post.getPostid().isEmpty()){
-            isLiked(post.getPostid(), viewHolder.like);
-            nrLikes(viewHolder.likes, post.getPostid());
-            getComments(post.getPostid(), viewHolder.comments);
-        } else {
-            viewHolder.like.setVisibility(View.GONE);
-            viewHolder.comment.setVisibility(View.GONE);
-            viewHolder.share.setVisibility(View.GONE);
-        }
-
-        viewHolder.doubletap.setOnTapListener(new DoubleTapLikeView.OnTapListener() {
-            @Override
-            public void onDoubleTap(View view) {
-                if (post.getPostid() != null && !post.getPostid().isEmpty()) {
-                    if (viewHolder.like.getTag().equals("like")) {
-                        FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
-                                .child(firebaseUser.getUid()).setValue(true);
-                    } else {
-                        FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
-                                .child(firebaseUser.getUid()).removeValue();
-                    }
-                } else {
-                    Toast.makeText(mContext, "Error", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onTap() {
-                mPlayer.setPlayWhenReady(!mPlayer.getPlayWhenReady());
-
-            }
-        });
-
-
-        viewHolder.image_profile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mPlayer.getPlayWhenReady() == true){
-                    mPlayer.setPlayWhenReady(false);
-                }
-                if (post.getPublisher() != null && !post.getPublisher().isEmpty()) {
-                    showprofile(post.getPublisher());
-                    }
-            else {
-                Toast.makeText(mContext, "Error", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        viewHolder.like.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                    if (viewHolder.like.getTag().equals("like")) {
-                        FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
-                                .child(firebaseUser.getUid()).setValue(true);
-                    } else {
-                        FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
-                                .child(firebaseUser.getUid()).removeValue();
-                    }
-                }
-        });
-        viewHolder.open.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                RotateAnimation rotate = new RotateAnimation(0, 180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                rotate.setDuration(200);
-                rotate.setInterpolator(new LinearInterpolator());
-                ImageButton image= (ImageButton) viewHolder.open;
-                image.startAnimation(rotate);
-                viewHolder.buttonscv.setVisibility(View.VISIBLE);
-                viewHolder.buttonscv.setAlpha(1.0f);
-                viewHolder.buttonscv.animate()
-                        .translationX(- viewHolder.buttonscv.getWidth())
-                        .alpha(1.0f)
-                        .setListener(null);
-                Runnable r = new Runnable() {
-                    @Override
-                    public void run(){
-                        viewHolder.open.setVisibility(View.GONE);
-                        viewHolder.close.setVisibility(View.VISIBLE);
-                    }
-                };
-
-                Handler h = new Handler();
-                h.postDelayed(r, 200);
-
-            }
-        });
-        viewHolder.close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RotateAnimation rotate = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                rotate.setDuration(200);
-                rotate.setInterpolator(new LinearInterpolator());
-                ImageButton image= (ImageButton) viewHolder.close;
-                image.startAnimation(rotate);
-                viewHolder.buttonscv.setVisibility(View.VISIBLE);
-                viewHolder.buttonscv.setAlpha(1.0f);
-                viewHolder.buttonscv.animate()
-                        .translationX(+ viewHolder.buttonscv.getWidth() - viewHolder.buttonscv.getWidth())
-                        .alpha(1.0f)
-                        .setListener(null);
-                Runnable r = new Runnable() {
-                    @Override
-                    public void run(){
-                        viewHolder.open.setVisibility(View.VISIBLE);
-                        viewHolder.close.setVisibility(View.GONE);
-                    }
-                };
-
-                Handler h = new Handler();
-                h.postDelayed(r, 200);
-
-            }
-        });
-        if (post.getPostvideo() != null && !post.getPostvideo().isEmpty()){
-            uri = Uri.parse(post.getPostvideo());
-        } else {
-            uri = Uri.parse("https://res.cloudinary.com/frooze/video/upload/v1591303571/piu9bb4bk0tj0m8yv2us.m3u8");
-        }
-
-
-          BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-          TrackSelection.Factory videoTrackSelectionFactory =
-        new AdaptiveTrackSelection.Factory(bandwidthMeter);
-         TrackSelector trackSelector =
-               new DefaultTrackSelector(videoTrackSelectionFactory);
-
-        // Create the player with previously created TrackSelector
-        mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
-        viewHolder.player.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-        mPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
-     //    Load the default controller
-        viewHolder.player.setUseController(false);
-    //     Load the SimpleExoPlayerView with the created player
-         viewHolder.player.setPlayer(mPlayer);
-
-        // Measures bandwidth during playback. Can be null if not required.
-             DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter();
-
-        // Produces DataSource instances through which media data is loaded.
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(mContext,
-        Util.getUserAgent(mContext, "frooze"),
-        defaultBandwidthMeter);
-
-
-        // This is the MediaSource representing the media to be played.
-        MediaSource videoSource = new HlsMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
-        // Prepare the player with the source.
-        mPlayer.prepare(videoSource);
-        // Autoplay the video when the player is ready
-
-
-
-        FirebaseAuth user = FirebaseAuth.getInstance();
-        String uid = user.getUid();
-        viewHolder.share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Task<ShortDynamicLink> shortLinkTask = FirebaseDynamicLinks.getInstance().createDynamicLink()
-                        .setLink(Uri.parse("https://app.frooze.ch/post/?postid="+post.getPostid()))
-                        .setDomainUriPrefix("https://app.frooze.ch/link")
-                        .setAndroidParameters(new DynamicLink.AndroidParameters.Builder("com.thilojaeggi.frooze")
-                                .setFallbackUrl(Uri.parse("https://app.frooze.ch/post/?postid="+post.getPostid()))
-                                .build()
-
-                        )
-                        .setIosParameters(new DynamicLink.IosParameters.Builder("com.thilojaeggi.frooze")
-                                .setFallbackUrl(Uri.parse("https://app.frooze.ch/post/?postid="+post.getPostid()))
-                                .build()
-                        )
-                        .buildShortDynamicLink()
-                        .addOnCompleteListener((Activity) mContext, new OnCompleteListener<ShortDynamicLink>() {
-                            @Override
-                            public void onComplete(@NonNull Task<ShortDynamicLink> task) {
-                                if (task.isSuccessful()) {
-                                    // Short link created
-                                    Uri shortLink = task.getResult().getShortLink();
-                                    Uri flowchartLink = task.getResult().getPreviewLink();
-                                    String username = viewHolder.username.getText().toString();
-                                    Intent sendIntent = new Intent();
-                                    sendIntent.setAction(Intent.ACTION_SEND);
-                                    sendIntent.putExtra(Intent.EXTRA_TEXT, "Check out this video on frooze.ch by @" + username + ":\n" + shortLink);
-                                    sendIntent.setType("text/plain");
-                                    Intent shareIntent = Intent.createChooser(sendIntent, null);
-                                    mContext.startActivity(shareIntent);
-                                } else {
-
-                                }
-                            }
-                        });
-
-                        }
-
-                    });
-        if (post.getDangerous().equals("true")){
-            viewHolder.dangerous.setVisibility(View.VISIBLE);
-        }
-        if (post.getDescription().equals("")){
-            viewHolder.description.setVisibility(View.GONE);
-        } else {
-            viewHolder.description.setVisibility(View.VISIBLE);
-            viewHolder.description.setText(post.getDescription());
-            mTextHashTagHelper = HashTagHelper.Creator.create(mContext.getResources().getColor(R.color.colorPrimary), new HashTagHelper.OnHashTagClickListener() {
-                @Override
-                public void onHashTagClicked(String hashTag) {
-                    mPlayer.release();
-                    SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
-                    editor.putString("hashtag", hashTag);
-                    editor.apply();
-                    FragmentTransaction transaction = ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction();
-                    transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,R.anim.slide_in_left, R.anim.slide_out_right);
-                    transaction.replace(R.id.fragment_container,
-                            new ViewHashtagFragment()).addToBackStack(null).commit();
-                }
-            });
-            mTextHashTagHelper.handle(viewHolder.description);
-
-        }
-        viewHolder.more.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
-                alert.setTitle("");
-                alert.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-
-                    } });
-                alert.setNeutralButton("Report", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        RequestQueue queue = Volley.newRequestQueue(mContext);
-                        String url ="https://maker.ifttt.com/trigger/froozereport/with/key/bX8uNSFbAeoqUKPdfSztoA?value1=https://app.frooze.ch/post/?postid="+post.getPostid();
-// Request a string response from the provided URL.
-                        StringRequest reportRequest = new StringRequest(Request.Method.POST, url,
-                                new Response.Listener<String>() {
-                                    @Override
-                                    public void onResponse(String response) {
-                                        Toast.makeText(mContext, "Successfully reported", Toast.LENGTH_SHORT).show();
-                                        // Display the first 500 characters of the response string.
-                                    }
-                                }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(mContext, "An error occured. Please contact support.", Toast.LENGTH_LONG).show();
-                            }
-                        });
-
-// Add the request to the RequestQueue.
-                        queue.add(reportRequest);
-                    }
-                });
-
-                alert.show();
-
-            }
-        });
-        publisherInfo(viewHolder.image_profile, viewHolder.username, viewHolder.publisher, post.getPublisher());
-        viewHolder.comment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mPlayer.getPlayWhenReady() == true){
-                    mPlayer.setPlayWhenReady(false);
-                }
-                Intent comment = new Intent(mContext, CommentsActivity.class);
-                comment.putExtra("postid", post.getPostid());
-                comment.putExtra("publisherid", post.getPublisher());
-               mContext.startActivity(comment);
-
-            }
-        });
-        */
         viewHolder.doubletap.setOnTapListener(new DoubleTapLikeView.OnTapListener() {
             @Override
             public void onDoubleTap(View view) {
@@ -441,7 +146,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
 
         @Nullable ExoPlayerViewHelper helper;
         @Nullable private Uri mediaUri;
-
         @BindView(R.id.videoplayer)
         PlayerView playerView;
         @BindView(R.id.image_profile)
@@ -456,6 +160,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
         TextView description;
         @BindView(R.id.like)
         ImageView like;
+        @BindView(R.id.adView)
+        LinearLayout adContainer;
         @BindView(R.id.comment)
         ImageView comment;
         @BindView(R.id.more)
@@ -514,14 +220,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
             FirebaseDatabase.getInstance().getReference("Posts").child(post.getPostid()).child("trendingviewedby").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
             }
             if (post.getDangerous().equals("true")){
+                adContainer.setVisibility(View.GONE);
                 dangerous.setVisibility(View.VISIBLE);
+            } else {
+                adContainer.setVisibility(View.VISIBLE);
+                adView = new AdView(mContext, "224573008994773_227062902079117", AdSize.BANNER_HEIGHT_50);
+                adContainer.addView(adView);
+                adView.loadAd();
             }
             profileimage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (post.getPublisher() != null && !post.getPublisher().isEmpty()) {
                         pause();
-
                         showprofile(post.getPublisher());
                     }
                     else {
@@ -544,7 +255,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
                                                     if (item.toString().equals("Report")){
                                                         RequestQueue queue = Volley.newRequestQueue(mContext);
                                                         String url = "https://maker.ifttt.com/trigger/froozereport/with/key/bX8uNSFbAeoqUKPdfSztoA?value1=https://app.frooze.ch/post/?postid=" + post.getPostid();
-// Request a string response from the provided URL.
                                                         StringRequest reportRequest = new StringRequest(Request.Method.POST, url,
                                                                 new Response.Listener<String>() {
                                                                     @Override
@@ -611,7 +321,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
             like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (like.getTag().equals("like")) {
+                    if (like != null && like.getTag().equals("like")) {
                         FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                                 .child(firebaseUser.getUid()).setValue(true);
                         sendNotification(post.getPublisher(), post.getPostid());
@@ -642,15 +352,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> im
             } else {
                 description.setVisibility(View.VISIBLE);
                 description.setText(post.getDescription());
-                mTextHashTagHelper = HashTagHelper.Creator.create(mContext.getResources().getColor(R.color.dark_blue), new HashTagHelper.OnHashTagClickListener() {
+                HashTagHelper mTextHashTagHelper = HashTagHelper.Creator.create(mContext.getResources().getColor(R.color.dark_blue), new HashTagHelper.OnHashTagClickListener() {
                     @Override
                     public void onHashTagClicked(String hashTag) {
                         pause();
                         SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit();
                         editor.putString("hashtag", hashTag.toLowerCase());
                         editor.apply();
-                        FragmentTransaction transaction = ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction();
-                        transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,R.anim.slide_in_left, R.anim.slide_out_right);
+                        FragmentTransaction transaction = ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction();
+                        transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                         transaction.replace(R.id.fragment_container,
                                 new GridView()).addToBackStack(null).commit();
                     }

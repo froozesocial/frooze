@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -68,7 +69,13 @@ public class PostActivity extends AppCompatActivity {
         activity = this;
         setContentView(R.layout.activity_post);
         description = findViewById(R.id.description);
+        try {
+            Map config = new HashMap();
+            config.put("cloud_name", "froozecdn");
+            MediaManager.init(this, config);
+        } catch (Exception e){
 
+        }
         post = findViewById(R.id.post);
         textcolorvalue ="white";
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

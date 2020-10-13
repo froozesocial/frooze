@@ -8,7 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.facebook.ads.*;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -16,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,7 +36,8 @@ public class SearchFragment extends Fragment {
     private UserAdapter userAdapter;
     private List<User> userList;
     EditText search_bar;
-    private AdView mAdView;
+    AdView adView;
+    LinearLayout adContainer;
     final float startSize = 33; // Size in pixels
     final float endSize = 20;
     long animationDuration = 175; // Animation duration in ms
@@ -93,27 +95,18 @@ public class SearchFragment extends Fragment {
         });
         FirebaseAuth user = FirebaseAuth.getInstance();
         String uid = user.getUid();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
-        reference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String premium = dataSnapshot.child("premium").getValue(String.class);
-                if (premium.equals("true")){
-                    mAdView = view.findViewById(R.id.adView);
-                    mAdView.setVisibility(View.GONE);
-                }if (premium.equals("false")) {
-                    mAdView = view.findViewById(R.id.adView);
-                    AdRequest adRequest = new AdRequest.Builder().build();
-                    mAdView.loadAd(adRequest);
-                }
-                }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                throw databaseError.toException();
-            }
-        });
-        // recyclerView.setVisibility(View.GONE);
 
+        // recyclerView.setVisibility(View.GONE);
+        adContainer = view.findViewById(R.id.adView);
+        adView = new AdView(getContext(), "224573008994773_224574345661306", AdSize.BANNER_HEIGHT_50);
+
+        // Add the ad view to your activity layout
+        adContainer.addView(adView);
+
+        // Request an ad
+        adView.loadAd();
+        /*AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);*/
         return view;
     }
 
@@ -171,5 +164,12 @@ public class SearchFragment extends Fragment {
 
             }
         });
+    }
+    @Override
+    public void onDestroy() {
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
     }
 }

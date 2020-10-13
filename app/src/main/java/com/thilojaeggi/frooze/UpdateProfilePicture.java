@@ -42,14 +42,12 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UpdateProfilePicture extends AppCompatActivity {
-
     Uri profileUri;
     String myUrl = "";
     StorageTask uploadTask;
     StorageReference storageReference;
 
     ImageView close;
-    ImageView profile_image_added;
     TextView post;
 
     @Override

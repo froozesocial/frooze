@@ -180,7 +180,7 @@ public class FollowPostsFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Post post = snapshot.getValue(Post.class);
                     for (String id : followingList){
-                        if (post.getPublisher().equals(id)){
+                        if (post.getPublisher() != null && post.getPublisher().equals(id)){
                             postLists.add(post);
                         }
                     }

@@ -23,6 +23,7 @@ import android.widget.Toast;
 import android.view.View;
 import android.widget.EditText;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -40,6 +41,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseUserMetadata;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.thilojaeggi.frooze.Model.User;
 import com.thilojaeggi.frooze.NewUser.NewUser;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
@@ -53,7 +60,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText emailTV, passwordTV;
     private AppCompatButton loginBtn;
     private FirebaseAuth mAuth;
-    private WaveView waveView;
     private static final int RC_SIGN_IN = 1001;
     GoogleSignInClient googleSignInClient;
     FirebaseAuth firebaseAuth;
@@ -61,17 +67,13 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         mAuth = FirebaseAuth.getInstance();
         String locale = Locale.getDefault().getLanguage();
         mAuth.setLanguageCode(locale);
-
         setContentView(R.layout.activity_login);
         emailTV = findViewById(R.id.email);
         passwordTV = findViewById(R.id.password);
         loginBtn = findViewById(R.id.login_button);
-
         FrameLayout background = findViewById(R.id.background);
         background.setBackgroundResource(R.drawable.gradient_animation);
         AnimationDrawable animation = (AnimationDrawable) background.getBackground();
@@ -168,9 +170,7 @@ public class LoginActivity extends AppCompatActivity {
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                             } else {
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
+                                checkIfRegisteredCorrectly();
                             }
 
                             Log.d(TAG, "signInWithCredential:success: currentUser: " + user.getEmail());
@@ -196,8 +196,6 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), getString(R.string.missingpassword), Toast.LENGTH_LONG).show();
             return;
         }
-
-
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -222,16 +220,32 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
+    private void checkIfRegisteredCorrectly(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()){
+                    Intent intent = new Intent(LoginActivity.this, NewUser.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
     @Override
     protected void onResume() {
         super.onResume();
-
     }
-
     @Override
     protected void onPause() {
         super.onPause();
-
     }
-
 }

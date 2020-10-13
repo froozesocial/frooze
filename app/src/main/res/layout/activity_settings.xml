@@ -105,6 +105,23 @@
         app:icon="@drawable/ic_baseline_library_music_24"
         app:iconTint="@color/alpha60_black" />
     <Button
+        android:id="@+id/reviewtest"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="60dp"
+        android:text="Test Review"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:background="@color/white"
+        android:backgroundTint="@color/white"
+        app:cornerRadius="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:rippleColor="#00FFFFFF"
+        app:iconTint="@color/alpha60_black" />
+    <Button
         android:id="@+id/getpremium"
         android:layout_width="match_parent"
         android:layout_height="60dp"

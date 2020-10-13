@@ -1,6 +1,7 @@
 package com.thilojaeggi.frooze;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Context;
@@ -29,8 +30,10 @@ import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.tasks.OnCompleteListener;
+import com.google.android.play.core.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -55,14 +58,26 @@ public class SettingsActivity extends AppCompatActivity {
     Integer selection;
     SharedPreferences.Editor editor;
     SharedPreferences prefs;
+    ReviewInfo reviewInfo;
+    ReviewManager manager;
+    Button testreview;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        testreview = findViewById(R.id.reviewtest);
 
-
+        if (user.getUid().equals("8x0BVAdw2VUopobTE0sWVadU0ms1")){
+            testreview.setVisibility(View.VISIBLE);
+        }
+        testreview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Review();
+            }
+        });
         ImageButton goback = findViewById(R.id.backbutton);
         goback.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,10 +89,10 @@ public class SettingsActivity extends AppCompatActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
                 Intent intentsettings = new Intent(getApplicationContext(), LoginActivity.class);
                 intentsettings.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intentsettings);
+                FirebaseAuth.getInstance().signOut();
 
             }
         });
@@ -97,7 +112,6 @@ public class SettingsActivity extends AppCompatActivity {
                         selection = i;
                         editor.putInt("selectdefaulttab", i);
                         String selection = "Selection: " + i;
-                        Toast.makeText(getApplicationContext(), selection, Toast.LENGTH_SHORT).show();
                         editor.apply();
                         Runnable r = new Runnable() {
                             @Override
@@ -180,12 +194,12 @@ public class SettingsActivity extends AppCompatActivity {
                                     }
                                 });
                                 queue.add(deleteRequest);
-                                user.delete();
-                                FirebaseAuth.getInstance().signOut();
-                                Toast.makeText(getApplicationContext(), getString(R.string.accountdeleted), Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
+                                user.delete();
+                                FirebaseAuth.getInstance().signOut();
+                                Toast.makeText(getApplicationContext(), getString(R.string.accountdeleted), Toast.LENGTH_LONG).show();
                                 dialog.cancel();
 
                             }
@@ -202,6 +216,33 @@ public class SettingsActivity extends AppCompatActivity {
         String versionName = com.thilojaeggi.frooze.BuildConfig.VERSION_NAME;
         TextView credits = findViewById(R.id.credits);
         credits.setText("Version " + versionName + "\n © 2020 frooze a Jaeggi company");
+    }
+    private void Review(){
+        manager.requestReviewFlow().addOnCompleteListener(new com.google.android.play.core.tasks.OnCompleteListener<ReviewInfo>() {
+            @Override
+            public void onComplete(@NonNull com.google.android.play.core.tasks.Task<ReviewInfo> task) {
+                if(task.isSuccessful()){
+                    reviewInfo = task.getResult();
+                    manager.launchReviewFlow(SettingsActivity.this, reviewInfo).addOnFailureListener(new com.google.android.play.core.tasks.OnFailureListener() {
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(getApplicationContext(), "Rating Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(getApplicationContext(), "Review Completed, Thank You!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+            }
+        }).addOnFailureListener(new com.google.android.play.core.tasks.OnFailureListener() {
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(getApplicationContext(), "In-App Request Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void deleteComments(String id){

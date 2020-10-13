@@ -101,7 +101,6 @@ public class ProfileFragment extends Fragment {
             settingsbutton.setVisibility(View.GONE);
             followbutton.setVisibility(View.VISIBLE);
             checkFollow();
-            //  saved_fotos.setVisibility(View.GONE);
         }
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -110,9 +109,8 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
-
                     profileimage = (CircleImageView) view.findViewById(R.id.profile_image);
-                    if (user.getImageurl() != null && !user.getImageurl().isEmpty()){
+                    if (user != null && user.getImageurl() != null && !user.getImageurl().isEmpty()){
                         imageuri = Uri.parse(user.getImageurl());
                         Glide.with(view).load(imageuri).into(profileimage);
                     }
@@ -240,7 +238,7 @@ public class ProfileFragment extends Fragment {
                 postList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Post post = snapshot.getValue(Post.class);
-                    if (post.getPublisher() != null && !post.getPublisher().isEmpty() && post.getPublisher().equals(profileid)){
+                    if (post != null && post.getPublisher() != null && !post.getPublisher().isEmpty() && post.getPublisher().equals(profileid)){
                         postList.add(post);
                     }
                 }

@@ -45,15 +45,12 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class SignUpActivity extends AppCompatActivity {
-
-
     private EditText emailTV, passwordTV, usernameTV, fullnameTV;
     private Button regBtn;
     private FirebaseAuth mAuth;
     private static FirebaseAnalytics firebaseAnalytics;
     TextView disclaimer;
     DatabaseReference reference;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

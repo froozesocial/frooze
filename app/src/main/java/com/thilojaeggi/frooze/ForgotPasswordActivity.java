@@ -32,7 +32,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgotpassword);
         mAuth = FirebaseAuth.getInstance();
-
         String locale = Locale.getDefault().getLanguage();
         mAuth.setLanguageCode(locale);
         FrameLayout background = findViewById(R.id.background);
@@ -41,8 +40,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         animation.setEnterFadeDuration(10);
         animation.setExitFadeDuration(5000);
         animation.start();
-
-
         final ImageButton back_button = findViewById(R.id.back_button);
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,7 +52,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             }
         });
 
-        final Button forgotpass_button = findViewById(R.id.send);
+        Button forgotpass_button = findViewById(R.id.send);
         forgotpass_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

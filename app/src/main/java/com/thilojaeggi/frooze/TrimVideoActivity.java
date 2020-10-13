@@ -13,10 +13,8 @@ import life.knowledge4.videotrimmer.interfaces.OnTrimVideoListener;
 
 
 public class TrimVideoActivity extends AppCompatActivity implements OnTrimVideoListener {
-
     private K4LVideoTrimmer mVideoTrimmer;
     private ProgressDialog mProgressDialog;
-    Integer VIDEO_TRIMMER = 3;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

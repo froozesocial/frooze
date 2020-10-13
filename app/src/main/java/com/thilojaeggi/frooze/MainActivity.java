@@ -32,6 +32,7 @@ import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
 import com.cloudinary.android.MediaManager;
 import com.danikula.videocache.HttpProxyCacheServer;
+import com.facebook.ads.AudienceNetworkAds;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -42,6 +43,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
+import com.google.android.play.core.tasks.OnCompleteListener;
+import com.google.android.play.core.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -60,7 +66,6 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
     private BillingProcessor bp;
     private int startingPosition;
     private int newPosition;
-    private InterstitialAd mInterstitialAd;
     SharedPreferences prefs;
     Integer selection;
     BottomNavigationView bottomNav;
@@ -69,15 +74,21 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Fresco.initialize(this);
+        AudienceNetworkAds.initialize(this);
         setContentView(R.layout.activity_main);
         uploadvideobutton = findViewById(R.id.upload);
         RateThisApp.onCreate(this);
-        // If the condition is satisfied, "Rate this app" dialog will be shown
-        RateThisApp.showRateDialogIfNeeded(this);
         Intent notifications = new Intent(this, NotificationService.class);
-        startService(notifications);
-        Bundle intent = getIntent().getExtras();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null){
+            startService(notifications);
+        } else {
+            Intent gotologin = new Intent(MainActivity.this, LoginActivity.class);
+            gotologin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(gotologin);
+        }
+
         RateThisApp.Config rconfig = new RateThisApp.Config();
         rconfig.setTitle(R.string.rate_dialog_title);
         rconfig.setMessage(R.string.rate_dialog_message);
@@ -86,21 +97,7 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
         rconfig.setCancelButtonText(R.string.rate_dialog_action_later);
         RateThisApp.init(rconfig);
         RateThisApp.showRateDialogIfNeeded(this);
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-        if (mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show();
-        }
-        try {
-            Map config = new HashMap();
-            config.put("cloud_name", "froozecdn");
-            MediaManager.init(this, config);
-        } catch (Exception e){
-
-        }
         prefs = getSharedPreferences("PREFS", MODE_PRIVATE);
-
         FirebaseDynamicLinks.getInstance()
                 .getDynamicLink(getIntent())
                 .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
@@ -128,10 +125,8 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
         bp.initialize();
         bp.loadOwnedPurchasesFromGoogle();
         bottomNav = findViewById(R.id.bottom_navigation);
-
         bottomNav.setOnNavigationItemSelectedListener(navListener);
         bottomNav.setSelectedItemId(R.id.nav_home);
-
         uploadvideobutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,6 +155,7 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
             notificationBadge.setVisibility(View.GONE);
         }
     }
+
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
@@ -228,7 +224,6 @@ public class MainActivity  extends AppCompatActivity implements BillingProcessor
     private void addBadgeView() {
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottomNav.getChildAt(0);
         BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(3);
-
         notificationBadge = LayoutInflater.from(this).inflate(R.layout.notification_badge, menuView, false);
         itemView.addView(notificationBadge);
 

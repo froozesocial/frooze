@@ -53,7 +53,6 @@ public class NotificationService extends Service {
         startNotificationListener();
         notificationList = new ArrayList<>();
         notificationAdapter = new NotificationAdapter(getApplicationContext(), notificationList);
-     //
     }
 
     @Override
@@ -84,7 +83,6 @@ public class NotificationService extends Service {
                         notificationtext = commented;
                     }
                      if (username != null && !notification.getUserid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-
                         showNotification(getApplicationContext(), username, notificationtext);
                     }
                 }
@@ -117,8 +115,10 @@ public class NotificationService extends Service {
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                username = user.getUsername();
+                if (dataSnapshot.exists()){
+                    User user = dataSnapshot.getValue(User.class);
+                    username = user.getUsername();
+                }
             }
 
             @Override

@@ -125,9 +125,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                Glide.with(mContext).load(user.getImageurl()).into(imageView);
-                username.setText(user.getUsername());
+                if (dataSnapshot.exists()){
+                    User user = dataSnapshot.getValue(User.class);
+                    Glide.with(mContext).load(user.getImageurl()).into(imageView);
+                    username.setText(user.getUsername());
+                }
             }
 
             @Override

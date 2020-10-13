@@ -84,14 +84,13 @@
         android:layout_alignParentTop="true"
         android:layout_above="@id/adView"
         android:id="@+id/recycler_view"/>
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
         android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        ads:adSize="SMART_BANNER"
-        ads:adUnitId="ca-app-pub-7280179625741556/8953401066">
-    </com.google.android.gms.ads.AdView>
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 </RelativeLayout>
     </LinearLayout>

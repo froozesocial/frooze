@@ -83,7 +83,6 @@ public class PostFromLink extends AppCompatActivity {
         player = findViewById(R.id.videoplayer);
         ImageButton finish = findViewById(R.id.finish);
         like.setBackgroundResource(R.drawable.heart_white);
-
         Intent intent = getIntent();
         String id = intent.getStringExtra("postid");
         String[] segments = id.split("=");

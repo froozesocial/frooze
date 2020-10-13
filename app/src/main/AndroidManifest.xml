@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.thilojaeggi.frooze">
-
-    <!-- Include required permissions for Google Mobile Ads to run. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -12,11 +10,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="com.android.vending.BILLING" />
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
-
     <application
         android:allowBackup="false"
         android:fullBackupContent="false"
@@ -28,15 +24,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:allowBackup, android:fullBackupContent">
-
-        <!--
-        This is the sample AdMob App ID. Insert your own AdMob App ID in quotes
-        https://googlemobileadssdk.page.link/admob-android-update-manifest
-        -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3940256099942544~3347511713" />
-
         <activity android:name=".NewUser.NewUser" />
         <activity android:name=".TrimVideoActivity" />
         <activity
@@ -73,7 +63,6 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -112,7 +101,6 @@
         <activity
             android:name=".EditProfileActivity"
             android:screenOrientation="portrait" />
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
@@ -122,7 +110,6 @@
         <meta-data
             android:name="firebase_performance_logcat_enabled"
             android:value="true" />
-
         <service
             android:name=".NotificationService"
             android:label="@string/app_name"
@@ -132,5 +119,4 @@
             </intent-filter>
         </service>
     </application>
-
 </manifest>

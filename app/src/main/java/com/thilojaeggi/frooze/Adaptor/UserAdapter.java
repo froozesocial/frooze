@@ -61,7 +61,10 @@ public class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             final User user = mUsers.get(position);
         UserViewHolder viewHolder = (UserViewHolder) holder;
-        isFollowing(user.getId(), viewHolder.btn_follow);
+        if (user.getId() != null && !user.getId().isEmpty()){
+            isFollowing(user.getId(), viewHolder.btn_follow);
+            
+        }
             viewHolder.btn_follow.setVisibility(View.VISIBLE);
             if (user.getUsername() != null) {
                 viewHolder.username.setText(
@@ -191,7 +194,6 @@ public class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.child(userid).exists()){
-                    // For some reason if i get the text from values it doesn't work whyyyyyyyyyyyyyyyyyyyyyyyyyy
                     button.setText("Unfollow");
                     button.setTextSize(17);
                     button.setTextAppearance(mContext, Typeface.BOLD);

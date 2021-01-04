@@ -1,3 +1,4 @@
+
 package com.thilojaeggi.frooze;
 
 import android.app.ActivityOptions;
@@ -87,14 +88,15 @@ public class LoginActivity extends AppCompatActivity {
                 signInToGoogle();
             }
         });
+
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 loginUserAccount();
             }
         });
-        final TextView signup_button = findViewById(R.id.signup_button);
+
+        TextView signup_button = findViewById(R.id.signup_button);
         signup_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
-        final TextView forgotpass = findViewById(R.id.forgotpass_button);
+        TextView forgotpass = findViewById(R.id.forgotpass_button);
         forgotpass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,8 +184,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
     });
     }
+
     private void loginUserAccount() {
-// inside your activity (if you did not enable transitions in your theme)
         String email, password;
         email = emailTV.getText().toString();
         password = passwordTV.getText().toString();

@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView android:layout_width="match_parent"
+<LinearLayout android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="10dp"
-    android:layout_marginEnd="10dp"
-    android:layout_marginStart="10dp"
-    android:layout_marginTop="5dp"
+    android:orientation="vertical"
     android:layout_marginBottom="5dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,8 +15,8 @@
     tools:android="com.thilojaeggi.frooze.Adaptor.UserAdapter">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:id="@+id/image_profile"
         android:src="@mipmap/ic_launcher"/>
 
@@ -44,6 +42,7 @@
             android:id="@+id/fullname"
             android:text="Full Name"
             android:maxLines="1"/>
+
     </LinearLayout>
 
     <Button
@@ -54,4 +53,4 @@
         android:layout_centerVertical="true"
         android:visibility="gone"/>
 </RelativeLayout>
-</androidx.cardview.widget.CardView>
+</LinearLayout>

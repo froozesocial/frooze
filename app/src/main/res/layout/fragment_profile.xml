@@ -5,18 +5,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.thilojaeggi.frooze.ProfileFragment"
     android:orientation="vertical"
+    android:background="@drawable/profilebottom_gradient"
     xmlns:android="http://schemas.android.com/apk/res/android">
+
 <FrameLayout
     android:id="@+id/profileframe"
     android:layout_width="match_parent"
     android:background="@drawable/profileframe"
-    android:layout_margin="2dp"
     android:layout_height="wrap_content">
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/backbutton"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="-10dp"
+        android:layout_marginStart="-10dp"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:text="@string/back"
+        android:background="@drawable/button_back"
+        android:textSize="14sp"
+        android:textStyle="bold"/>
     <RelativeLayout
         android:layout_width="match_parent"
+        android:paddingTop="20dp"
         android:layout_height="wrap_content">
-
         <Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -65,18 +78,6 @@
         android:layout_gravity="left"
         android:layout_marginStart="10dp"
         />
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/backbutton"
-                android:layout_width="wrap_content"
-                android:layout_marginTop="-10dp"
-                android:layout_marginStart="-10dp"
-                android:visibility="gone"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:text="@string/back"
-                android:background="@drawable/button_back"
-                android:textSize="14sp"
-                android:textStyle="bold"/>
         </FrameLayout>
     <TextView
         android:id="@+id/fullname"
@@ -222,13 +223,23 @@
         </androidx.cardview.widget.CardView>
     </RelativeLayout>
 </FrameLayout>
-
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+<View
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginStart="3dp"
+    android:layout_marginEnd="3dp"
+    android:background="@drawable/inverted_corners"/>
 <androidx.recyclerview.widget.RecyclerView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="2dp"
-    android:layout_marginEnd="2dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginTop="8dp"
     android:id="@+id/recyclerview"/>
+    </FrameLayout>
 </LinearLayout>
 
 

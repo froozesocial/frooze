@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.facebook.ads.*;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,6 +36,7 @@ public class SearchFragment extends Fragment {
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
     private List<User> userList;
+    CardView search_switch,hashtags_text;
     EditText search_bar;
     AdView adView;
     LinearLayout adContainer;
@@ -55,7 +57,8 @@ public class SearchFragment extends Fragment {
             }
         });
         animator.start();
-
+        hashtags_text = view.findViewById(R.id.hashtags_text);
+        search_switch = view.findViewById(R.id.switch_cv);
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -65,8 +68,17 @@ public class SearchFragment extends Fragment {
         userAdapter = new UserAdapter(getContext(), userList);
         recyclerView.setAdapter(userAdapter);
         readUsers();
-        TextView hashtags = view.findViewById(R.id.hashtags);
-        hashtags.setOnClickListener(new View.OnClickListener() {
+        hashtags_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment hashtagfrag= new HashtagListFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, hashtagfrag)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+        search_switch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Fragment hashtagfrag= new HashtagListFragment();
@@ -119,6 +131,11 @@ public class SearchFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userList.clear();
+                User emptyUser = new User();
+                emptyUser.setFullname("");
+                emptyUser.setUsername("");
+                emptyUser.setId("");
+                userList.add(emptyUser);
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     User user = snapshot.getValue(User.class);
                     userList.add(user);
@@ -150,9 +167,16 @@ public class SearchFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (search_bar.getText().toString().equals("")){
                     userList.clear();
+                    // Ugliest hack ever, plz don't judge
+                    User emptyUser = new User();
+                    emptyUser.setFullname("");
+                    emptyUser.setUsername("");
+                    emptyUser.setImageurl("");
+                    emptyUser.setBio("");
+                    emptyUser.setId("");
+                    userList.add(emptyUser);
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                         User user = snapshot.getValue(User.class);
-
                         userList.add(user);
                     }
                     userAdapter.notifyDataSetChanged();

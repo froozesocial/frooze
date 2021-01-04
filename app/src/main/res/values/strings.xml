@@ -129,7 +129,7 @@
 
     <!-- Search -->
     <string name="searchhint">Search…</string>
-    <string name="notificationstab">Notifs</string>
+    <string name="notificationstab">Notifications</string>
 
     <string name="cancel">Cancel</string>
     <string name="save">Ok</string>

@@ -1,50 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="NotificationFragment"
     android:background="@color/background_color" >
-
-        <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/toolbar"
-            android:inputType="text"
-            android:background="@drawable/searchappbar"
-            android:outlineAmbientShadowColor="@color/transparent"
-            android:outlineSpotShadowColor="@color/transparent"
-            android:singleLine="true">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_notifications_black_24dp"
-                android:tint="@color/white"
-                />
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/notificationstab"
-                android:textColor="@color/white"
-
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-           <RelativeLayout
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content">
+                android:textColor="@color/black"
+                android:layout_margin="15dp"
+                android:textSize="40sp"
+                android:layout_centerVertical="true"/>
             <ImageButton
                 android:id="@+id/clearnotifs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_delete_black_24dp"
-                android:tint="@color/white"
+                android:tint="@color/black"
                 android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:backgroundTint="@color/transparent"
                 android:layout_marginEnd="20dp"
                 android:foregroundGravity="right"/>
-           </RelativeLayout>
-        </androidx.appcompat.widget.Toolbar>
+    </RelativeLayout>
 
 <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/notif_rv"
@@ -52,4 +37,4 @@
     android:layout_height="match_parent"
     android:layout_below="@id/toolbar"/>
 
-</RelativeLayout>
+</LinearLayout>

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +32,7 @@ public class HashtagListFragment extends Fragment {
     private RecyclerView recyclerView;
     private HashtagAdapter hashtagAdapter;
     private List<String> hashtagLists;
+    CardView users_text, switch_cv;
     final float startSize = 33;
     final float endSize = 20;
     long animationDuration = 175;
@@ -41,6 +43,8 @@ public class HashtagListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_hashtag, container, false);
         recyclerView = rootView.findViewById(R.id.hashtagrecyclerview);
+        users_text = rootView.findViewById(R.id.users_text);
+        switch_cv = rootView.findViewById(R.id.switch_cv);
         recyclerView.setHasFixedSize(true);
         linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false);
         linearLayoutManager.setReverseLayout(true);
@@ -61,7 +65,17 @@ public class HashtagListFragment extends Fragment {
             }
         });
         animator.start();
-        users.setOnClickListener(new View.OnClickListener() {
+        users_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment searchfrag= new SearchFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, searchfrag)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+        switch_cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Fragment searchfrag= new SearchFragment();

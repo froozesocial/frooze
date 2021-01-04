@@ -61,6 +61,12 @@ public class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             final User user = mUsers.get(position);
         UserViewHolder viewHolder = (UserViewHolder) holder;
+        if (user.getId() != null && user.getId().equals("") && user.getImageurl() != null && user.getImageurl().equals("") && user.getBio() != null && user.getBio().equals("") && user.getFullname() != null && user.getFullname().equals("") && user.getUsername() != null && user.getUsername().equals("")){
+            viewHolder.btn_follow.setVisibility(View.GONE);
+            viewHolder.fullname.setVisibility(View.GONE);
+            viewHolder.username.setVisibility(View.GONE);
+            viewHolder.image_profile.setVisibility(View.GONE);
+        }
         if (user.getId() != null && !user.getId().isEmpty()){
             isFollowing(user.getId(), viewHolder.btn_follow);
             
@@ -178,13 +184,11 @@ public class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void sendNotification(String userid){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
-
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("userid", firebaseUser.getUid());
         hashMap.put("text", "followingyou");
         hashMap.put("postid", "");
         hashMap.put("ispost", false);
-
         reference.push().setValue(hashMap);
     }
     private void isFollowing(String userid, Button button) {

@@ -1,12 +1,12 @@
 
 # frooze
-
+Development of frooze was stopped in 2021 and the app and backend are no longer available.
 ![](https://lh3.googleusercontent.com/vvYCPNnsXGSoSPTqg_3u6PbbqjK2DzXwv3M9XIRIuXEAUm_Izd5qpAs35pRT7ryAqg=s180-rw)
 
 
 
 
-**frooze is a new social media app made in Switzerland
+**frooze was a new social media app made in Switzerland
 You can learn more on [frooze.ch](https://frooze.ch "frooze.ch")**
 
 

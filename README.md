@@ -1,6 +1,6 @@
 
 # frooze
-Development of frooze was stopped in 2021 and the app and backend are no longer available.
+Development of frooze was stopped in 2021 and the app and backend are no longer available.  
 ![](https://lh3.googleusercontent.com/vvYCPNnsXGSoSPTqg_3u6PbbqjK2DzXwv3M9XIRIuXEAUm_Izd5qpAs35pRT7ryAqg=s180-rw)
 
 
